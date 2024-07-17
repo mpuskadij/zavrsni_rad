@@ -27,7 +27,7 @@ export class RegistrationGuard implements CanActivate {
     const validationResult = this.validateParameters(username, password);
     if (!validationResult) {
       throw new NotAcceptableException(
-        'Username must not be a number and must be in range between 5-25 characters. Password must have a length of 8 characters minimum.',
+        'Username must not be a number and must be in range between 5-25 characters. Password must have a length of 8 characters minimum and contains 1 uppercase character and 1 number.',
       );
     }
     return true;
