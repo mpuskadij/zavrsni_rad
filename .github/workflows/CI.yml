@@ -21,7 +21,7 @@ jobs:
           run: npm i -g @nestjs/cli
 
         - name: Move to inner directory
-          run: cd nest/backend/
+          run: cd nest/
 
         - name: List items
           run: ls -al
