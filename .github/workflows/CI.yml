@@ -19,8 +19,11 @@ jobs:
         
         - name: Install Nest
           run: npm i -g @nestjs/cli
+
+        - name: Move to inner directory
+          run: cd nest/backend/
         
         - name: Build NestJS project
-          run: nest build nest/backend/
+          run: nest build
 
         
