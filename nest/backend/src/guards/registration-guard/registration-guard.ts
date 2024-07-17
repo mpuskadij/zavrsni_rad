@@ -1,4 +1,10 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  HttpException,
+  Injectable,
+  NotAcceptableException,
+} from '@nestjs/common';
 import { Observable } from 'rxjs';
 
 @Injectable()
@@ -7,6 +13,9 @@ export class RegistrationGuard implements CanActivate {
     if (username.length == 0 || password.length == 0) return false;
     if (!isNaN(Number(username))) return false;
     if (username.length < 5 || username.length > 25) return false;
+    if (password.length < 8) return false;
+    if (!isNaN(Number(password))) return false;
+    if (!/[A-Z]/.test(password)) return false;
     return true;
   }
   canActivate(
@@ -15,6 +24,12 @@ export class RegistrationGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const username = request.body.username;
     const password = request.body.password;
-    return this.validateParameters(username, password);
+    const validationResult = this.validateParameters(username, password);
+    if (!validationResult) {
+      throw new NotAcceptableException(
+        'Username must not be a number and must be in range between 5-25 characters. Password must have a length of 8 characters minimum.',
+      );
+    }
+    return true;
   }
 }
