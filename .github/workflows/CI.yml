@@ -28,4 +28,8 @@ jobs:
           working-directory: ./nest/backend/
           run: npm run build
 
+        - name: Perform unit tests with Jest
+          working-directory: ./nest/backend/
+          run: npm test
+
         
