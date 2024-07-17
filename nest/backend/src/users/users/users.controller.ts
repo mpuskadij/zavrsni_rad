@@ -8,26 +8,12 @@ import {
 } from '@nestjs/common';
 import { RegistrationGuard } from '../../guards/registration-guard/registration-guard';
 
-@Controller('users')
+@Controller('api')
 export class UsersController {
-  @Post()
+  @Post('users')
   @UseGuards(RegistrationGuard)
   async register(
     @Body('username') username: string,
     @Body('password') password: string,
-  ): Promise<any> {
-    if (!isNaN(Number(username))) {
-      throw new HttpException(
-        'Username should not be a number nad must not be empty!',
-        HttpStatus.NOT_ACCEPTABLE,
-      );
-    }
-
-    if (password.length == 0) {
-      throw new HttpException(
-        'Password must not be empty!',
-        HttpStatus.NOT_ACCEPTABLE,
-      );
-    }
-  }
+  ): Promise<any> {}
 }
