@@ -17,6 +17,13 @@ describe('RegistrationGuard', () => {
   });
 
   describe('validateParameters', () => {
+    it('should return false if username or password is null', () => {
+      const username = null;
+      const password = null;
+      const result = provider.validateParameters(username, password);
+
+      expect(result).toBe(false);
+    });
     it('should return false when username is empty', () => {
       const username = '';
       const password = '';
