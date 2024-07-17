@@ -24,6 +24,6 @@ jobs:
           run: cd nest/backend/
         
         - name: Build NestJS project
-          run: nest build
+          run: npm run build
 
         
