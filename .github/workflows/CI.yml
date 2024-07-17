@@ -26,6 +26,6 @@ jobs:
 
         - name: Build NestJS project
           working-directory: ./nest/backend/
-          run: npm run start
+          run: npm run build
 
         
