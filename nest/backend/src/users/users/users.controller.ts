@@ -6,7 +6,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { RegistrationGuard } from 'src/guards/registration-guard/registration-guard';
+import { RegistrationGuard } from '../../guards/registration-guard/registration-guard';
 
 @Controller('users')
 export class UsersController {

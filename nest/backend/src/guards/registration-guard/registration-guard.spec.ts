@@ -24,5 +24,13 @@ describe('RegistrationGuard', () => {
 
       expect(result).toBe(false);
     });
+
+    it('should return false when username is filled, but password is empty', () => {
+      const username = 'abc';
+      const password = '';
+      const result = provider.validateParameters(username, password);
+
+      expect(result).toBe(false);
+    });
   });
 });
