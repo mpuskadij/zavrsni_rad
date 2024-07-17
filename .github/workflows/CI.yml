@@ -27,6 +27,7 @@ jobs:
           run: ls -al
         
         - name: Build NestJS project
+          working-directory: ./nest/backend/
           run: npm run build
 
         
