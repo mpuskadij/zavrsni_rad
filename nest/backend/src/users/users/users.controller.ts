@@ -1,15 +1,17 @@
 import {
   Body,
   Controller,
-  HttpCode,
   HttpException,
   HttpStatus,
   Post,
+  UseGuards,
 } from '@nestjs/common';
+import { RegistrationGuard } from 'src/guards/registration-guard/registration-guard';
 
 @Controller('users')
 export class UsersController {
   @Post()
+  @UseGuards(RegistrationGuard)
   async register(
     @Body('username') username: string,
     @Body('password') password: string,
