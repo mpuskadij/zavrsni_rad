@@ -4,7 +4,10 @@ import { Observable } from 'rxjs';
 @Injectable()
 export class RegistrationGuard implements CanActivate {
   validateParameters(username: string, password: string): boolean {
-    return false;
+    if (username.length == 0 || password.length == 0) return false;
+    if (!isNaN(Number(username))) return false;
+    if (username.length < 5 || username.length > 25) return false;
+    return true;
   }
   canActivate(
     context: ExecutionContext,

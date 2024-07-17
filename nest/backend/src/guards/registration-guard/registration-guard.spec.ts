@@ -32,5 +32,69 @@ describe('RegistrationGuard', () => {
 
       expect(result).toBe(false);
     });
+
+    it('should return false when password is filled, but username is empty', () => {
+      const username = '';
+      const password = 'abc';
+      const result = provider.validateParameters(username, password);
+
+      expect(result).toBe(false);
+    });
+
+    it('should return false when username is a number', () => {
+      const username = '1';
+      const password = 'abc';
+      const result = provider.validateParameters(username, password);
+
+      expect(result).toBe(false);
+    });
+
+    it('should return false when username has length less than 5', () => {
+      const username = 'abcd';
+      const password = 'abc';
+      const result = provider.validateParameters(username, password);
+
+      expect(result).toBe(false);
+    });
+
+    it('should return true when username has length of 5', () => {
+      const username = 'abcde';
+      const password = 'abc';
+      const result = provider.validateParameters(username, password);
+
+      expect(result).toBe(true);
+    });
+
+    it('should return true when username has length of 6', () => {
+      const username = 'abcdef';
+      const password = 'abc';
+      const result = provider.validateParameters(username, password);
+
+      expect(result).toBe(true);
+    });
+
+    it('should return false when username has length greater than 25', () => {
+      const username = 'qwertzuioplkjhgfdsayxcvbnm';
+      const password = 'abc';
+      const result = provider.validateParameters(username, password);
+
+      expect(result).toBe(false);
+    });
+
+    it('should return true when username is 25 characters long', () => {
+      const username = 'qwertzuioplkjhgfdsayxcvbn';
+      const password = 'abc';
+      const result = provider.validateParameters(username, password);
+
+      expect(result).toBe(true);
+    });
+
+    it('should return true when username is 24 characters long', () => {
+      const username = 'qwertzuioplkjhgfdsayxcvbn';
+      const password = 'abc';
+      const result = provider.validateParameters(username, password);
+
+      expect(result).toBe(true);
+    });
   });
 });
