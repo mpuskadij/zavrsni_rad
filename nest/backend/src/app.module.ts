@@ -5,6 +5,7 @@ import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GuardsModule } from './guards/guards.module';
 import { EntitiesModule } from './entities/entities.module';
+import { User } from './entities/user/user';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { EntitiesModule } from './entities/entities.module';
       type: 'sqlite',
       database: './database/database.sqlite',
       synchronize: true,
-      entities: [],
+      entities: [User],
     }),
     EntitiesModule,
   ],
