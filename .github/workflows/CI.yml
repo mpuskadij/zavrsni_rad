@@ -23,6 +23,15 @@ jobs:
         - name: Install dependencies
           working-directory: ./nest/backend/
           run: npm install
+        
+        - name: Create .env file
+          uses: SpicyPizza/create-envfile@v2.0.3
+          with:
+            envkey_GOOGLE_RECAPTCHA_SECRET_KEY: ${{ secrets.GOOGLE_RECAPTCHA_SECRET_KEY }}
+            directory: ./nest/backend
+            filename: .env
+            fail_on_empty: false
+            sort_keys: false
 
         - name: Build NestJS project
           working-directory: ./nest/backend/
