@@ -31,5 +31,9 @@ jobs:
         - name: Perform unit tests with Jest
           working-directory: ./nest/backend/
           run: npm test
+        
+        - name: Perform E2E tests with SuperTest
+          working-directory: ./nest/backend/
+          run: npm run test:e2e
 
         
