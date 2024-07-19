@@ -12,7 +12,7 @@ describe('HashGenerator', () => {
     expect(hashGenerator).toBeDefined();
   });
 
-  describe('hashPassword', () => {
+  describe('hashPassword (integration tests)', () => {
     it('should not return the same string as the one provided when using real salt generation', async () => {
       const password = 'skdjfnksdnfkans';
       const hashedPasswordData: HashedPasswordData =

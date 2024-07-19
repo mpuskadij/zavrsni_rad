@@ -9,7 +9,7 @@ describe('SaltGenerator', () => {
     expect(generator).toBeDefined();
   });
 
-  describe('generateSalt', () => {
+  describe('generateSalt (integration tests)', () => {
     it('should generate salt different from input string', async () => {
       await expect(generator.generateSalt()).resolves.toBeDefined();
     });
