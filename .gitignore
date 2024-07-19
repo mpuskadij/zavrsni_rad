@@ -128,3 +128,5 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+nest/backend/database/test.sqlite
+nest/backend/database/database.sqlite
