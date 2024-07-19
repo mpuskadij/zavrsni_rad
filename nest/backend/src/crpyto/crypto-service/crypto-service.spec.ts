@@ -40,4 +40,10 @@ describe('CryptoService', () => {
       );
     });
   });
+
+  describe('hashPassword (integration tests)', () => {
+    it('should return correct properites of object HashedPasswordData', async () => {
+      await expect(provider.hashPassword('fsdf')).resolves.not.toBeNull();
+    });
+  });
 });
