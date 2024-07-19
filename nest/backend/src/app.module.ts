@@ -7,7 +7,8 @@ import { GuardsModule } from './guards/guards.module';
 import { EntitiesModule } from './entities/entities.module';
 import { User } from './entities/user/user';
 import { GoogleRecaptchaModule } from '@nestlab/google-recaptcha';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
+import { CrpytoModule } from './crpyto/crpyto.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       response: (req) => req.headers.recaptcha,
       score: 0.5,
     }),
+    CrpytoModule,
   ],
   controllers: [AppController],
   providers: [AppService],
