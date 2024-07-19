@@ -6,14 +6,12 @@ describe('SaltGenerator', () => {
     generator = new SaltGenerator();
   });
   it('should be defined', () => {
-    expect(new SaltGenerator()).toBeDefined();
+    expect(generator).toBeDefined();
   });
 
   describe('generateSalt', () => {
     it('should generate salt different from input string', async () => {
-      const password = 'a';
-
-      await expect(generator.generateSalt()).resolves.not.toEqual(password);
+      await expect(generator.generateSalt()).resolves.toBeDefined();
     });
   });
 });

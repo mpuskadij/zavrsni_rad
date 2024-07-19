@@ -1,7 +1,7 @@
-import csprng from 'csprng';
+import * as bcrypt from 'bcrypt';
 
 export class SaltGenerator {
   async generateSalt(): Promise<string> {
-    return csprng(160, 36);
+    return await bcrypt.genSalt();
   }
 }
