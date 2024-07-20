@@ -15,6 +15,9 @@ describe('UsersService', () => {
   let provider: UsersService;
   let repository: Repository<User>;
   let crypto: CryptoService;
+  const mockCryptoService = {
+    hashPassword: jest.fn(),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -22,7 +25,7 @@ describe('UsersService', () => {
       providers: [
         UsersService,
         { provide: getRepositoryToken(User), useClass: Repository },
-        CryptoService,
+        { provide: CryptoService, useValue: mockCryptoService },
         HashGenerator,
         SaltGenerator,
         HashedPasswordData,
@@ -62,6 +65,10 @@ describe('UsersService', () => {
   });
 
   describe('addUser (unit tests)', () => {
+    const crpytoResult: HashedPasswordData = {
+      HashedPassword: 'asfsdgs',
+      Salt: 'asadasf',
+    };
     const userToAdd = new User();
     userToAdd.isAdmin = 0;
     userToAdd.password = 'jfdhgt6H';
@@ -73,6 +80,7 @@ describe('UsersService', () => {
         .mockResolvedValue(false);
       jest.spyOn(repository, 'insert').mockResolvedValue(insertResult);
       jest.spyOn(repository, 'create').mockReturnValue(userToAdd);
+      mockCryptoService.hashPassword.mockResolvedValue(crpytoResult);
 
       const result = await provider.addUser(
         userToAdd.username,
@@ -120,26 +128,19 @@ describe('UsersService', () => {
     });
 
     it('should use CryptoService for creating a hash', async () => {
-      const crpytoResult: HashedPasswordData = {
-        HashedPassword: 'asfsdgs',
-        Salt: 'asadasf',
-      };
       jest
         .spyOn(provider, 'checkIfUsernameIsAlreadyInDatabase')
         .mockResolvedValue(false);
       jest.spyOn(repository, 'create').mockReturnValue(userToAdd);
-      let cryptoMockFunction = jest
-        .spyOn(crypto, 'hashPassword')
-        .mockRejectedValue(crpytoResult);
+      mockCryptoService.hashPassword.mockResolvedValue(crpytoResult);
       jest.spyOn(repository, 'insert').mockResolvedValue(insertResult);
-
       const result = await provider.addUser(
         userToAdd.username,
         userToAdd.password,
       );
 
       expect(result).toBe(true);
-      expect(cryptoMockFunction).toHaveBeenCalled();
+      expect(mockCryptoService.hashPassword).toHaveBeenCalled();
     });
   });
 });
