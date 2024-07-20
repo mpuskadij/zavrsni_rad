@@ -14,7 +14,7 @@ export class UsersController {
   constructor(private userService: UsersService) {}
 
   @Post('users')
-  @UseGuards(RegistrationGuard)
+  @UseGuards(GoogleRecaptchaGuard, RegistrationGuard)
   async register(
     @Body('username') username: string,
     @Body('password') password: string,

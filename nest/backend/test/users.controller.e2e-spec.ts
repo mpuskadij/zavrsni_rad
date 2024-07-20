@@ -4,10 +4,11 @@ import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { UsersController } from '../src/users/users/users.controller';
 import { UsersService } from '../src/users/users-service/users-service';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
 import { User } from '../src/entities/user/user';
 import { UsersModule } from '../src/users/users.module';
 import { Repository } from 'typeorm';
+import { GoogleRecaptchaGuard } from '@nestlab/google-recaptcha';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
@@ -25,10 +26,13 @@ describe('UserController (e2e)', () => {
           entities: [User],
         }),
       ],
-      controllers: [],
-      providers: [Repository, UsersService],
-    }).compile();
-    repo = moduleFixture.get<Repository<User>>(Repository<User>);
+      controllers: [UsersController],
+      providers: [Repository<User>, UsersService],
+    })
+      .overrideGuard(GoogleRecaptchaGuard)
+      .useValue(true)
+      .compile();
+    repo = moduleFixture.get<Repository<User>>(getRepositoryToken(User));
     usersService = moduleFixture.get<UsersService>(UsersService);
     app = moduleFixture.createNestApplication();
     await app.init();
@@ -61,7 +65,7 @@ describe('UserController (e2e)', () => {
         userCredentials.username,
       );
     if (userAlreadyExists == true) {
-      await repo.delete(userCredentials.username);
+      await repo?.delete(userCredentials.username);
     }
     return request(app.getHttpServer())
       .post('/api/users')
