@@ -143,4 +143,6 @@ describe('UsersService', () => {
       expect(mockCryptoService.hashPassword).toHaveBeenCalled();
     });
   });
+
+  describe('addUser (integration tests)', () => {});
 });

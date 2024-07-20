@@ -9,6 +9,11 @@ import { User } from '../src/entities/user/user';
 import { UsersModule } from '../src/users/users.module';
 import { Repository } from 'typeorm';
 import { GoogleRecaptchaGuard } from '@nestlab/google-recaptcha';
+import { CrpytoModule } from '../src/crpyto/crpyto.module';
+import { CryptoService } from '../src/crpyto/crypto-service/crypto-service';
+import { SaltGenerator } from '../src/crpyto/salt-generator/salt-generator';
+import { HashGenerator } from '../src/crpyto/hash-generator/hash-generator';
+import { HashedPasswordData } from '../src/crpyto/hashed-password-data/hashed-password-data';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
@@ -19,6 +24,7 @@ describe('UserController (e2e)', () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
         UsersModule,
+        CrpytoModule,
         TypeOrmModule.forRoot({
           type: 'sqlite',
           database: './database/test.sqlite',
@@ -27,7 +33,14 @@ describe('UserController (e2e)', () => {
         }),
       ],
       controllers: [UsersController],
-      providers: [Repository<User>, UsersService],
+      providers: [
+        Repository<User>,
+        UsersService,
+        CryptoService,
+        SaltGenerator,
+        HashGenerator,
+        HashedPasswordData,
+      ],
     })
       .overrideGuard(GoogleRecaptchaGuard)
       .useValue(true)
@@ -49,6 +62,7 @@ describe('UserController (e2e)', () => {
         isAdmin: 0,
         password: userCredentials.password,
         username: userCredentials.username,
+        salt: 'asdasd',
       });
       await repo.insert(user);
     }

@@ -20,6 +20,7 @@ describe('GoogleRecaptchaGuard (e2e)', () => {
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
+        CrpytoModule,
         ConfigModule.forRoot(),
         GoogleRecaptchaModule.forRoot({
           secretKey: process.env.GOOGLE_RECAPTCHA_SECRET_KEY,
