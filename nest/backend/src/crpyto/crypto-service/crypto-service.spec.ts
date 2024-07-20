@@ -43,7 +43,10 @@ describe('CryptoService', () => {
 
   describe('hashPassword (integration tests)', () => {
     it('should return correct properites of object HashedPasswordData', async () => {
-      await expect(provider.hashPassword('fsdf')).resolves.not.toBeNull();
+      const password: string = 'fsdf';
+      const result: HashedPasswordData = await provider.hashPassword(password);
+      expect(result.HashedPassword).not.toEqual(password);
+      expect(result.Salt).not.toBeNull();
     });
   });
 });
