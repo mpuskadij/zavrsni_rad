@@ -9,7 +9,6 @@ export class CryptoService {
 
   async hashPassword(password: string): Promise<HashedPasswordData> {
     if (password?.length == 0) {
-      console.error('Received password: ' + password);
       throw new Error('Cannot hash empty password!');
     }
     const hashedPasswordData = await this.hashGenerator.hashPassword(password);
