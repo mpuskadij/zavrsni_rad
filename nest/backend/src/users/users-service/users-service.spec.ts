@@ -5,21 +5,35 @@ import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
 import { User } from '../../entities/user/user';
 import { AppModule } from '../../app.module';
 import { InsertResult, Repository } from 'typeorm';
+import { CryptoService } from '../../crpyto/crypto-service/crypto-service';
+import { CrpytoModule } from '../../crpyto/crpyto.module';
+import { HashGenerator } from '../../crpyto/hash-generator/hash-generator';
+import { SaltGenerator } from '../../crpyto/salt-generator/salt-generator';
+import { HashedPasswordData } from '../../crpyto/hashed-password-data/hashed-password-data';
 
 describe('UsersService', () => {
   let provider: UsersService;
   let repository: Repository<User>;
+  let crypto: CryptoService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [CrpytoModule],
       providers: [
         UsersService,
         { provide: getRepositoryToken(User), useClass: Repository },
+        CryptoService,
+        HashGenerator,
+        SaltGenerator,
+        HashedPasswordData,
       ],
     }).compile();
 
     provider = module.get<UsersService>(UsersService);
     repository = module.get<Repository<User>>(getRepositoryToken(User));
+    crypto = module.get<CryptoService>(CryptoService);
+
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -29,7 +43,7 @@ describe('UsersService', () => {
   const username: string = 'marin';
   const password: string = 'abchdj4K';
 
-  describe('checkIfUsernameAlreadyInDatabase', () => {
+  describe('checkIfUsernameAlreadyInDatabase (unit tests)', () => {
     it('should return false if username not in database', async () => {
       jest.spyOn(repository, 'existsBy').mockResolvedValue(false);
       const result =
@@ -47,13 +61,13 @@ describe('UsersService', () => {
     });
   });
 
-  describe('addUser', () => {
+  describe('addUser (unit tests)', () => {
     const userToAdd = new User();
     userToAdd.isAdmin = 0;
     userToAdd.password = 'jfdhgt6H';
     userToAdd.username = 'alex';
+    const insertResult = new InsertResult();
     it('should return true when user is successfully added', async () => {
-      const insertResult = new InsertResult();
       jest
         .spyOn(provider, 'checkIfUsernameIsAlreadyInDatabase')
         .mockResolvedValue(false);
@@ -69,7 +83,6 @@ describe('UsersService', () => {
     });
 
     it('should activate user repository methods create and insert to add user', async () => {
-      const insertResult = new InsertResult();
       jest
         .spyOn(provider, 'checkIfUsernameIsAlreadyInDatabase')
         .mockResolvedValue(false);
@@ -88,7 +101,6 @@ describe('UsersService', () => {
     });
 
     it('should return false when username already exists', async () => {
-      const insertResult = new InsertResult();
       jest
         .spyOn(provider, 'checkIfUsernameIsAlreadyInDatabase')
         .mockResolvedValue(true);
@@ -105,6 +117,29 @@ describe('UsersService', () => {
       expect(result).toBe(false);
       expect(mockFunction).toHaveBeenCalledTimes(0);
       expect(createMockFunction).toHaveBeenCalledTimes(0);
+    });
+
+    it('should use CryptoService for creating a hash', async () => {
+      const crpytoResult: HashedPasswordData = {
+        HashedPassword: 'asfsdgs',
+        Salt: 'asadasf',
+      };
+      jest
+        .spyOn(provider, 'checkIfUsernameIsAlreadyInDatabase')
+        .mockResolvedValue(false);
+      jest.spyOn(repository, 'create').mockReturnValue(userToAdd);
+      let cryptoMockFunction = jest
+        .spyOn(crypto, 'hashPassword')
+        .mockRejectedValue(crpytoResult);
+      jest.spyOn(repository, 'insert').mockResolvedValue(insertResult);
+
+      const result = await provider.addUser(
+        userToAdd.username,
+        userToAdd.password,
+      );
+
+      expect(result).toBe(true);
+      expect(cryptoMockFunction).toHaveBeenCalled();
     });
   });
 });
