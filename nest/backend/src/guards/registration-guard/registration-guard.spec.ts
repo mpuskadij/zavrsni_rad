@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RegistrationGuard } from './registration-guard';
 
-describe('RegistrationGuard', () => {
+describe('RegistrationGuard (unit tests)', () => {
   let provider: RegistrationGuard;
 
   beforeEach(async () => {

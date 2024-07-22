@@ -2,7 +2,7 @@ import { HashedPasswordData } from '../hashed-password-data/hashed-password-data
 import { SaltGenerator } from '../salt-generator/salt-generator';
 import { HashGenerator } from './hash-generator';
 
-describe('HashGenerator', () => {
+describe('HashGenerator (integration tests)', () => {
   let hashGenerator: HashGenerator;
 
   beforeEach(() => {
@@ -12,7 +12,7 @@ describe('HashGenerator', () => {
     expect(hashGenerator).toBeDefined();
   });
 
-  describe('hashPassword (integration tests)', () => {
+  describe('hashPassword', () => {
     it('should not return the same string as the one provided when using real salt generation', async () => {
       const password = 'skdjfnksdnfkans';
       const hashedPasswordData: HashedPasswordData =

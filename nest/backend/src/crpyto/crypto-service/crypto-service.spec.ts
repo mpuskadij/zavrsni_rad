@@ -5,7 +5,7 @@ import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 import { HashGenerator } from '../hash-generator/hash-generator';
 import { HashedPasswordData } from '../hashed-password-data/hashed-password-data';
 
-describe('CryptoService', () => {
+describe('CryptoService (unit tests)', () => {
   let provider: CryptoService;
   let generator: HashGenerator;
 
@@ -22,7 +22,7 @@ describe('CryptoService', () => {
     expect(provider).toBeDefined();
   });
 
-  describe('hashPassword (unit tests)', () => {
+  describe('hashPassword', () => {
     it('should throw exception if password is null', async () => {
       await expect(provider.hashPassword('')).rejects.toBeDefined();
     });
@@ -38,15 +38,6 @@ describe('CryptoService', () => {
       await expect(provider.hashPassword('fsdf')).resolves.toEqual(
         hashedPasswordData,
       );
-    });
-  });
-
-  describe('hashPassword (integration tests)', () => {
-    it('should return correct properites of object HashedPasswordData', async () => {
-      const password: string = 'fsdf';
-      const result: HashedPasswordData = await provider.hashPassword(password);
-      expect(result.HashedPassword).not.toEqual(password);
-      expect(result.Salt).not.toBeNull();
     });
   });
 });

@@ -1,6 +1,6 @@
 import { SaltGenerator } from './salt-generator';
 
-describe('SaltGenerator', () => {
+describe('SaltGenerator (integration tests)', () => {
   let generator: SaltGenerator;
   beforeEach(() => {
     generator = new SaltGenerator();
@@ -9,7 +9,7 @@ describe('SaltGenerator', () => {
     expect(generator).toBeDefined();
   });
 
-  describe('generateSalt (integration tests)', () => {
+  describe('generateSalt', () => {
     it('should generate salt different from input string', async () => {
       await expect(generator.generateSalt()).resolves.toBeDefined();
     });
