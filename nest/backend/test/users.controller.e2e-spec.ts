@@ -87,6 +87,49 @@ describe('UserController (e2e)', () => {
       .expect(201);
   });
 
+  it('/api/users/login (POST) should return 400 when username not recognized in database', () => {
+    return request(app.getHttpServer())
+      .post('/api/users/login')
+      .send({ username: 'niram', password: 'skghtkH7' })
+      .expect(400);
+  });
+
+  it('/api/users/login (POST) should return 400 when username not recognized in database', async () => {
+    const userCredentials = { username: 'marin', password: 'jgklsmhM3' };
+    let userAlreadyExists: boolean =
+      await usersService.checkIfUsernameIsAlreadyInDatabase(
+        userCredentials.username,
+      );
+    if (userAlreadyExists == true) {
+      await repo?.delete(userCredentials.username);
+    }
+    return request(app.getHttpServer())
+      .post('/api/users/login')
+      .send({ username: 'marin', password: 'skghtkH7' })
+      .expect(400);
+  });
+
+  it('/api/users/login (POST) should return 200 with correct username and password', async () => {
+    const userCredentials = { username: 'marin', password: 'jgklsmhM3' };
+    let userAlreadyExists: boolean =
+      await usersService.checkIfUsernameIsAlreadyInDatabase(
+        userCredentials.username,
+      );
+    if (userAlreadyExists == false) {
+      await usersService.addUser(
+        userCredentials.username,
+        userCredentials.password,
+      );
+    }
+    return request(app.getHttpServer())
+      .post('/api/users/login')
+      .send({
+        username: userCredentials.username,
+        password: userCredentials.password,
+      })
+      .expect(200);
+  });
+
   afterEach(async () => {
     await app.close();
   });

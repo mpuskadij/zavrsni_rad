@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   ConflictException,
   Controller,
@@ -38,6 +39,6 @@ export class UsersController {
     @Body('username') username: string,
     @Body('password') password: string,
   ): Promise<any> {
-    return;
+    throw new BadRequestException('Username not valid');
   }
 }
