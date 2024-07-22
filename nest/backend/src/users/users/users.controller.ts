@@ -33,9 +33,11 @@ export class UsersController {
   }
 
   @Post('login')
-  @UseGuards(RegistrationGuard)
+  @UseGuards(GoogleRecaptchaGuard, RegistrationGuard)
   async login(
     @Body('username') username: string,
     @Body('password') password: string,
-  ): Promise<any> {}
+  ): Promise<any> {
+    return;
+  }
 }

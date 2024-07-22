@@ -54,6 +54,10 @@ describe('GoogleRecaptchaGuard (e2e)', () => {
       .expect(400);
   });
 
+  it('/api/users/login (POST) should return 400 response when no recaptcha token is passed in header', () => {
+    return request(app.getHttpServer()).post('/api/users/login').expect(400);
+  });
+
   afterEach(async () => {
     await app.close();
   });
