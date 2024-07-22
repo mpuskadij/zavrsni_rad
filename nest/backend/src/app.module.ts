@@ -9,6 +9,7 @@ import { User } from './entities/user/user';
 import { GoogleRecaptchaModule } from '@nestlab/google-recaptcha';
 import { ConfigModule } from '@nestjs/config';
 import { CrpytoModule } from './crpyto/crpyto.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -26,6 +27,11 @@ import { CrpytoModule } from './crpyto/crpyto.module';
       secretKey: process.env.GOOGLE_RECAPTCHA_SECRET_KEY,
       response: (req) => req.headers.recaptcha,
       score: 0.5,
+    }),
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      global: true,
+      signOptions: { expiresIn: '60s' },
     }),
     CrpytoModule,
   ],
