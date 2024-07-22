@@ -14,7 +14,6 @@ import { HashedPasswordData } from '../../crpyto/hashed-password-data/hashed-pas
 describe('UsersService', () => {
   let provider: UsersService;
   let repository: Repository<User>;
-  let crypto: CryptoService;
   const mockCryptoService = {
     hashPassword: jest.fn(),
   };
@@ -34,7 +33,6 @@ describe('UsersService', () => {
 
     provider = module.get<UsersService>(UsersService);
     repository = module.get<Repository<User>>(getRepositoryToken(User));
-    crypto = module.get<CryptoService>(CryptoService);
 
     jest.clearAllMocks();
   });
@@ -143,6 +141,4 @@ describe('UsersService', () => {
       expect(mockCryptoService.hashPassword).toHaveBeenCalled();
     });
   });
-
-  describe('addUser (integration tests)', () => {});
 });
