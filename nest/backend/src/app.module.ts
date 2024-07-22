@@ -10,6 +10,8 @@ import { GoogleRecaptchaModule } from '@nestlab/google-recaptcha';
 import { ConfigModule } from '@nestjs/config';
 import { CrpytoModule } from './crpyto/crpyto.module';
 import { JwtModule } from '@nestjs/jwt';
+import { AuthenticationService } from './authentication/authentication-service/authentication-service';
+import { AuthenticationModule } from './authentication/authentication.module';
 
 @Module({
   imports: [
@@ -34,8 +36,9 @@ import { JwtModule } from '@nestjs/jwt';
       signOptions: { expiresIn: '60s' },
     }),
     CrpytoModule,
+    AuthenticationModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AuthenticationService],
 })
 export class AppModule {}
