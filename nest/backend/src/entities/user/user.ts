@@ -8,9 +8,6 @@ export class User {
   @Column({ nullable: false })
   password: string;
 
-  @Column({ nullable: false })
-  salt: string;
-
   @Column({ default: 0 })
   isAdmin: number;
 }

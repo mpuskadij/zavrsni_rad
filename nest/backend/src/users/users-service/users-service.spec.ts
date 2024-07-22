@@ -17,6 +17,7 @@ describe('UsersService (unit tests)', () => {
   let repository: Repository<User>;
   const mockCryptoService = {
     hashPassword: jest.fn(),
+    comparePasswords: jest.fn(),
   };
 
   beforeEach(async () => {

@@ -39,7 +39,6 @@ export class UsersService {
     const newUser = this.userRepository.create({
       isAdmin: 0,
       password: hashedPasswordData.HashedPassword,
-      salt: hashedPasswordData.Salt,
       username: username,
     });
 

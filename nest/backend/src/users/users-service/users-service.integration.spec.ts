@@ -49,7 +49,6 @@ describe('UsersService (integration tests)', () => {
           isAdmin: 0,
           username: 'marin',
           password: 'sadasd',
-          salt: 'dsasd',
         });
       }
       const result =
@@ -82,7 +81,6 @@ describe('UsersService (integration tests)', () => {
       expect(result).toBe(true);
       const user = await repository.findOneBy({ username: username });
       expect(user).not.toBeNull();
-      expect(user.salt).not.toBeNull();
       expect(user.password).not.toEqual(password);
       expect(user.isAdmin).toBe(0);
     });

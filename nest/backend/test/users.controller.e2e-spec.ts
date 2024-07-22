@@ -62,7 +62,6 @@ describe('UserController (e2e)', () => {
         isAdmin: 0,
         password: userCredentials.password,
         username: userCredentials.username,
-        salt: 'asdasd',
       });
       await repo.insert(user);
     }

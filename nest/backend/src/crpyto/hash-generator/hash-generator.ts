@@ -12,4 +12,15 @@ export class HashGenerator {
     const hashedPasswordData = new HashedPasswordData(salt, hashedPassword);
     return hashedPasswordData;
   }
+
+  async compareHashes(
+    plainPassword: string,
+    hashedPassword: string,
+  ): Promise<boolean> {
+    try {
+      return await bcrypt.compare(plainPassword, hashedPassword);
+    } catch (error) {
+      return false;
+    }
+  }
 }

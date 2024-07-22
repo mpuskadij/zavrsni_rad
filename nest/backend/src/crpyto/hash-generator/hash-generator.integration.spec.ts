@@ -20,4 +20,30 @@ describe('HashGenerator (integration tests)', () => {
       expect(hashedPasswordData.HashedPassword).not.toEqual(password);
     });
   });
+
+  describe('compareHashes', () => {
+    it('should return true if hashes are the same', async () => {
+      const password = 'skdjfnksdnfkans';
+      const hashedPasswordData: HashedPasswordData =
+        await hashGenerator.hashPassword(password);
+
+      const result = await hashGenerator.compareHashes(
+        password,
+        hashedPasswordData.HashedPassword,
+      );
+      expect(result).toBe(true);
+    });
+
+    it('should return false if hashes are not the same', async () => {
+      const password = 'skdjfnksdnfkans';
+      const hashedPasswordData: HashedPasswordData =
+        await hashGenerator.hashPassword(password);
+
+      const result = await hashGenerator.compareHashes(
+        'skdjfnksdnfkanr',
+        hashedPasswordData.HashedPassword,
+      );
+      expect(result).toBe(false);
+    });
+  });
 });
