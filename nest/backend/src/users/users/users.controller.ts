@@ -20,18 +20,14 @@ export class UsersController {
     @Body('username') username: string,
     @Body('password') password: string,
   ): Promise<any> {
-    try {
-      const userAddedStatus: boolean = await this.userService.addUser(
-        username,
-        password,
+    const userAddedStatus: boolean = await this.userService.addUser(
+      username,
+      password,
+    );
+    if (userAddedStatus == false) {
+      throw new ConflictException(
+        'Username already exists! Please choose another username.',
       );
-      if (userAddedStatus == false) {
-        throw new ConflictException(
-          'Username already exists! Please choose another username.',
-        );
-      }
-    } catch (error) {
-      throw new InternalServerErrorException('Error while adding to database!');
     }
     return;
   }
