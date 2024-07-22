@@ -19,6 +19,8 @@ describe('UserController (e2e)', () => {
   let app: INestApplication;
   let repo: Repository<User>;
   let usersService: UsersService;
+  const username = 'marin';
+  const password = 'ajskfnU7';
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -52,7 +54,7 @@ describe('UserController (e2e)', () => {
   });
 
   it('/api/users/register (POST) should return 409 response when username already in database', async () => {
-    const userCredentials = { username: 'marin', password: 'jgklsmhM3' };
+    const userCredentials = { username: username, password: password };
     let userAlreadyExists: boolean =
       await usersService.checkIfUsernameIsAlreadyInDatabase(
         userCredentials.username,
@@ -72,11 +74,8 @@ describe('UserController (e2e)', () => {
   });
 
   it('/api/users/register (POST) should add user into database and return 201 when username not in database', async () => {
-    const userCredentials = { username: 'marin', password: 'jgklsmhM3' };
-    let userAlreadyExists: boolean =
-      await usersService.checkIfUsernameIsAlreadyInDatabase(
-        userCredentials.username,
-      );
+    const userCredentials = { username: username, password: password };
+    let userAlreadyExists: boolean = await repo.existsBy({ username });
     if (userAlreadyExists == true) {
       await repo?.delete(userCredentials.username);
     }
@@ -86,46 +85,33 @@ describe('UserController (e2e)', () => {
       .expect(201);
   });
 
-  it('/api/users/login (POST) should return 400 when username not recognized in database', () => {
-    return request(app.getHttpServer())
-      .post('/api/users/login')
-      .send({ username: 'niram', password: 'skghtkH7' })
-      .expect(400);
-  });
-
   it('/api/users/login (POST) should return 400 when username not recognized in database', async () => {
-    const userCredentials = { username: 'marin', password: 'jgklsmhM3' };
-    let userAlreadyExists: boolean =
-      await usersService.checkIfUsernameIsAlreadyInDatabase(
-        userCredentials.username,
-      );
+    const userCredentials = { username: username, password: password };
+    let userAlreadyExists: boolean = await repo.existsBy({ username });
     if (userAlreadyExists == true) {
-      await repo?.delete(userCredentials.username);
+      await repo.delete({ username: username });
     }
     return request(app.getHttpServer())
       .post('/api/users/login')
-      .send({ username: 'marin', password: 'skghtkH7' })
+      .send(userCredentials)
       .expect(400);
   });
 
-  it('/api/users/login (POST) should return 200 with correct username and password', async () => {
-    const userCredentials = { username: 'marin', password: 'jgklsmhM3' };
-    let userAlreadyExists: boolean =
-      await usersService.checkIfUsernameIsAlreadyInDatabase(
-        userCredentials.username,
-      );
-    if (userAlreadyExists == false) {
-      await usersService.addUser(
-        userCredentials.username,
-        userCredentials.password,
-      );
+  it('/api/users/login (POST) should return 200 with correct username and password after /api/users/register', async () => {
+    const userCredentials = { username: username, password: password };
+    let userAlreadyExists: boolean = await repo.existsBy({
+      username,
+    });
+    if (userAlreadyExists == true) {
+      await repo.delete({ username: username });
     }
+    await request(app.getHttpServer())
+      .post('/api/users/register')
+      .send(userCredentials);
+
     return request(app.getHttpServer())
       .post('/api/users/login')
-      .send({
-        username: userCredentials.username,
-        password: userCredentials.password,
-      })
+      .send(userCredentials)
       .expect(200);
   });
 
