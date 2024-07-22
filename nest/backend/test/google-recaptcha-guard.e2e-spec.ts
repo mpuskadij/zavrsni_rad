@@ -43,13 +43,13 @@ describe('GoogleRecaptchaGuard (e2e)', () => {
     await app.init();
   });
 
-  it('/api/users (POST) should return 400 response when no recaptcha token is passed in header', () => {
-    return request(app.getHttpServer()).post('/api/users').expect(400);
+  it('/api/users/register (POST) should return 400 response when no recaptcha token is passed in header', () => {
+    return request(app.getHttpServer()).post('/api/users/register').expect(400);
   });
 
-  it('/api/users (POST) should return 400 response when invalid key is passed in header', () => {
+  it('/api/users/register (POST) should return 400 response when invalid key is passed in header', () => {
     return request(app.getHttpServer())
-      .post('/api/users')
+      .post('/api/users/register')
       .set('recaptcha', '123')
       .expect(400);
   });

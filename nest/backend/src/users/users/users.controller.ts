@@ -9,11 +9,11 @@ import { RegistrationGuard } from '../../guards/registration-guard/registration-
 import { GoogleRecaptchaGuard } from '@nestlab/google-recaptcha';
 import { UsersService } from '../users-service/users-service';
 
-@Controller('api')
+@Controller('api/users')
 export class UsersController {
   constructor(private userService: UsersService) {}
 
-  @Post('users')
+  @Post('register')
   @UseGuards(GoogleRecaptchaGuard, RegistrationGuard)
   async register(
     @Body('username') username: string,

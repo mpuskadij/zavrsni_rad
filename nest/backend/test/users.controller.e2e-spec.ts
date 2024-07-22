@@ -51,7 +51,7 @@ describe('UserController (e2e)', () => {
     await app.init();
   });
 
-  it('/api/users (POST) should return 409 response when username already in database', async () => {
+  it('/api/users/register (POST) should return 409 response when username already in database', async () => {
     const userCredentials = { username: 'marin', password: 'jgklsmhM3' };
     let userAlreadyExists: boolean =
       await usersService.checkIfUsernameIsAlreadyInDatabase(
@@ -67,12 +67,12 @@ describe('UserController (e2e)', () => {
       await repo.insert(user);
     }
     return request(app.getHttpServer())
-      .post('/api/users')
+      .post('/api/users/register')
       .send(userCredentials)
       .expect(409);
   });
 
-  it('/api/users (POST) should add user into database and return 201 when username not in database', async () => {
+  it('/api/users/register (POST) should add user into database and return 201 when username not in database', async () => {
     const userCredentials = { username: 'marin', password: 'jgklsmhM3' };
     let userAlreadyExists: boolean =
       await usersService.checkIfUsernameIsAlreadyInDatabase(
@@ -82,7 +82,7 @@ describe('UserController (e2e)', () => {
       await repo?.delete(userCredentials.username);
     }
     return request(app.getHttpServer())
-      .post('/api/users')
+      .post('/api/users/register')
       .send(userCredentials)
       .expect(201);
   });
