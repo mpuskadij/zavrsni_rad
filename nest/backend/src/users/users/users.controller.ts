@@ -6,6 +6,7 @@ import {
   HttpCode,
   InternalServerErrorException,
   Post,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { RegistrationGuard } from '../../guards/registration-guard/registration-guard';
@@ -46,6 +47,6 @@ export class UsersController {
       password,
     );
     if (validCredentials == false)
-      throw new BadRequestException('Username and/or password not valid!');
+      throw new UnauthorizedException('Username and/or password not valid!');
   }
 }

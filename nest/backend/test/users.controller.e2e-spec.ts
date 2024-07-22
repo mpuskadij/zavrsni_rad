@@ -94,7 +94,7 @@ describe('UserController (e2e)', () => {
     return request(app.getHttpServer())
       .post('/api/users/login')
       .send(userCredentials)
-      .expect(400);
+      .expect(401);
   });
 
   it('/api/users/login (POST) should return 200 with correct username and password after /api/users/register', async () => {
@@ -113,6 +113,28 @@ describe('UserController (e2e)', () => {
       .post('/api/users/login')
       .send(userCredentials)
       .expect(200);
+  });
+
+  it('/api/users/login (POST) should return 400 HTTP response with correct username,but incorrect password after /api/users/register', async () => {
+    const userCredentials = { username: username, password: password };
+    const invalidUserCredentials = {
+      username: username,
+      password: password + 's',
+    };
+    let userAlreadyExists: boolean = await repo.existsBy({
+      username,
+    });
+    if (userAlreadyExists == true) {
+      await repo.delete({ username: username });
+    }
+    await request(app.getHttpServer())
+      .post('/api/users/register')
+      .send(userCredentials);
+
+    return request(app.getHttpServer())
+      .post('/api/users/login')
+      .send(invalidUserCredentials)
+      .expect(401);
   });
 
   afterEach(async () => {
