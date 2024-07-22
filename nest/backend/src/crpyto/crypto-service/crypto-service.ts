@@ -14,4 +14,14 @@ export class CryptoService {
     const hashedPasswordData = await this.hashGenerator.hashPassword(password);
     return hashedPasswordData;
   }
+
+  async compareIfPasswordsMatch(
+    plainPassword: string,
+    encryptedPassword: string,
+  ): Promise<boolean> {
+    return await this.hashGenerator.compareHashes(
+      plainPassword,
+      encryptedPassword,
+    );
+  }
 }

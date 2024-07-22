@@ -40,4 +40,32 @@ describe('CryptoService (unit tests)', () => {
       );
     });
   });
+
+  describe('compareIfPasswordsMatch', () => {
+    it('should return false if passwords dont match', async () => {
+      const plainPassword = 'abchgjjskd';
+      const encryptedPassword = 'asndfskjdngkjsdngjkds';
+      jest.spyOn(generator, 'compareHashes').mockResolvedValue(false);
+
+      const result = await provider.compareIfPasswordsMatch(
+        plainPassword,
+        encryptedPassword,
+      );
+
+      expect(result).toBe(false);
+    });
+
+    it('should return true if passwords match', async () => {
+      const plainPassword = 'abchgjjskd';
+      const encryptedPassword = 'asndfskjdngkjsdngjkds';
+      jest.spyOn(generator, 'compareHashes').mockResolvedValue(true);
+
+      const result = await provider.compareIfPasswordsMatch(
+        plainPassword,
+        encryptedPassword,
+      );
+
+      expect(result).toBe(true);
+    });
+  });
 });
