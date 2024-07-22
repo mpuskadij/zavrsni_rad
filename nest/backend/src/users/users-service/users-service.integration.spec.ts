@@ -39,9 +39,37 @@ describe('UsersService (integration tests)', () => {
     repository = module.get<Repository<User>>(getRepositoryToken(User));
   });
 
+  const username = 'marin';
+
+  describe('checkIfUsernameIsAlreadyInDatabase', () => {
+    it('should return true when username already in database', async () => {
+      const user: User = await repository.findOneBy({ username: username });
+      if (user == null) {
+        await repository.insert({
+          isAdmin: 0,
+          username: 'marin',
+          password: 'sadasd',
+          salt: 'dsasd',
+        });
+      }
+      const result =
+        await provider.checkIfUsernameIsAlreadyInDatabase(username);
+      expect(result).toBe(true);
+    });
+
+    it('should return false when username not in database', async () => {
+      const user: User = await repository.findOneBy({ username: username });
+      if (user != null) {
+        await repository.delete({ username: username });
+      }
+      const result =
+        await provider.checkIfUsernameIsAlreadyInDatabase(username);
+      expect(result).toBe(false);
+    });
+  });
+
   describe('addUser', () => {
     it('should add user, hash the password using CryptoService and insert hashed password with salt into database', async () => {
-      const username = 'marin';
       const password = '123456Hm';
       const usernameInDatabase =
         await provider.checkIfUsernameIsAlreadyInDatabase(username);

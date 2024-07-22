@@ -11,7 +11,7 @@ import { HashGenerator } from '../../crpyto/hash-generator/hash-generator';
 import { SaltGenerator } from '../../crpyto/salt-generator/salt-generator';
 import { HashedPasswordData } from '../../crpyto/hashed-password-data/hashed-password-data';
 
-describe('UsersService', () => {
+describe('UsersService (unit tests)', () => {
   let provider: UsersService;
   let repository: Repository<User>;
   const mockCryptoService = {
@@ -44,7 +44,7 @@ describe('UsersService', () => {
   const username: string = 'marin';
   const password: string = 'abchdj4K';
 
-  describe('checkIfUsernameAlreadyInDatabase (unit tests)', () => {
+  describe('checkIfUsernameAlreadyInDatabase', () => {
     it('should return false if username not in database', async () => {
       jest.spyOn(repository, 'existsBy').mockResolvedValue(false);
       const result =
@@ -62,7 +62,7 @@ describe('UsersService', () => {
     });
   });
 
-  describe('addUser (unit tests)', () => {
+  describe('addUser', () => {
     const crpytoResult: HashedPasswordData = {
       HashedPassword: 'asfsdgs',
       Salt: 'asadasf',
