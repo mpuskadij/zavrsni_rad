@@ -55,6 +55,10 @@ describe('RegistrationGuard (e2e)', () => {
     return request(app.getHttpServer()).post('/api/users/register').expect(406);
   });
 
+  it('/api/users/login (POST) should return NOT_ACCEPTABLE HTTP response when no body is passed', () => {
+    return request(app.getHttpServer()).post('/api/users/login').expect(406);
+  });
+
   afterEach(async () => {
     await app.close();
   });

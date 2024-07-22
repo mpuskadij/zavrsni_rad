@@ -31,4 +31,11 @@ export class UsersController {
     }
     return;
   }
+
+  @Post('login')
+  @UseGuards(RegistrationGuard)
+  async login(
+    @Body('username') username: string,
+    @Body('password') password: string,
+  ): Promise<any> {}
 }
