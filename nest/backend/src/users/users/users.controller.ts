@@ -3,6 +3,7 @@ import {
   Body,
   ConflictException,
   Controller,
+  HttpCode,
   InternalServerErrorException,
   Post,
   UseGuards,
@@ -34,11 +35,17 @@ export class UsersController {
   }
 
   @Post('login')
+  @HttpCode(200)
   @UseGuards(GoogleRecaptchaGuard, RegistrationGuard)
   async login(
     @Body('username') username: string,
     @Body('password') password: string,
   ): Promise<any> {
-    throw new BadRequestException('Username not valid');
+    const validCredentials = await this.userService.checkLoginCredentials(
+      username,
+      password,
+    );
+    if (validCredentials == false)
+      throw new BadRequestException('Username and/or password not valid!');
   }
 }

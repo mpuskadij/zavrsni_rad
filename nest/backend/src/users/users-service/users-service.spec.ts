@@ -145,12 +145,30 @@ describe('UsersService (unit tests)', () => {
 
   describe('checkLoginCredentials', () => {
     it('should return true if username and password are correct', async () => {
+      jest
+        .spyOn(provider, 'checkIfUsernameIsAlreadyInDatabase')
+        .mockResolvedValue(true);
+      jest.spyOn(repository, 'existsBy').mockResolvedValue(true);
       const result: boolean = await provider.checkLoginCredentials(
         username,
         password,
       );
 
       expect(result).toBe(true);
+    });
+
+    it('should return false if username not even in database', async () => {
+      jest
+        .spyOn(provider, 'checkIfUsernameIsAlreadyInDatabase')
+        .mockResolvedValue(false);
+      jest.spyOn(repository, 'existsBy').mockResolvedValue(false);
+
+      const result: boolean = await provider.checkLoginCredentials(
+        username,
+        password,
+      );
+
+      expect(result).toBe(false);
     });
   });
 });

@@ -19,6 +19,11 @@ export class UsersService {
     username: string,
     password: string,
   ): Promise<boolean> {
+    const usernameInDatabase =
+      await this.checkIfUsernameIsAlreadyInDatabase(username);
+    if (usernameInDatabase == false) {
+      return false;
+    }
     return true;
   }
 
