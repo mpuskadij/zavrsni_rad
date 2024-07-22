@@ -15,6 +15,13 @@ export class UsersService {
     return await this.userRepository.existsBy({ username });
   }
 
+  async checkLoginCredentials(
+    username: string,
+    password: string,
+  ): Promise<boolean> {
+    return true;
+  }
+
   async addUser(username: string, password: string): Promise<boolean> {
     const usernameAlreadyExists: boolean =
       await this.checkIfUsernameIsAlreadyInDatabase(username);

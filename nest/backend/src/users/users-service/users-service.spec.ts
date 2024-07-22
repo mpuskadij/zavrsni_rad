@@ -10,6 +10,7 @@ import { CrpytoModule } from '../../crpyto/crpyto.module';
 import { HashGenerator } from '../../crpyto/hash-generator/hash-generator';
 import { SaltGenerator } from '../../crpyto/salt-generator/salt-generator';
 import { HashedPasswordData } from '../../crpyto/hashed-password-data/hashed-password-data';
+import { async } from 'rxjs';
 
 describe('UsersService (unit tests)', () => {
   let provider: UsersService;
@@ -139,6 +140,17 @@ describe('UsersService (unit tests)', () => {
 
       expect(result).toBe(true);
       expect(mockCryptoService.hashPassword).toHaveBeenCalled();
+    });
+  });
+
+  describe('checkLoginCredentials', () => {
+    it('should return true if username and password are correct', async () => {
+      const result: boolean = await provider.checkLoginCredentials(
+        username,
+        password,
+      );
+
+      expect(result).toBe(true);
     });
   });
 });
