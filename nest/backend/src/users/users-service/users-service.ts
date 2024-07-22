@@ -15,16 +15,22 @@ export class UsersService {
     return await this.userRepository.existsBy({ username });
   }
 
+  async getUser(username: string): Promise<User> {
+    return await this.userRepository.findOneBy({ username });
+  }
+
   async checkLoginCredentials(
     username: string,
     password: string,
   ): Promise<boolean> {
-    const usernameInDatabase =
-      await this.checkIfUsernameIsAlreadyInDatabase(username);
-    if (usernameInDatabase == false) {
+    const userDatabase: User = await this.getUser(username);
+    if (userDatabase == null) {
       return false;
     }
-    return true;
+    return await this.cryptoService.compareIfPasswordsMatch(
+      password,
+      userDatabase.password,
+    );
   }
 
   async addUser(username: string, password: string): Promise<boolean> {
