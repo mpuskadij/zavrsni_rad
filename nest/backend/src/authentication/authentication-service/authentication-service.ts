@@ -18,8 +18,11 @@ export class AuthenticationService {
   }
 
   async validateJWT(token: string): Promise<boolean> {
-    const result = await this.jwtService.verifyAsync(token);
-
-    return result != null;
+    try {
+      const result = await this.jwtService.verifyAsync(token);
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 }

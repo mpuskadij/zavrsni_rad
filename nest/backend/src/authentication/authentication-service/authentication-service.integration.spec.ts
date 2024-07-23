@@ -40,5 +40,11 @@ describe('AuthenticationService (integration tests)', () => {
       const result: boolean = await provider.validateJWT(token);
       expect(result).toBe(true);
     });
+
+    it('should return false if jwt is valid', async () => {
+      const token: string = await provider.generateJWT(username, 0);
+      const result: boolean = await provider.validateJWT(token + 's');
+      expect(result).toBe(false);
+    });
   });
 });
