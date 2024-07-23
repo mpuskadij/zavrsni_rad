@@ -13,6 +13,7 @@ import {
   GoogleRecaptchaModule,
 } from '@nestlab/google-recaptcha';
 import { ConfigModule } from '@nestjs/config';
+import { Bmientry } from '../src/entities/bmientry/bmientry';
 
 describe('GoogleRecaptchaGuard (e2e)', () => {
   let app: INestApplication;
@@ -32,7 +33,8 @@ describe('GoogleRecaptchaGuard (e2e)', () => {
           type: 'sqlite',
           database: './database/test.sqlite',
           synchronize: true,
-          entities: [User],
+          autoLoadEntities: true,
+          entities: [User, Bmientry],
         }),
       ],
       controllers: [UsersController],

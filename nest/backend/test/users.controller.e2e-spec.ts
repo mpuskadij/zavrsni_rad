@@ -19,6 +19,7 @@ import * as cookieParser from 'cookie-parser';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { AuthenticationService } from '../src/authentication/authentication-service/authentication-service';
+import { Bmientry } from '../src/entities/bmientry/bmientry';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
@@ -38,7 +39,8 @@ describe('UserController (e2e)', () => {
           type: 'sqlite',
           database: './database/test.sqlite',
           synchronize: true,
-          entities: [User],
+          autoLoadEntities: true,
+          entities: [User, Bmientry],
         }),
         AuthenticationModule,
         JwtModule.register({ secret: process.env.JWT_SECRET }),

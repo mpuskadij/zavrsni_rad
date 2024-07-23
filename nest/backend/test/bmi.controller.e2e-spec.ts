@@ -20,6 +20,7 @@ import { HashedPasswordData } from '../src/crpyto/hashed-password-data/hashed-pa
 import { AuthenticationService } from '../src/authentication/authentication-service/authentication-service';
 import { GoogleRecaptchaGuard } from '@nestlab/google-recaptcha';
 import { GuardsModule } from '../src/guards/guards.module';
+import { Bmientry } from '../src/entities/bmientry/bmientry';
 
 describe('BmiController (e2e)', () => {
   let app: INestApplication;
@@ -38,7 +39,7 @@ describe('BmiController (e2e)', () => {
           type: 'sqlite',
           database: './database/test.sqlite',
           synchronize: true,
-          entities: [User],
+          entities: [User, Bmientry],
         }),
         AuthenticationModule,
         JwtModule.register({ secret: process.env.JWT_SECRET }),

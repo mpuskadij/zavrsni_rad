@@ -17,7 +17,6 @@ export class Bmientry {
   dateAdded: Date;
 
   @ManyToOne(() => User, (user) => user.bmiEntries)
-  @JoinColumn({ name: 'username' })
   user: User;
 
   @Column()
