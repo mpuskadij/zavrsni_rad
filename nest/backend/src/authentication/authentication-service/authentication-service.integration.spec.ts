@@ -28,8 +28,9 @@ describe('AuthenticationService', () => {
   describe('generateJWT (integration tests)', () => {
     it('should generate JWT', async () => {
       const token: string = await provider.generateJWT(username, isAdmin);
-
+      const tokenParts: string[] = token.split('.');
       expect(token).not.toBeNull();
+      expect(tokenParts).toHaveLength(3);
     });
   });
 });
