@@ -12,6 +12,7 @@ import { CrpytoModule } from './crpyto/crpyto.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthenticationService } from './authentication/authentication-service/authentication-service';
 import { AuthenticationModule } from './authentication/authentication.module';
+import { BmiModule } from './bmi/bmi.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { AuthenticationModule } from './authentication/authentication.module';
     }),
     CrpytoModule,
     AuthenticationModule,
+    BmiModule,
   ],
   controllers: [AppController],
   providers: [AppService, AuthenticationService],
