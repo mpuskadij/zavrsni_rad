@@ -41,7 +41,7 @@ describe('AuthenticationService (integration tests)', () => {
       expect(result).toBe(true);
     });
 
-    it('should return false if jwt is valid', async () => {
+    it('should return false if jwt is invalid', async () => {
       const token: string = await provider.generateJWT(username, 0);
       const result: boolean = await provider.validateJWT(token + 's');
       expect(result).toBe(false);
