@@ -13,6 +13,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthenticationService } from './authentication/authentication-service/authentication-service';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { BmiModule } from './bmi/bmi.module';
+import { Bmientry } from './entities/bmientry/bmientry';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { BmiModule } from './bmi/bmi.module';
       type: 'sqlite',
       database: './database/database.sqlite',
       synchronize: true,
-      entities: [User],
+      autoLoadEntities: true,
+      entities: [User, Bmientry],
     }),
     EntitiesModule,
     GoogleRecaptchaModule.forRoot({

@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { Bmientry } from '../bmientry/bmientry';
 
 @Entity()
 export class User {
@@ -8,6 +9,11 @@ export class User {
   @Column({ nullable: false })
   password: string;
 
-  @Column({ default: 0 })
+  @Column({ default: 0, nullable: true })
   isAdmin: number;
+
+  @OneToMany(() => Bmientry, (bmiEntry) => bmiEntry.user, {
+    cascade: ['insert'],
+  })
+  bmiEntries: Bmientry[];
 }

@@ -13,6 +13,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthenticationModule } from '../../authentication/authentication.module';
 import { AuthenticationService } from '../../authentication/authentication-service/authentication-service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
+import { Bmientry } from '../../entities/bmientry/bmientry';
 
 describe('UsersService (integration tests)', () => {
   let provider: UsersService;
@@ -29,9 +30,11 @@ describe('UsersService (integration tests)', () => {
           type: 'sqlite',
           database: './database/test.sqlite',
           synchronize: true,
-          entities: [User],
+          autoLoadEntities: true,
+          entities: [User, Bmientry],
         }),
         TypeOrmModule.forFeature([User]),
+        TypeOrmModule.forFeature([Bmientry]),
         ConfigModule.forRoot(),
         AuthenticationModule,
         JwtModule.register({ secret: process.env.JWT_SECRET }),

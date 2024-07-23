@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../entities/user/user';
 import { CrpytoModule } from '../crpyto/crpyto.module';
 import { AuthenticationModule } from '../authentication/authentication.module';
+import { Bmientry } from '../entities/bmientry/bmientry';
 
 @Module({
   imports: [

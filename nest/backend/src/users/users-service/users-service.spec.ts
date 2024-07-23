@@ -161,7 +161,12 @@ describe('UsersService (unit tests)', () => {
 
   describe('checkLoginCredentials', () => {
     it('should return true if username and password are correct', async () => {
-      const user: User = { password: password, username: username, isAdmin: 0 };
+      const user: User = {
+        password: password,
+        username: username,
+        isAdmin: 0,
+        bmiEntries: [],
+      };
       jest.spyOn(provider, 'getUser').mockResolvedValue(user);
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(user);
       mockCryptoService.compareIfPasswordsMatch.mockResolvedValue(true);
@@ -192,6 +197,7 @@ describe('UsersService (unit tests)', () => {
         password: 'askfjkafk',
         username: username,
         isAdmin: 0,
+        bmiEntries: [],
       };
       jest.spyOn(provider, 'getUser').mockResolvedValue(user);
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(user);
@@ -215,6 +221,7 @@ describe('UsersService (unit tests)', () => {
         username: username,
         password: password,
         isAdmin: 0,
+        bmiEntries: [],
       };
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(repoUser);
       const result: User = await provider.getUser(username);
@@ -230,6 +237,7 @@ describe('UsersService (unit tests)', () => {
         username: username,
         password: password,
         isAdmin: 0,
+        bmiEntries: [],
       };
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
       const result: User = await provider.getUser(username);
@@ -243,7 +251,12 @@ describe('UsersService (unit tests)', () => {
       mockAuthenticationService.generateJWT.mockResolvedValue(
         'asdasd.sadasd.asdasd',
       );
-      const user: User = { username: username, password: password, isAdmin: 0 };
+      const user: User = {
+        username: username,
+        password: password,
+        isAdmin: 0,
+        bmiEntries: [],
+      };
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(user);
       jest.spyOn(provider, 'getUser').mockResolvedValue(user);
 
