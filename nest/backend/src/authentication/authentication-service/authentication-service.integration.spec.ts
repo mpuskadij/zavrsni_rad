@@ -3,7 +3,7 @@ import { AuthenticationService } from './authentication-service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 
-describe('AuthenticationService', () => {
+describe('AuthenticationService (integration tests)', () => {
   let provider: AuthenticationService;
 
   beforeEach(async () => {
@@ -25,12 +25,20 @@ describe('AuthenticationService', () => {
   const username = 'marin';
   const isAdmin = 0;
 
-  describe('generateJWT (integration tests)', () => {
+  describe('generateJWT', () => {
     it('should generate JWT', async () => {
       const token: string = await provider.generateJWT(username, isAdmin);
       const tokenParts: string[] = token.split('.');
       expect(token).not.toBeNull();
       expect(tokenParts).toHaveLength(3);
+    });
+  });
+
+  describe('validateJWT', () => {
+    it('should return true if jwt is valid', async () => {
+      const token: string = await provider.generateJWT(username, 0);
+      const result: boolean = await provider.validateJWT(token);
+      expect(result).toBe(true);
     });
   });
 });
