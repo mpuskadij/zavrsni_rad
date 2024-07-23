@@ -1,17 +1,17 @@
 import {
-  BadRequestException,
   Body,
   ConflictException,
   Controller,
   HttpCode,
-  InternalServerErrorException,
   Post,
+  Res,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { RegistrationGuard } from '../../guards/registration-guard/registration-guard';
 import { GoogleRecaptchaGuard } from '@nestlab/google-recaptcha';
 import { UsersService } from '../users-service/users-service';
+import { Response } from 'express';
 
 @Controller('api/users')
 export class UsersController {
@@ -41,12 +41,17 @@ export class UsersController {
   async login(
     @Body('username') username: string,
     @Body('password') password: string,
+    @Res({ passthrough: true }) response: Response,
   ): Promise<any> {
     const validCredentials = await this.userService.checkLoginCredentials(
       username,
       password,
     );
-    if (validCredentials == false)
+    if (validCredentials == false) {
       throw new UnauthorizedException('Username and/or password not valid!');
+    }
+    const token = await this.userService.createJWT(username);
+    response.cookie('token', token, { httpOnly: true });
+    return;
   }
 }

@@ -5,9 +5,15 @@ import { GuardsModule } from '../guards/guards.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../entities/user/user';
 import { CrpytoModule } from '../crpyto/crpyto.module';
+import { AuthenticationModule } from '../authentication/authentication.module';
 
 @Module({
-  imports: [GuardsModule, TypeOrmModule.forFeature([User]), CrpytoModule],
+  imports: [
+    GuardsModule,
+    TypeOrmModule.forFeature([User]),
+    CrpytoModule,
+    AuthenticationModule,
+  ],
   exports: [TypeOrmModule, UsersService],
   controllers: [UsersController],
   providers: [UsersService],

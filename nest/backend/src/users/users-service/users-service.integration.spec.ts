@@ -9,6 +9,10 @@ import { HashGenerator } from '../../crpyto/hash-generator/hash-generator';
 import { SaltGenerator } from '../../crpyto/salt-generator/salt-generator';
 import { HashedPasswordData } from '../../crpyto/hashed-password-data/hashed-password-data';
 import { UsersModule } from '../users.module';
+import { ConfigModule } from '@nestjs/config';
+import { AuthenticationModule } from '../../authentication/authentication.module';
+import { AuthenticationService } from '../../authentication/authentication-service/authentication-service';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 
 describe('UsersService (integration tests)', () => {
   let provider: UsersService;
@@ -28,6 +32,9 @@ describe('UsersService (integration tests)', () => {
           entities: [User],
         }),
         TypeOrmModule.forFeature([User]),
+        ConfigModule.forRoot(),
+        AuthenticationModule,
+        JwtModule.register({ secret: process.env.JWT_SECRET }),
       ],
       providers: [
         UsersService,
@@ -35,6 +42,7 @@ describe('UsersService (integration tests)', () => {
         HashGenerator,
         SaltGenerator,
         HashedPasswordData,
+        AuthenticationService,
       ],
     }).compile();
 
@@ -171,6 +179,26 @@ describe('UsersService (integration tests)', () => {
       );
 
       expect(result).toBe(false);
+    });
+  });
+
+  describe('createJWT', () => {
+    it('should generate jwt when valid username passed', async () => {
+      const usernameInDatabase = await repository.findOneBy({ username });
+      if (usernameInDatabase == null) {
+        await repository.insert(
+          repository.create({
+            username: username,
+            password: password,
+            isAdmin: 0,
+          }),
+        );
+      }
+      const token = await provider.createJWT(username);
+      const tokenParts = token?.split('.');
+      expect(token).toBeDefined();
+      expect(tokenParts).toBeDefined();
+      expect(tokenParts).toHaveLength(3);
     });
   });
 });

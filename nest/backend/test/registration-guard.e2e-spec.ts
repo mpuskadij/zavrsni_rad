@@ -17,6 +17,7 @@ import { CryptoService } from '../src/crpyto/crypto-service/crypto-service';
 import { SaltGenerator } from '../src/crpyto/salt-generator/salt-generator';
 import { HashGenerator } from '../src/crpyto/hash-generator/hash-generator';
 import { HashedPasswordData } from '../src/crpyto/hashed-password-data/hashed-password-data';
+import { AuthenticationModule } from '../src/authentication/authentication.module';
 
 describe('RegistrationGuard (e2e)', () => {
   let app: INestApplication;
@@ -32,6 +33,7 @@ describe('RegistrationGuard (e2e)', () => {
           synchronize: true,
           entities: [User],
         }),
+        AuthenticationModule,
       ],
       controllers: [UsersController],
       providers: [

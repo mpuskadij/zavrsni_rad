@@ -14,9 +14,15 @@ import { CryptoService } from '../src/crpyto/crypto-service/crypto-service';
 import { SaltGenerator } from '../src/crpyto/salt-generator/salt-generator';
 import { HashGenerator } from '../src/crpyto/hash-generator/hash-generator';
 import { HashedPasswordData } from '../src/crpyto/hashed-password-data/hashed-password-data';
+import { AuthenticationModule } from '../src/authentication/authentication.module';
+import * as cookieParser from 'cookie-parser';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule } from '@nestjs/config';
+import { AuthenticationService } from '../src/authentication/authentication-service/authentication-service';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
+
   let repo: Repository<User>;
   let usersService: UsersService;
   const username = 'marin';
@@ -27,12 +33,15 @@ describe('UserController (e2e)', () => {
       imports: [
         UsersModule,
         CrpytoModule,
+        ConfigModule.forRoot(),
         TypeOrmModule.forRoot({
           type: 'sqlite',
           database: './database/test.sqlite',
           synchronize: true,
           entities: [User],
         }),
+        AuthenticationModule,
+        JwtModule.register({ secret: process.env.JWT_SECRET }),
       ],
       controllers: [UsersController],
       providers: [
@@ -42,6 +51,7 @@ describe('UserController (e2e)', () => {
         SaltGenerator,
         HashGenerator,
         HashedPasswordData,
+        AuthenticationService,
       ],
     })
       .overrideGuard(GoogleRecaptchaGuard)
@@ -50,6 +60,7 @@ describe('UserController (e2e)', () => {
     repo = moduleFixture.get<Repository<User>>(getRepositoryToken(User));
     usersService = moduleFixture.get<UsersService>(UsersService);
     app = moduleFixture.createNestApplication();
+    app.use(cookieParser());
     await app.init();
   });
 
@@ -135,6 +146,26 @@ describe('UserController (e2e)', () => {
       .post('/api/users/login')
       .send(invalidUserCredentials)
       .expect(401);
+  });
+
+  it('/api/users/register (POST) should return 200 with jwt in cookie', async () => {
+    const userCredentials = { username: username, password: password };
+    let userAlreadyExists: boolean = await repo.existsBy({
+      username,
+    });
+    if (userAlreadyExists == true) {
+      await repo.delete({ username: username });
+    }
+    await request(app.getHttpServer())
+      .post('/api/users/register')
+      .send(userCredentials);
+
+    return await request(app.getHttpServer())
+      .post('/api/users/login')
+      .send(userCredentials)
+      .expect((response) => {
+        expect(response.headers['set-cookie']).toBeDefined();
+      });
   });
 
   afterEach(async () => {

@@ -4,12 +4,14 @@ import { User } from '../../entities/user/user';
 import { Repository } from 'typeorm';
 import { CryptoService } from '../../crpyto/crypto-service/crypto-service';
 import { HashedPasswordData } from '../../crpyto/hashed-password-data/hashed-password-data';
+import { AuthenticationService } from '../../authentication/authentication-service/authentication-service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
     private cryptoService: CryptoService,
+    private authenticationService: AuthenticationService,
   ) {}
   async checkIfUsernameIsAlreadyInDatabase(username: string): Promise<boolean> {
     return await this.userRepository.existsBy({ username });
@@ -51,5 +53,14 @@ export class UsersService {
     await this.userRepository.insert(newUser);
 
     return true;
+  }
+
+  async createJWT(username: string): Promise<string> {
+    const user: User = await this.getUser(username);
+
+    return await this.authenticationService.generateJWT(
+      user.username,
+      user.isAdmin,
+    );
   }
 }

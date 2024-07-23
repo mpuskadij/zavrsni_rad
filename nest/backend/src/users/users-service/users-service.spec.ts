@@ -10,7 +10,10 @@ import { CrpytoModule } from '../../crpyto/crpyto.module';
 import { HashGenerator } from '../../crpyto/hash-generator/hash-generator';
 import { SaltGenerator } from '../../crpyto/salt-generator/salt-generator';
 import { HashedPasswordData } from '../../crpyto/hashed-password-data/hashed-password-data';
-import { async } from 'rxjs';
+import { AuthenticationModule } from '../../authentication/authentication.module';
+import { AuthenticationService } from '../../authentication/authentication-service/authentication-service';
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 describe('UsersService (unit tests)', () => {
   let provider: UsersService;
@@ -20,13 +23,25 @@ describe('UsersService (unit tests)', () => {
     compareIfPasswordsMatch: jest.fn(),
   };
 
+  const mockAuthenticationService = {
+    generateJWT: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [CrpytoModule],
+      imports: [
+        CrpytoModule,
+        AuthenticationModule,
+        ConfigModule.forRoot(),
+        JwtModule.register({ secret: process.env.JWT_SECRET }),
+      ],
       providers: [
         UsersService,
         { provide: getRepositoryToken(User), useClass: Repository },
         { provide: CryptoService, useValue: mockCryptoService },
+        { provide: AuthenticationService, useValue: mockAuthenticationService },
+        JwtService,
+        ConfigService,
         HashGenerator,
         SaltGenerator,
         HashedPasswordData,
@@ -220,6 +235,24 @@ describe('UsersService (unit tests)', () => {
       const result: User = await provider.getUser(username);
 
       expect(result).toBeNull();
+    });
+  });
+
+  describe('createJWT', () => {
+    it('should use AuthenticationService', async () => {
+      mockAuthenticationService.generateJWT.mockResolvedValue(
+        'asdasd.sadasd.asdasd',
+      );
+      const user: User = { username: username, password: password, isAdmin: 0 };
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(user);
+      jest.spyOn(provider, 'getUser').mockResolvedValue(user);
+
+      const result: string = await provider.createJWT(username);
+      const tokenParts: string[] = result.split('.');
+
+      expect(mockAuthenticationService.generateJWT).toHaveBeenCalled();
+      expect(result).toBeDefined();
+      expect(tokenParts).toHaveLength(3);
     });
   });
 });
