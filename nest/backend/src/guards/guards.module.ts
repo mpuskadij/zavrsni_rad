@@ -3,10 +3,11 @@ import { RegistrationGuard } from './registration-guard/registration-guard';
 import { JwtGuard } from './jwt/jwt.guard';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { AuthenticationService } from '../authentication/authentication-service/authentication-service';
+import { NewBmiEntryGuard } from './new-bmi-entry/new-bmi-entry.guard';
 
 @Module({
   imports: [AuthenticationModule],
-  providers: [RegistrationGuard, JwtGuard],
-  exports: [RegistrationGuard, JwtGuard],
+  providers: [RegistrationGuard, JwtGuard, NewBmiEntryGuard],
+  exports: [RegistrationGuard, JwtGuard, NewBmiEntryGuard],
 })
 export class GuardsModule {}

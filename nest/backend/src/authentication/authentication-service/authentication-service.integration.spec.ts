@@ -2,6 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthenticationService } from './authentication-service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
+import { UnauthorizedException } from '@nestjs/common';
+import { JwtPayload } from '../jwt-payload/jwt-payload';
 
 describe('AuthenticationService (integration tests)', () => {
   let provider: AuthenticationService;
@@ -37,14 +39,20 @@ describe('AuthenticationService (integration tests)', () => {
   describe('validateJWT', () => {
     it('should return true if jwt is valid', async () => {
       const token: string = await provider.generateJWT(username, 0);
-      const result: boolean = await provider.validateJWT(token);
-      expect(result).toBe(true);
+      const result: JwtPayload = await provider.validateJWT(token);
+      expect(result).toBeDefined();
+      expect(result).not.toBeNull();
+      expect(result.username).toEqual(username);
+      expect(result.isAdmin).toEqual(0);
     });
 
     it('should return false if jwt is invalid', async () => {
       const token: string = await provider.generateJWT(username, 0);
-      const result: boolean = await provider.validateJWT(token + 's');
-      expect(result).toBe(false);
+      try {
+        const result: JwtPayload = await provider.validateJWT(token + 's');
+      } catch (error) {
+        expect(error).toBeInstanceOf(UnauthorizedException);
+      }
     });
   });
 });

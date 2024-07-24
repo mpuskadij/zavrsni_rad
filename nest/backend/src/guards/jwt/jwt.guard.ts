@@ -19,10 +19,11 @@ export class JwtGuard implements CanActivate {
       const token = cookies['token'];
       if (token != undefined) {
         return this.authenticationService.validateJWT(token).then((result) => {
-          return result;
+          request.jwtPayload = result;
+          return true;
         });
       }
     }
-    throw new UnauthorizedException('JWT is not valid!');
+    throw new UnauthorizedException('JWT not passed!');
   }
 }

@@ -14,6 +14,7 @@ import { AuthenticationService } from './authentication/authentication-service/a
 import { AuthenticationModule } from './authentication/authentication.module';
 import { BmiModule } from './bmi/bmi.module';
 import { Bmientry } from './entities/bmientry/bmientry';
+import { DecoratorsModule } from './decorators/decorators.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { Bmientry } from './entities/bmientry/bmientry';
     CrpytoModule,
     AuthenticationModule,
     BmiModule,
+    DecoratorsModule,
   ],
   controllers: [AppController],
   providers: [AppService, AuthenticationService],

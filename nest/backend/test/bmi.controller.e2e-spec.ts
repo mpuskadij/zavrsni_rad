@@ -21,6 +21,7 @@ import { AuthenticationService } from '../src/authentication/authentication-serv
 import { GoogleRecaptchaGuard } from '@nestlab/google-recaptcha';
 import { GuardsModule } from '../src/guards/guards.module';
 import { Bmientry } from '../src/entities/bmientry/bmientry';
+import { NewBmiEntryGuard } from '../src/guards/new-bmi-entry/new-bmi-entry.guard';
 
 describe('BmiController (e2e)', () => {
   let app: INestApplication;
@@ -59,6 +60,8 @@ describe('BmiController (e2e)', () => {
       .overrideGuard(GoogleRecaptchaGuard)
       .useValue(true)
       .overrideGuard(JwtGuard)
+      .useValue(true)
+      .overrideGuard(NewBmiEntryGuard)
       .useValue(true)
       .compile();
 
