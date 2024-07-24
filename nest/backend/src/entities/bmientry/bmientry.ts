@@ -16,9 +16,10 @@ export class Bmientry {
   @PrimaryColumn()
   dateAdded: Date;
 
-  @ManyToOne(() => User, (user) => user.bmiEntries)
+  @ManyToOne(() => User, (user) => user.bmiEntries, { onDelete: 'CASCADE' })
+  @JoinColumn({ referencedColumnName: 'username', name: 'username' })
   user: User;
 
-  @Column()
+  @Column('decimal', { precision: 3, scale: 1 })
   bmi: number;
 }

@@ -204,4 +204,25 @@ describe('UsersService (integration tests)', () => {
       expect(tokenParts).toHaveLength(3);
     });
   });
+
+  describe('saveUserData', () => {
+    it('should return true if user is saved', async () => {
+      const usernameInDatabase = await repository.findOne({
+        where: { username: username },
+        relations: ['bmiEntries'],
+      });
+      if (usernameInDatabase != null) {
+        await repository.remove(usernameInDatabase);
+      }
+      const user: User = repository.create({
+        username: username,
+        password: password,
+        isAdmin: 0,
+        bmiEntries: [],
+      });
+      const result = await provider.saveUserData(user);
+
+      expect(result).toBe(true);
+    });
+  });
 });

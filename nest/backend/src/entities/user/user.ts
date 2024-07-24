@@ -13,7 +13,7 @@ export class User {
   isAdmin: number;
 
   @OneToMany(() => Bmientry, (bmiEntry) => bmiEntry.user, {
-    cascade: ['insert'],
+    cascade: ['insert', 'remove'],
   })
   bmiEntries: Bmientry[];
 }

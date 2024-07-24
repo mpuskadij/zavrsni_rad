@@ -30,15 +30,16 @@ export class BmiService {
         'Username could not be found in database!',
       );
     }
-    const bmi: number = weight / squaredHeight;
+    const bmi: number = Number((weight / squaredHeight).toPrecision(3));
     const bmiEntry: Bmientry = this.bmiRepository.create({
       bmi: bmi,
       dateAdded: Date(),
       username: username,
       user: user,
     });
-    const saveResult: Bmientry = await this.bmiRepository.save(bmiEntry);
-    if (saveResult == null || saveResult == undefined) {
+    user.bmiEntries.push(bmiEntry);
+    const saveResult: boolean = await this.usersService.saveUserData(user);
+    if (saveResult == false) {
       throw new InternalServerErrorException('Error adding entry to database!');
     }
     return true;

@@ -14,7 +14,7 @@ import { User } from '../../entities/user/user';
 describe('BmiService (unit tests)', () => {
   let provider: BmiService;
   const mockBmiRepository = { save: jest.fn(), create: jest.fn() };
-  const mockUsersService = { getUser: jest.fn() };
+  const mockUsersService = { getUser: jest.fn(), saveUserData: jest.fn() };
   const username: string = 'marin';
 
   beforeEach(async () => {
@@ -63,7 +63,7 @@ describe('BmiService (unit tests)', () => {
         .then((result) => {
           expect(result).toBe(true);
           expect(mockBmiRepository.create).toHaveBeenCalled();
-          expect(mockBmiRepository.save).toHaveBeenCalled();
+          expect(mockUsersService.saveUserData).toHaveBeenCalled();
         });
     });
 
@@ -134,9 +134,9 @@ describe('BmiService (unit tests)', () => {
         user: user,
       };
 
-      mockBmiRepository.save.mockResolvedValue(null);
       mockBmiRepository.create.mockReturnValue(bmiEntry);
       mockUsersService.getUser.mockResolvedValue(user);
+      mockUsersService.saveUserData.mockResolvedValue(false);
 
       return provider
         .addNewBmiEntry(username, weight, height)

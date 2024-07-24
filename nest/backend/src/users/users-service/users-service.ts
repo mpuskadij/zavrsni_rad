@@ -18,7 +18,10 @@ export class UsersService {
   }
 
   async getUser(username: string): Promise<User> {
-    return await this.userRepository.findOneBy({ username });
+    return await this.userRepository.findOne({
+      where: { username: username },
+      relations: ['bmiEntries'],
+    });
   }
 
   async checkLoginCredentials(
@@ -48,6 +51,7 @@ export class UsersService {
       isAdmin: 0,
       password: hashedPasswordData.HashedPassword,
       username: username,
+      bmiEntries: [],
     });
 
     await this.userRepository.insert(newUser);
@@ -62,5 +66,9 @@ export class UsersService {
       user.username,
       user.isAdmin,
     );
+  }
+
+  async saveUserData(user: User): Promise<boolean> {
+    return (await this.userRepository.save(user)) != null;
   }
 }

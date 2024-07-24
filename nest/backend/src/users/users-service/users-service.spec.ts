@@ -223,7 +223,7 @@ describe('UsersService (unit tests)', () => {
         isAdmin: 0,
         bmiEntries: [],
       };
-      jest.spyOn(repository, 'findOneBy').mockResolvedValue(repoUser);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(repoUser);
       const result: User = await provider.getUser(username);
 
       expect(result).not.toBeNull();
@@ -239,7 +239,7 @@ describe('UsersService (unit tests)', () => {
         isAdmin: 0,
         bmiEntries: [],
       };
-      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
       const result: User = await provider.getUser(username);
 
       expect(result).toBeNull();
@@ -266,6 +266,36 @@ describe('UsersService (unit tests)', () => {
       expect(mockAuthenticationService.generateJWT).toHaveBeenCalled();
       expect(result).toBeDefined();
       expect(tokenParts).toHaveLength(3);
+    });
+  });
+
+  describe('saveUserData', () => {
+    it('should use userRepository to save user and return true if save is successful', async () => {
+      const user: User = {
+        bmiEntries: [],
+        isAdmin: 0,
+        password: password,
+        username: username,
+      };
+      jest.spyOn(repository, 'save').mockResolvedValue(user);
+
+      const result = await provider.saveUserData(user);
+
+      expect(result).toBe(true);
+    });
+
+    it('should return false if save returns null', async () => {
+      const user: User = {
+        bmiEntries: [],
+        isAdmin: 0,
+        password: password,
+        username: username,
+      };
+      jest.spyOn(repository, 'save').mockResolvedValue(null);
+
+      const result = await provider.saveUserData(user);
+
+      expect(result).toBe(false);
     });
   });
 });
