@@ -7,6 +7,7 @@ import { AuthenticationModule } from '../authentication/authentication.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { BmiService } from './bmi-service/bmi-service';
+import { DecoratorsModule } from '../decorators/decorators.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { BmiService } from './bmi-service/bmi-service';
     GuardsModule,
     AuthenticationModule,
     JwtModule.register({ secret: process.env.JWT_SECRET }),
+    DecoratorsModule,
   ],
   controllers: [BmiController],
   providers: [JwtGuard, AuthenticationService, BmiService],
