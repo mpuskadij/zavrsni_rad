@@ -7,6 +7,11 @@ import { GuardsModule } from '../src/guards/guards.module';
 import { NewBmiEntryGuard } from '../src/guards/new-bmi-entry/new-bmi-entry.guard';
 import * as request from 'supertest';
 import { BmiModule } from '../src/bmi/bmi.module';
+import { UsersModule } from '../src/users/users.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from '../src/entities/user/user';
+import { Bmientry } from '../src/entities/bmientry/bmientry';
+import { GoogleRecaptchaGuard } from '@nestlab/google-recaptcha';
 
 describe('NewBmiEntryGuard (e2e)', () => {
   let app: INestApplication;
@@ -14,11 +19,23 @@ describe('NewBmiEntryGuard (e2e)', () => {
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AuthenticationModule, GuardsModule, BmiModule],
+      imports: [
+        AuthenticationModule,
+        GuardsModule,
+        BmiModule,
+        TypeOrmModule.forRoot({
+          type: 'sqlite',
+          database: './database/test.sqlite',
+          synchronize: true,
+          entities: [User, Bmientry],
+        }),
+      ],
       controllers: [BmiController],
       providers: [NewBmiEntryGuard, JwtGuard],
     })
       .overrideGuard(JwtGuard)
+      .useValue(true)
+      .overrideGuard(GoogleRecaptchaGuard)
       .useValue(true)
       .compile();
 

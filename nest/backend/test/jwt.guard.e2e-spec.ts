@@ -8,6 +8,11 @@ import { BmiModule } from '../src/bmi/bmi.module';
 import { AuthenticationService } from '../src/authentication/authentication-service/authentication-service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from '../src/entities/user/user';
+import { Bmientry } from '../src/entities/bmientry/bmientry';
+import { UsersModule } from '../src/users/users.module';
+import { GoogleRecaptchaGuard } from '@nestlab/google-recaptcha';
 
 describe('JWTGuard (e2e)', () => {
   let app: INestApplication;
@@ -18,11 +23,21 @@ describe('JWTGuard (e2e)', () => {
         ConfigModule,
         AuthenticationModule,
         BmiModule,
+        UsersModule,
         JwtModule.register({ secret: process.env.JWT_SECRET }),
+        TypeOrmModule.forRoot({
+          type: 'sqlite',
+          database: './database/test.sqlite',
+          synchronize: true,
+          entities: [User, Bmientry],
+        }),
       ],
       controllers: [],
       providers: [JwtGuard, AuthenticationService],
-    }).compile();
+    })
+      .overrideGuard(GoogleRecaptchaGuard)
+      .useValue(true)
+      .compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
