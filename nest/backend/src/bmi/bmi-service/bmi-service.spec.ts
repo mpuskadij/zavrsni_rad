@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BmiService } from './bmi-service';
 import {
+  ForbiddenException,
   InternalServerErrorException,
   NotAcceptableException,
   UnauthorizedException,
@@ -144,6 +145,113 @@ describe('BmiService (unit tests)', () => {
         .catch((error) => {
           expect(error).toBeInstanceOf(InternalServerErrorException);
         });
+    });
+
+    it('should throw exception if less that 7 days have passed!', async () => {
+      const user: User = {
+        username: username,
+        isAdmin: 0,
+        password: '123456Hj',
+        bmiEntries: [],
+      };
+      const weight: number = 66.7;
+      const height: number = 1.8;
+      const squaredHeight: number = Math.pow(height, 2);
+      const sixDaysAgo = new Date().getTime() - 6 * 24 * 60 * 60 * 1000;
+      const bmiEntry: Bmientry = {
+        bmi: weight / squaredHeight,
+        dateAdded: new Date(sixDaysAgo),
+        username: username,
+        user: user,
+      };
+      user.bmiEntries.push(bmiEntry);
+
+      await expect(
+        provider.addNewBmiEntry(user.username, weight, height),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+    });
+
+    it('should return true if 7 days passed', async () => {
+      const user: User = {
+        username: username,
+        isAdmin: 0,
+        password: '123456Hj',
+        bmiEntries: [],
+      };
+      const weight: number = 66.7;
+      const height: number = 1.8;
+      const squaredHeight: number = Math.pow(height, 2);
+      const sixDaysAgo = new Date().getTime() - 7 * 24 * 60 * 60 * 1000;
+      const bmiEntry: Bmientry = {
+        bmi: weight / squaredHeight,
+        dateAdded: new Date(sixDaysAgo),
+        username: username,
+        user: user,
+      };
+      user.bmiEntries.push(bmiEntry);
+
+      mockBmiRepository.create.mockReturnValue(bmiEntry);
+      mockUsersService.getUser.mockResolvedValue(user);
+      mockUsersService.saveUserData.mockResolvedValue(true);
+
+      await expect(
+        provider.addNewBmiEntry(user.username, weight, height),
+      ).resolves.toBe(true);
+    });
+
+    it('should return true if 8 days passed', async () => {
+      const user: User = {
+        username: username,
+        isAdmin: 0,
+        password: '123456Hj',
+        bmiEntries: [],
+      };
+      const weight: number = 66.7;
+      const height: number = 1.8;
+      const squaredHeight: number = Math.pow(height, 2);
+      const sixDaysAgo = new Date().getTime() - 8 * 24 * 60 * 60 * 1000;
+      const bmiEntry: Bmientry = {
+        bmi: weight / squaredHeight,
+        dateAdded: new Date(sixDaysAgo),
+        username: username,
+        user: user,
+      };
+      user.bmiEntries.push(bmiEntry);
+
+      mockBmiRepository.create.mockReturnValue(bmiEntry);
+      mockUsersService.getUser.mockResolvedValue(user);
+      mockUsersService.saveUserData.mockResolvedValue(true);
+
+      await expect(
+        provider.addNewBmiEntry(user.username, weight, height),
+      ).resolves.toBe(true);
+    });
+
+    it('should return true if it is the first bmi entry of the user', async () => {
+      const user: User = {
+        username: username,
+        isAdmin: 0,
+        password: '123456Hj',
+        bmiEntries: [],
+      };
+      const weight: number = 66.7;
+      const height: number = 1.8;
+      const squaredHeight: number = Math.pow(height, 2);
+      const sixDaysAgo = new Date().getTime() - 4 * 24 * 60 * 60 * 1000;
+      const bmiEntry: Bmientry = {
+        bmi: weight / squaredHeight,
+        dateAdded: new Date(sixDaysAgo),
+        username: user.username,
+        user: user,
+      };
+
+      mockBmiRepository.create.mockReturnValue(bmiEntry);
+      mockUsersService.getUser.mockResolvedValue(user);
+      mockUsersService.saveUserData.mockResolvedValue(true);
+
+      await expect(
+        provider.addNewBmiEntry(user.username, weight, height),
+      ).resolves.toBe(true);
     });
   });
 });

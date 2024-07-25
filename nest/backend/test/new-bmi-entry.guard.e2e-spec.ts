@@ -12,6 +12,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../src/entities/user/user';
 import { Bmientry } from '../src/entities/bmientry/bmientry';
 import { GoogleRecaptchaGuard } from '@nestlab/google-recaptcha';
+import { BmiService } from '../src/bmi/bmi-service/bmi-service';
 
 describe('NewBmiEntryGuard (e2e)', () => {
   let app: INestApplication;

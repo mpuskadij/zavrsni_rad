@@ -1,5 +1,6 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -16,7 +17,10 @@ export class Bmientry {
   @PrimaryColumn()
   dateAdded: Date;
 
-  @ManyToOne(() => User, (user) => user.bmiEntries, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.bmiEntries, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ referencedColumnName: 'username', name: 'username' })
   user: User;
 

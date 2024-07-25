@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   NotAcceptableException,
@@ -30,11 +31,18 @@ export class BmiService {
         'Username could not be found in database!',
       );
     }
+    const hasAtLeastOneBmiEntry = user.bmiEntries.length > 0;
+    if (hasAtLeastOneBmiEntry) {
+      await this.haveAtLeastSevenDaysPassed(
+        user.bmiEntries.find((entry) => Math.max(entry.dateAdded.getTime()))
+          .dateAdded,
+      );
+    }
     const bmi: number = Number((weight / squaredHeight).toPrecision(3));
     const bmiEntry: Bmientry = this.bmiRepository.create({
       bmi: bmi,
-      dateAdded: Date(),
-      username: username,
+      dateAdded: new Date(),
+      username: user.username,
       user: user,
     });
     user.bmiEntries.push(bmiEntry);
@@ -43,5 +51,30 @@ export class BmiService {
       throw new InternalServerErrorException('Error adding entry to database!');
     }
     return true;
+  }
+
+  private async haveAtLeastSevenDaysPassed(
+    dateFromLatestBmiEntryOfUser: Date,
+  ): Promise<void> {
+    const dateFromLatestBmiEntry = new Date(dateFromLatestBmiEntryOfUser);
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+    dateFromLatestBmiEntry.setHours(0, 0, 0, 0);
+    const differenceInMiliseconds = Math.abs(
+      currentDate.getTime() - dateFromLatestBmiEntry.getTime(),
+    );
+    const differenceInDays = Math.floor(
+      differenceInMiliseconds / (1000 * 60 * 60 * 24),
+    );
+    if (differenceInDays < 7) {
+      throw new ForbiddenException(
+        'New BMI entry can be inserted after at least 7 days!',
+      );
+    }
+    return;
+  }
+
+  async getAllBmiEntriesFromUser(username: string): Promise<Bmientry[]> {
+    return null;
   }
 }

@@ -6,6 +6,7 @@ import {
   NotAcceptableException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
+import { BmiService } from '../../bmi/bmi-service/bmi-service';
 
 @Injectable()
 export class NewBmiEntryGuard implements CanActivate {

@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BmiService } from './bmi-service';
 import {
+  ForbiddenException,
   InternalServerErrorException,
   NotAcceptableException,
   UnauthorizedException,
@@ -74,7 +75,7 @@ describe('BmiService (integration tests)', () => {
       });
     });
 
-    it('should add new bmi entry in tables User and BmiEntry', async () => {
+    it('should add new bmi entry in tables User and BmiEntry if it is the first bmi entry', async () => {
       const userExists = await userRepo.existsBy({ username: username });
       const weight: number = 65;
       const height: number = 1.8;
@@ -108,6 +109,124 @@ describe('BmiService (integration tests)', () => {
           expect(bmiEntry.bmi).toEqual(expectedBMI);
           expect(bmiEntry.username).toEqual(username);
         });
+    });
+
+    it('should throw error if 6 days passed between 2 bmi entries', async () => {
+      const userExists = await userRepo.findOne({
+        where: { username: username },
+      });
+      const weight: number = 65;
+      const height: number = 1.8;
+      if (userExists != null) {
+        await userRepo.remove(userExists);
+      }
+      const user: User = {
+        username: username,
+        password: 'sdasd',
+        bmiEntries: [],
+        isAdmin: 0,
+      };
+      const sixDaysAgo = Date.now() - 6 * 24 * 60 * 60 * 1000;
+
+      const bmiEntry: Bmientry = {
+        bmi: 20.5,
+        dateAdded: new Date(sixDaysAgo),
+        username: user.username,
+        user: user,
+      };
+      user.bmiEntries.push(bmiEntry);
+      await userRepo.save(user);
+      await expect(
+        provider.addNewBmiEntry(username, weight, height),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+      expect(user.bmiEntries).toHaveLength(1);
+      expect(user.bmiEntries[0].dateAdded.getTime()).toEqual(sixDaysAgo);
+    });
+
+    it('return true if 7 days passed', async () => {
+      const userExists = await userRepo.findOne({
+        where: { username: username },
+        relations: ['bmiEntries'],
+      });
+      const weight: number = 65;
+      const height: number = 1.8;
+      if (userExists != null) {
+        await userRepo.remove(userExists);
+      }
+      const user: User = {
+        username: username,
+        password: 'sdasd',
+        bmiEntries: [],
+        isAdmin: 0,
+      };
+      const sevenDaysAgo = new Date().getTime() - 7 * 24 * 60 * 60 * 1000;
+
+      const bmiEntry: Bmientry = {
+        bmi: 20.5,
+        dateAdded: new Date(sevenDaysAgo),
+        username: username,
+        user: user,
+      };
+      user.bmiEntries.push(bmiEntry);
+      await userRepo.insert(user);
+      await expect(
+        provider.addNewBmiEntry(username, weight, height),
+      ).resolves.toBe(true);
+    });
+
+    it('return true if 8 days passed', async () => {
+      const userExists = await userRepo.findOne({
+        where: { username: username },
+        relations: ['bmiEntries'],
+      });
+      const weight: number = 65;
+      const height: number = 1.8;
+      if (userExists != null) {
+        await userRepo.remove(userExists);
+      }
+      const user: User = {
+        username: username,
+        password: 'sdasd',
+        bmiEntries: [],
+        isAdmin: 0,
+      };
+      const sevenDaysAgo = new Date().getTime() - 8 * 24 * 60 * 60 * 1000;
+
+      const bmiEntry: Bmientry = {
+        bmi: 20.5,
+        dateAdded: new Date(sevenDaysAgo),
+        username: username,
+        user: user,
+      };
+      user.bmiEntries.push(bmiEntry);
+      await userRepo.insert(user);
+      await expect(
+        provider.addNewBmiEntry(username, weight, height),
+      ).resolves.toBe(true);
+    });
+
+    it('return false if 2 back to back entries are made', async () => {
+      const userExists = await userRepo.findOne({
+        where: { username: username },
+        relations: ['bmiEntries'],
+      });
+      const weight: number = 65;
+      const height: number = 1.8;
+      if (userExists != null) {
+        await userRepo.remove(userExists);
+      }
+      const user: User = {
+        username: username,
+        password: 'sdasd',
+        bmiEntries: [],
+        isAdmin: 0,
+      };
+
+      await userRepo.save(user);
+      await provider.addNewBmiEntry(username, weight, height);
+      await expect(
+        provider.addNewBmiEntry(username, weight, height),
+      ).rejects.toBeInstanceOf(ForbiddenException);
     });
   });
 });
