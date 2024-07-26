@@ -81,47 +81,53 @@ describe('BmiController (e2e)', () => {
 
   it('api/bmi (POST) should return 201 when user logged in', async () => {
     if ((await userRepo.existsBy({ username })) == true) {
-      await userRepo.delete({ username });
+      const user = await userRepo.findOne({
+        where: { username: username },
+        relations: ['bmiEntries'],
+      });
+      await userRepo.remove(user);
     }
     const payload: JwtPayload = { username: username, isAdmin: 0 };
     await request(app.getHttpServer())
       .post('/api/users/register')
       .send({ username: username, password: password });
-    const loginResponse = await request(app.getHttpServer())
-      .post('/api/users/login')
-      .send({ username: username, password: password });
-    return await request(app.getHttpServer())
+    const response = await request(app.getHttpServer())
       .post('/api/bmi')
       .set('jwtPayload', JSON.stringify(payload))
-      .send({ weight: 65, height: 1.8 })
-      .expect(HttpStatus.CREATED);
+      .send({ weight: 65, height: 1.8 });
+
+    expect(response.status).toBe(HttpStatus.CREATED);
   });
 
   it('/api/bmi (GET) should return 406 FORBIDDEN when user doesnt have at least 1 bmi entry', async () => {
     if ((await userRepo.existsBy({ username })) == true) {
-      await userRepo.delete({ username });
+      const user = await userRepo.findOne({
+        where: { username: username },
+        relations: ['bmiEntries'],
+      });
+      await userRepo.remove(user);
     }
+    const payload: JwtPayload = { isAdmin: 0, username: username };
     await request(app.getHttpServer())
       .post('/api/users/register')
       .send({ username: username, password: password });
-    const loginResponse = await request(app.getHttpServer())
-      .post('/api/users/login')
-      .send({ username: username, password: password });
     return await request(app.getHttpServer())
       .get('/api/bmi')
+      .set('jwtPayload', JSON.stringify(payload))
       .expect(HttpStatus.FORBIDDEN);
   });
 
   it('/api/bmi (GET) should return 200 OK when user has at least 1 bmi entry', async () => {
     if ((await userRepo.existsBy({ username })) == true) {
-      await userRepo.delete({ username });
+      const user = await userRepo.findOne({
+        where: { username: username },
+        relations: ['bmiEntries'],
+      });
+      await userRepo.remove(user);
     }
     const payload: JwtPayload = { username: username, isAdmin: 0 };
-    await request(app.getHttpServer())
+    const registrationREsponse = await request(app.getHttpServer())
       .post('/api/users/register')
-      .send({ username: username, password: password });
-    await request(app.getHttpServer())
-      .post('/api/users/login')
       .send({ username: username, password: password });
     await request(app.getHttpServer())
       .post('/api/bmi')
@@ -132,7 +138,6 @@ describe('BmiController (e2e)', () => {
       .set('jwtPayload', JSON.stringify(payload));
     expect(response.status).toBe(HttpStatus.OK);
     expect(response.body).toBeInstanceOf(Array<BmiEntryDto>);
-    console.log(response.body);
   });
 
   afterEach(async () => {

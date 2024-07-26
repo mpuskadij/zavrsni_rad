@@ -41,7 +41,7 @@ describe('BmiService (unit tests)', () => {
   });
 
   describe('addNewBmiEntry', () => {
-    it('should return true when new bmi entry is added to database', async () => {
+    it('should return bmi when new bmi entry is added to database', async () => {
       const user: User = {
         username: username,
         isAdmin: 0,
@@ -65,7 +65,7 @@ describe('BmiService (unit tests)', () => {
       return provider
         .addNewBmiEntry(username, weight, height)
         .then((result) => {
-          expect(result).toBe(true);
+          expect(result).toBe(Number((weight / squaredHeight).toPrecision(3)));
           expect(mockBmiRepository.create).toHaveBeenCalled();
           expect(mockUsersService.saveUserData).toHaveBeenCalled();
         });
@@ -76,7 +76,7 @@ describe('BmiService (unit tests)', () => {
       const height: number = 180;
 
       try {
-        const result: boolean = await provider.addNewBmiEntry(
+        const result: number = await provider.addNewBmiEntry(
           username,
           weight,
           height,
@@ -91,7 +91,7 @@ describe('BmiService (unit tests)', () => {
       const height: number = -180;
 
       try {
-        const result: boolean = await provider.addNewBmiEntry(
+        const result: number = await provider.addNewBmiEntry(
           username,
           weight,
           height,
@@ -174,7 +174,7 @@ describe('BmiService (unit tests)', () => {
       ).rejects.toBeInstanceOf(ForbiddenException);
     });
 
-    it('should return true if 7 days passed', async () => {
+    it('should return bmi if 7 days passed', async () => {
       const user: User = {
         username: username,
         isAdmin: 0,
@@ -199,10 +199,10 @@ describe('BmiService (unit tests)', () => {
 
       await expect(
         provider.addNewBmiEntry(user.username, weight, height),
-      ).resolves.toBe(true);
+      ).resolves.toEqual(Number((weight / squaredHeight).toPrecision(3)));
     });
 
-    it('should return true if 8 days passed', async () => {
+    it('should return bmi if 8 days passed', async () => {
       const user: User = {
         username: username,
         isAdmin: 0,
@@ -227,7 +227,7 @@ describe('BmiService (unit tests)', () => {
 
       await expect(
         provider.addNewBmiEntry(user.username, weight, height),
-      ).resolves.toBe(true);
+      ).resolves.toEqual(Number((weight / squaredHeight).toPrecision(3)));
     });
 
     it('should return true if it is the first bmi entry of the user', async () => {
@@ -254,7 +254,7 @@ describe('BmiService (unit tests)', () => {
 
       await expect(
         provider.addNewBmiEntry(user.username, weight, height),
-      ).resolves.toBe(true);
+      ).resolves.toEqual(Number((weight / squaredHeight).toPrecision(3)));
     });
   });
 

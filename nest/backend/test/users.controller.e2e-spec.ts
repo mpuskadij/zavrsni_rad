@@ -77,6 +77,7 @@ describe('UserController (e2e)', () => {
         isAdmin: 0,
         password: userCredentials.password,
         username: userCredentials.username,
+        bmiEntries: [],
       });
       await repo.insert(user);
     }
@@ -90,7 +91,11 @@ describe('UserController (e2e)', () => {
     const userCredentials = { username: username, password: password };
     let userAlreadyExists: boolean = await repo.existsBy({ username });
     if (userAlreadyExists == true) {
-      await repo?.delete(userCredentials.username);
+      const user = await repo.findOne({
+        where: { username: username },
+        relations: ['bmiEntries'],
+      });
+      await repo.remove(user);
     }
     return request(app.getHttpServer())
       .post('/api/users/register')
@@ -116,7 +121,11 @@ describe('UserController (e2e)', () => {
       username,
     });
     if (userAlreadyExists == true) {
-      await repo.delete({ username: username });
+      const user = await repo.findOne({
+        where: { username: username },
+        relations: ['bmiEntries'],
+      });
+      await repo.remove(user);
     }
     await request(app.getHttpServer())
       .post('/api/users/register')

@@ -171,7 +171,7 @@ describe('BmiService (integration tests)', () => {
       await userRepo.insert(user);
       await expect(
         provider.addNewBmiEntry(username, weight, height),
-      ).resolves.toBe(true);
+      ).resolves.toBe(Number((weight / Math.pow(height, 2)).toPrecision(3)));
     });
 
     it('return true if 8 days passed', async () => {
@@ -202,7 +202,7 @@ describe('BmiService (integration tests)', () => {
       await userRepo.insert(user);
       await expect(
         provider.addNewBmiEntry(username, weight, height),
-      ).resolves.toBe(true);
+      ).resolves.toBe(Number((weight / Math.pow(height, 2)).toPrecision(3)));
     });
 
     it('return false if 2 back to back entries are made', async () => {

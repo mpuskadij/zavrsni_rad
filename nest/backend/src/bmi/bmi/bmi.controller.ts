@@ -26,8 +26,8 @@ export class BmiController {
     @Body('height') height: number,
     @Payload('username') username: string,
   ): Promise<any> {
-    await this.bmiService.addNewBmiEntry(username, weight, height);
-    return;
+    const bmi = await this.bmiService.addNewBmiEntry(username, weight, height);
+    return bmi;
   }
 
   @Get()

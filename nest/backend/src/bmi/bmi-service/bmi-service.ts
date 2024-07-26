@@ -21,7 +21,7 @@ export class BmiService {
     username: string,
     weight: number,
     height: number,
-  ): Promise<boolean> {
+  ): Promise<number> {
     if (weight <= 0 || height <= 0) {
       throw new NotAcceptableException('Weight cannot be 0 or less than 0!');
     }
@@ -51,7 +51,7 @@ export class BmiService {
     if (saveResult == false) {
       throw new InternalServerErrorException('Error adding entry to database!');
     }
-    return true;
+    return bmi;
   }
 
   private async haveAtLeastSevenDaysPassed(
