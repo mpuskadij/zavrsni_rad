@@ -22,6 +22,7 @@ import { UsersModule } from '../users/users.module';
     UsersModule,
     TypeOrmModule.forFeature([Bmientry]),
   ],
+  exports: [BmiService],
   controllers: [BmiController],
   providers: [JwtGuard, AuthenticationService, BmiService],
 })

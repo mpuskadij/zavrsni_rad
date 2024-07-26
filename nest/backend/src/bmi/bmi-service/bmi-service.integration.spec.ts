@@ -222,7 +222,7 @@ describe('BmiService (integration tests)', () => {
         isAdmin: 0,
       };
 
-      await userRepo.save(user);
+      await userRepo.insert(user);
       await provider.addNewBmiEntry(username, weight, height);
       await expect(
         provider.addNewBmiEntry(username, weight, height),

@@ -5,8 +5,9 @@ import {
 } from '@nestjs/common';
 
 export const Payload = createParamDecorator(
-  (data: unknown, ctx: ExecutionContext) => {
+  (data: string, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest();
-    return request.jwtPayload;
+    const payload = request.jwtPayload;
+    return data ? payload?.[data] : payload;
   },
 );

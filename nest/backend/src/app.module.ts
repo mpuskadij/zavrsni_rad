@@ -15,6 +15,7 @@ import { AuthenticationModule } from './authentication/authentication.module';
 import { BmiModule } from './bmi/bmi.module';
 import { Bmientry } from './entities/bmientry/bmientry';
 import { DecoratorsModule } from './decorators/decorators.module';
+import { DtosModule } from './dtos/dtos.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { DecoratorsModule } from './decorators/decorators.module';
     AuthenticationModule,
     BmiModule,
     DecoratorsModule,
+    DtosModule,
   ],
   controllers: [AppController],
   providers: [AppService, AuthenticationService],
