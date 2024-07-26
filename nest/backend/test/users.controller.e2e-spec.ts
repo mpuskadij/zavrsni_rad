@@ -20,6 +20,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { AuthenticationService } from '../src/authentication/authentication-service/authentication-service';
 import { Bmientry } from '../src/entities/bmientry/bmientry';
+import { JournalEntry } from '../src/entities/journal-entry/journal-entry';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
@@ -40,7 +41,7 @@ describe('UserController (e2e)', () => {
           database: './database/test.sqlite',
           synchronize: true,
           autoLoadEntities: true,
-          entities: [User, Bmientry],
+          entities: [User, Bmientry, JournalEntry],
         }),
         AuthenticationModule,
         JwtModule.register({ secret: process.env.JWT_SECRET }),

@@ -16,6 +16,7 @@ import { BmiModule } from './bmi/bmi.module';
 import { Bmientry } from './entities/bmientry/bmientry';
 import { DecoratorsModule } from './decorators/decorators.module';
 import { DtosModule } from './dtos/dtos.module';
+import { JournalEntry } from './entities/journal-entry/journal-entry';
 
 @Module({
   imports: [
@@ -27,7 +28,7 @@ import { DtosModule } from './dtos/dtos.module';
       database: './database/database.sqlite',
       synchronize: true,
       autoLoadEntities: true,
-      entities: [User, Bmientry],
+      entities: [User, Bmientry, JournalEntry],
     }),
     EntitiesModule,
     GoogleRecaptchaModule.forRoot({

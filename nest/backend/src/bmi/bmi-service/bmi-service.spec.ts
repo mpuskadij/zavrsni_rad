@@ -47,6 +47,7 @@ describe('BmiService (unit tests)', () => {
         isAdmin: 0,
         password: '123456Hj',
         bmiEntries: [],
+        journalEntries: [],
       };
       const weight: number = 66.7;
       const height: number = 180;
@@ -127,6 +128,7 @@ describe('BmiService (unit tests)', () => {
         isAdmin: 0,
         password: '123456Hj',
         bmiEntries: [],
+        journalEntries: [],
       };
       const weight: number = 66.7;
       const height: number = 180;
@@ -156,6 +158,7 @@ describe('BmiService (unit tests)', () => {
         isAdmin: 0,
         password: '123456Hj',
         bmiEntries: [],
+        journalEntries: [],
       };
       const weight: number = 66.7;
       const height: number = 1.8;
@@ -180,6 +183,7 @@ describe('BmiService (unit tests)', () => {
         isAdmin: 0,
         password: '123456Hj',
         bmiEntries: [],
+        journalEntries: [],
       };
       const weight: number = 66.7;
       const height: number = 1.8;
@@ -208,6 +212,7 @@ describe('BmiService (unit tests)', () => {
         isAdmin: 0,
         password: '123456Hj',
         bmiEntries: [],
+        journalEntries: [],
       };
       const weight: number = 66.7;
       const height: number = 1.8;
@@ -236,6 +241,7 @@ describe('BmiService (unit tests)', () => {
         isAdmin: 0,
         password: '123456Hj',
         bmiEntries: [],
+        journalEntries: [],
       };
       const weight: number = 66.7;
       const height: number = 1.8;
@@ -272,6 +278,7 @@ describe('BmiService (unit tests)', () => {
         isAdmin: 0,
         bmiEntries: [],
         password: 'password',
+        journalEntries: [],
       };
       mockUsersService.getUser.mockResolvedValue(user);
       await expect(
@@ -285,6 +292,7 @@ describe('BmiService (unit tests)', () => {
         isAdmin: 0,
         bmiEntries: [],
         password: 'password',
+        journalEntries: [],
       };
       const weight: number = 66.7;
       const height: number = 1.8;

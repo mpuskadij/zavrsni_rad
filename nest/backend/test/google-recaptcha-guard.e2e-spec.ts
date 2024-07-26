@@ -14,6 +14,7 @@ import {
 } from '@nestlab/google-recaptcha';
 import { ConfigModule } from '@nestjs/config';
 import { Bmientry } from '../src/entities/bmientry/bmientry';
+import { JournalEntry } from '../src/entities/journal-entry/journal-entry';
 
 describe('GoogleRecaptchaGuard (e2e)', () => {
   let app: INestApplication;
@@ -34,7 +35,7 @@ describe('GoogleRecaptchaGuard (e2e)', () => {
           database: './database/test.sqlite',
           synchronize: true,
           autoLoadEntities: true,
-          entities: [User, Bmientry],
+          entities: [User, Bmientry, JournalEntry],
         }),
       ],
       controllers: [UsersController],

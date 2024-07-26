@@ -93,7 +93,7 @@ describe('UsersService (unit tests)', () => {
       jest
         .spyOn(provider, 'checkIfUsernameIsAlreadyInDatabase')
         .mockResolvedValue(false);
-      jest.spyOn(repository, 'insert').mockResolvedValue(insertResult);
+      jest.spyOn(repository, 'save').mockResolvedValue(userToAdd);
       jest.spyOn(repository, 'create').mockReturnValue(userToAdd);
       mockCryptoService.hashPassword.mockResolvedValue(crpytoResult);
 
@@ -110,8 +110,8 @@ describe('UsersService (unit tests)', () => {
         .spyOn(provider, 'checkIfUsernameIsAlreadyInDatabase')
         .mockResolvedValue(false);
       let mockFunction = jest
-        .spyOn(repository, 'insert')
-        .mockResolvedValue(insertResult);
+        .spyOn(repository, 'save')
+        .mockResolvedValue(userToAdd);
 
       let createMockFunction = jest
         .spyOn(repository, 'create')
@@ -128,8 +128,8 @@ describe('UsersService (unit tests)', () => {
         .spyOn(provider, 'checkIfUsernameIsAlreadyInDatabase')
         .mockResolvedValue(true);
       let mockFunction = jest
-        .spyOn(repository, 'insert')
-        .mockResolvedValue(insertResult);
+        .spyOn(repository, 'save')
+        .mockResolvedValue(userToAdd);
 
       let createMockFunction = jest
         .spyOn(repository, 'create')
@@ -148,7 +148,7 @@ describe('UsersService (unit tests)', () => {
         .mockResolvedValue(false);
       jest.spyOn(repository, 'create').mockReturnValue(userToAdd);
       mockCryptoService.hashPassword.mockResolvedValue(crpytoResult);
-      jest.spyOn(repository, 'insert').mockResolvedValue(insertResult);
+      jest.spyOn(repository, 'save').mockResolvedValue(userToAdd);
       const result = await provider.addUser(
         userToAdd.username,
         userToAdd.password,
@@ -160,13 +160,14 @@ describe('UsersService (unit tests)', () => {
   });
 
   describe('checkLoginCredentials', () => {
+    const user: User = {
+      password: password,
+      username: username,
+      isAdmin: 0,
+      bmiEntries: [],
+      journalEntries: [],
+    };
     it('should return true if username and password are correct', async () => {
-      const user: User = {
-        password: password,
-        username: username,
-        isAdmin: 0,
-        bmiEntries: [],
-      };
       jest.spyOn(provider, 'getUser').mockResolvedValue(user);
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(user);
       mockCryptoService.compareIfPasswordsMatch.mockResolvedValue(true);
@@ -193,12 +194,6 @@ describe('UsersService (unit tests)', () => {
     });
 
     it('should return false when password doesnt match', async () => {
-      const user: User = {
-        password: 'askfjkafk',
-        username: username,
-        isAdmin: 0,
-        bmiEntries: [],
-      };
       jest.spyOn(provider, 'getUser').mockResolvedValue(user);
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(user);
       mockCryptoService.compareIfPasswordsMatch.mockResolvedValue(false);
@@ -214,31 +209,24 @@ describe('UsersService (unit tests)', () => {
   });
 
   describe('getUser', () => {
+    const user: User = {
+      password: password,
+      username: username,
+      isAdmin: 0,
+      bmiEntries: [],
+      journalEntries: [],
+    };
     it('should get user when username passed exists in database', async () => {
-      const username: string = 'marin';
-      const password: string = 'asfkasf';
-      const repoUser: User = {
-        username: username,
-        password: password,
-        isAdmin: 0,
-        bmiEntries: [],
-      };
-      jest.spyOn(repository, 'findOne').mockResolvedValue(repoUser);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(user);
       const result: User = await provider.getUser(username);
 
       expect(result).not.toBeNull();
-      expect(result).toBe(repoUser);
+      expect(result).toBe(user);
     });
 
     it('should return null when username passed doesnt exist in database', async () => {
       const username: string = 'marin';
       const password: string = 'asfkasf';
-      const repoUser: User = {
-        username: username,
-        password: password,
-        isAdmin: 0,
-        bmiEntries: [],
-      };
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
       const result: User = await provider.getUser(username);
 
@@ -247,16 +235,17 @@ describe('UsersService (unit tests)', () => {
   });
 
   describe('createJWT', () => {
+    const user: User = {
+      password: password,
+      username: username,
+      isAdmin: 0,
+      bmiEntries: [],
+      journalEntries: [],
+    };
     it('should use AuthenticationService', async () => {
       mockAuthenticationService.generateJWT.mockResolvedValue(
         'asdasd.sadasd.asdasd',
       );
-      const user: User = {
-        username: username,
-        password: password,
-        isAdmin: 0,
-        bmiEntries: [],
-      };
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(user);
       jest.spyOn(provider, 'getUser').mockResolvedValue(user);
 
@@ -270,13 +259,14 @@ describe('UsersService (unit tests)', () => {
   });
 
   describe('saveUserData', () => {
+    const user: User = {
+      password: password,
+      username: username,
+      isAdmin: 0,
+      bmiEntries: [],
+      journalEntries: [],
+    };
     it('should use userRepository to save user and return true if save is successful', async () => {
-      const user: User = {
-        bmiEntries: [],
-        isAdmin: 0,
-        password: password,
-        username: username,
-      };
       jest.spyOn(repository, 'save').mockResolvedValue(user);
 
       const result = await provider.saveUserData(user);
@@ -285,12 +275,6 @@ describe('UsersService (unit tests)', () => {
     });
 
     it('should return false if save returns null', async () => {
-      const user: User = {
-        bmiEntries: [],
-        isAdmin: 0,
-        password: password,
-        username: username,
-      };
       jest.spyOn(repository, 'save').mockResolvedValue(null);
 
       const result = await provider.saveUserData(user);

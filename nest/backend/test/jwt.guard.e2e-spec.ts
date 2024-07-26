@@ -13,6 +13,7 @@ import { User } from '../src/entities/user/user';
 import { Bmientry } from '../src/entities/bmientry/bmientry';
 import { UsersModule } from '../src/users/users.module';
 import { GoogleRecaptchaGuard } from '@nestlab/google-recaptcha';
+import { JournalEntry } from '../src/entities/journal-entry/journal-entry';
 
 describe('JWTGuard (e2e)', () => {
   let app: INestApplication;
@@ -29,7 +30,7 @@ describe('JWTGuard (e2e)', () => {
           type: 'sqlite',
           database: './database/test.sqlite',
           synchronize: true,
-          entities: [User, Bmientry],
+          entities: [User, Bmientry, JournalEntry],
         }),
       ],
       controllers: [],

@@ -27,6 +27,7 @@ import { BmiModule } from '../src/bmi/bmi.module';
 import { JwtPayload } from '../src/authentication/jwt-payload/jwt-payload';
 import { BmiEntryDto } from '../src/dtos/bmi-entry-dto/bmi-entry-dto';
 import { DtosModule } from '../src/dtos/dtos.module';
+import { JournalEntry } from '../src/entities/journal-entry/journal-entry';
 
 describe('BmiController (e2e)', () => {
   let app: INestApplication;
@@ -48,7 +49,7 @@ describe('BmiController (e2e)', () => {
           database: './database/test.sqlite',
           synchronize: true,
           autoLoadEntities: true,
-          entities: [User, Bmientry],
+          entities: [User, Bmientry, JournalEntry],
         }),
         AuthenticationModule,
         JwtModule.register({ secret: process.env.JWT_SECRET }),
@@ -57,6 +58,7 @@ describe('BmiController (e2e)', () => {
       providers: [
         Repository<User>,
         Repository<Bmientry>,
+        Repository<JournalEntry>,
         UsersService,
         CryptoService,
         SaltGenerator,

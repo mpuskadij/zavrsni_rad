@@ -1,5 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import { Bmientry } from '../bmientry/bmientry';
+import { JournalEntry } from '../journal-entry/journal-entry';
 
 @Entity()
 export class User {
@@ -16,4 +17,9 @@ export class User {
     cascade: ['insert', 'remove', 'update'],
   })
   bmiEntries: Bmientry[];
+
+  @OneToMany(() => JournalEntry, (journalEntry) => journalEntry.user, {
+    cascade: ['insert', 'remove', 'update'],
+  })
+  journalEntries: JournalEntry[];
 }

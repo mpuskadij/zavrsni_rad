@@ -20,7 +20,7 @@ export class UsersService {
   async getUser(username: string): Promise<User> {
     return await this.userRepository.findOne({
       where: { username: username },
-      relations: ['bmiEntries'],
+      relations: ['bmiEntries', 'journalEntries'],
     });
   }
 
@@ -52,9 +52,10 @@ export class UsersService {
       password: hashedPasswordData.HashedPassword,
       username: username,
       bmiEntries: [],
+      journalEntries: [],
     });
 
-    await this.userRepository.insert(newUser);
+    await this.saveUserData(newUser);
 
     return true;
   }

@@ -25,6 +25,7 @@ import {
   GoogleRecaptchaModule,
 } from '@nestlab/google-recaptcha';
 import { AppModule } from '../../app.module';
+import { JournalEntry } from '../../entities/journal-entry/journal-entry';
 
 describe('BmiService (integration tests)', () => {
   let provider: BmiService;
@@ -41,9 +42,9 @@ describe('BmiService (integration tests)', () => {
           database: './database/test.sqlite',
           synchronize: true,
           autoLoadEntities: true,
-          entities: [User, Bmientry],
+          entities: [User, Bmientry, JournalEntry],
         }),
-        TypeOrmModule.forFeature([User, Bmientry]),
+        TypeOrmModule.forFeature([User, Bmientry, JournalEntry]),
       ],
       providers: [
         BmiService,
@@ -85,6 +86,7 @@ describe('BmiService (integration tests)', () => {
           password: 'sdasd',
           bmiEntries: [],
           isAdmin: 0,
+          journalEntries: [],
         };
         await userRepo.save(user);
       }
@@ -124,6 +126,7 @@ describe('BmiService (integration tests)', () => {
         username: username,
         password: 'sdasd',
         bmiEntries: [],
+        journalEntries: [],
         isAdmin: 0,
       };
       const sixDaysAgo = Date.now() - 6 * 24 * 60 * 60 * 1000;
@@ -158,6 +161,7 @@ describe('BmiService (integration tests)', () => {
         password: 'sdasd',
         bmiEntries: [],
         isAdmin: 0,
+        journalEntries: [],
       };
       const sevenDaysAgo = new Date().getTime() - 7 * 24 * 60 * 60 * 1000;
 
@@ -189,6 +193,7 @@ describe('BmiService (integration tests)', () => {
         password: 'sdasd',
         bmiEntries: [],
         isAdmin: 0,
+        journalEntries: [],
       };
       const eightDaysAgo = new Date().getTime() - 8 * 24 * 60 * 60 * 1000;
 
@@ -220,6 +225,7 @@ describe('BmiService (integration tests)', () => {
         password: 'sdasd',
         bmiEntries: [],
         isAdmin: 0,
+        journalEntries: [],
       };
 
       await userRepo.insert(user);
@@ -256,6 +262,7 @@ describe('BmiService (integration tests)', () => {
         username: username,
         password: 'sdasd',
         bmiEntries: [],
+        journalEntries: [],
         isAdmin: 0,
       };
       await userRepo.save(user);
@@ -276,6 +283,7 @@ describe('BmiService (integration tests)', () => {
         username: username,
         password: 'sdasd',
         bmiEntries: [],
+        journalEntries: [],
         isAdmin: 0,
       };
       await userRepo.insert(user);
