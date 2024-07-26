@@ -11,6 +11,8 @@ import { DecoratorsModule } from '../decorators/decorators.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Bmientry } from '../entities/bmientry/bmientry';
 import { UsersModule } from '../users/users.module';
+import { DtosModule } from '../dtos/dtos.module';
+import { BmiEntryDto } from '../dtos/bmi-entry-dto/bmi-entry-dto';
 
 @Module({
   imports: [
@@ -21,9 +23,10 @@ import { UsersModule } from '../users/users.module';
     DecoratorsModule,
     UsersModule,
     TypeOrmModule.forFeature([Bmientry]),
+    DtosModule,
   ],
   exports: [BmiService],
   controllers: [BmiController],
-  providers: [JwtGuard, AuthenticationService, BmiService],
+  providers: [JwtGuard, AuthenticationService, BmiService, BmiEntryDto],
 })
 export class BmiModule {}

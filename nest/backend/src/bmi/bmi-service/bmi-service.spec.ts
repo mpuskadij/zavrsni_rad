@@ -254,4 +254,26 @@ describe('BmiService (unit tests)', () => {
       ).resolves.toBe(true);
     });
   });
+
+  describe('getAllBmiEntriesFromUser', () => {
+    it('should throw internal server error is user is null', async () => {
+      mockUsersService.getUser.mockResolvedValue(null);
+      await expect(
+        provider.getAllBmiEntriesFromUser(username),
+      ).rejects.toBeInstanceOf(InternalServerErrorException);
+    });
+
+    it('should throw forbidden exception if user has no bmi entries', async () => {
+      const user: User = {
+        username: username,
+        isAdmin: 0,
+        bmiEntries: [],
+        password: 'password',
+      };
+      mockUsersService.getUser.mockResolvedValue(user);
+      await expect(
+        provider.getAllBmiEntriesFromUser(username),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+    });
+  });
 });

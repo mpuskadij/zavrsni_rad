@@ -9,6 +9,7 @@ import { Bmientry } from '../../entities/bmientry/bmientry';
 import { Repository } from 'typeorm';
 import { UsersService } from '../../users/users-service/users-service';
 import { User } from 'src/entities/user/user';
+import { BmiEntryDto } from '../../dtos/bmi-entry-dto/bmi-entry-dto';
 
 @Injectable()
 export class BmiService {
@@ -74,7 +75,17 @@ export class BmiService {
     return;
   }
 
-  async getAllBmiEntriesFromUser(username: string): Promise<Bmientry[]> {
+  async getAllBmiEntriesFromUser(username: string): Promise<BmiEntryDto[]> {
+    const user = await this.usersService.getUser(username);
+    const userNotFound = user == null;
+    const hasNoBmiEntries = user?.bmiEntries.length == 0;
+    if (userNotFound) {
+      throw new InternalServerErrorException(
+        'User with that username not found!',
+      );
+    } else if (hasNoBmiEntries) {
+      throw new ForbiddenException('No BMI entries found!');
+    }
     return null;
   }
 }
