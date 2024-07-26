@@ -75,7 +75,7 @@ export class BmiService {
     return;
   }
 
-  async getAllBmiEntriesFromUser(username: string): Promise<BmiEntryDto[]> {
+  async getAllBmiEntriesFromUser(username: string): Promise<Bmientry[]> {
     const user = await this.usersService.getUser(username);
     const userNotFound = user == null;
     const hasNoBmiEntries = user?.bmiEntries.length == 0;
@@ -86,6 +86,6 @@ export class BmiService {
     } else if (hasNoBmiEntries) {
       throw new ForbiddenException('No BMI entries found!');
     }
-    return null;
+    return user.bmiEntries;
   }
 }

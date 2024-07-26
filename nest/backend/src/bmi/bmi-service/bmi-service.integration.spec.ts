@@ -190,11 +190,11 @@ describe('BmiService (integration tests)', () => {
         bmiEntries: [],
         isAdmin: 0,
       };
-      const sevenDaysAgo = new Date().getTime() - 8 * 24 * 60 * 60 * 1000;
+      const eightDaysAgo = new Date().getTime() - 8 * 24 * 60 * 60 * 1000;
 
       const bmiEntry: Bmientry = {
         bmi: 20.5,
-        dateAdded: new Date(sevenDaysAgo),
+        dateAdded: new Date(eightDaysAgo),
         username: username,
         user: user,
       };
@@ -227,6 +227,71 @@ describe('BmiService (integration tests)', () => {
       await expect(
         provider.addNewBmiEntry(username, weight, height),
       ).rejects.toBeInstanceOf(ForbiddenException);
+    });
+  });
+
+  describe('getAllBmiEntriesFromUser', () => {
+    it('should throw InternalServerException if user not found', async () => {
+      const userExists = await userRepo.findOne({
+        where: { username: username },
+        relations: ['bmiEntries'],
+      });
+      if (userExists != null) {
+        await userRepo.remove(userExists);
+      }
+      await expect(
+        provider.getAllBmiEntriesFromUser(username),
+      ).rejects.toBeInstanceOf(InternalServerErrorException);
+    });
+
+    it('should throw ForbiddenException if user doesnt have any bmi entries', async () => {
+      const userExists = await userRepo.findOne({
+        where: { username: username },
+        relations: ['bmiEntries'],
+      });
+      if (userExists != null) {
+        await userRepo.remove(userExists);
+      }
+      const user: User = {
+        username: username,
+        password: 'sdasd',
+        bmiEntries: [],
+        isAdmin: 0,
+      };
+      await userRepo.save(user);
+      await expect(
+        provider.getAllBmiEntriesFromUser(username),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+    });
+
+    it('should return one bmi entry if user has one bmi entry', async () => {
+      const userExists = await userRepo.findOne({
+        where: { username: username },
+        relations: ['bmiEntries'],
+      });
+      if (userExists != null) {
+        await userRepo.remove(userExists);
+      }
+      const user: User = {
+        username: username,
+        password: 'sdasd',
+        bmiEntries: [],
+        isAdmin: 0,
+      };
+      await userRepo.insert(user);
+      const eightDaysAgo = new Date().getTime() - 8 * 24 * 60 * 60 * 1000;
+
+      const bmiEntry: Bmientry = {
+        bmi: 20.5,
+        dateAdded: new Date(eightDaysAgo),
+        username: username,
+        user: user,
+      };
+      user.bmiEntries.push(bmiEntry);
+      await userRepo.save(user);
+      await expect(
+        provider.getAllBmiEntriesFromUser(username),
+      ).resolves.toHaveLength(1);
     });
   });
 });

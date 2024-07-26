@@ -11,6 +11,8 @@ import { Bmientry } from '../../entities/bmientry/bmientry';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { UsersService } from '../../users/users-service/users-service';
 import { User } from '../../entities/user/user';
+import { BmiEntryDto } from '../../dtos/bmi-entry-dto/bmi-entry-dto';
+import { DtosModule } from '../../dtos/dtos.module';
 
 describe('BmiService (unit tests)', () => {
   let provider: BmiService;
@@ -20,6 +22,7 @@ describe('BmiService (unit tests)', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [DtosModule],
       providers: [
         BmiService,
         {
@@ -237,7 +240,7 @@ describe('BmiService (unit tests)', () => {
       const weight: number = 66.7;
       const height: number = 1.8;
       const squaredHeight: number = Math.pow(height, 2);
-      const sixDaysAgo = new Date().getTime() - 4 * 24 * 60 * 60 * 1000;
+      const sixDaysAgo = new Date().getTime() - 6 * 24 * 60 * 60 * 1000;
       const bmiEntry: Bmientry = {
         bmi: weight / squaredHeight,
         dateAdded: new Date(sixDaysAgo),
@@ -274,6 +277,30 @@ describe('BmiService (unit tests)', () => {
       await expect(
         provider.getAllBmiEntriesFromUser(username),
       ).rejects.toBeInstanceOf(ForbiddenException);
+    });
+
+    it('should return array of bmi entries as dto when user exists and ahs at elast one entry', async () => {
+      const user: User = {
+        username: username,
+        isAdmin: 0,
+        bmiEntries: [],
+        password: 'password',
+      };
+      const weight: number = 66.7;
+      const height: number = 1.8;
+      const squaredHeight: number = Math.pow(height, 2);
+      const fourDaysAgo = new Date().getTime() - 4 * 24 * 60 * 60 * 1000;
+      const bmiEntry: Bmientry = {
+        bmi: weight / squaredHeight,
+        dateAdded: new Date(fourDaysAgo),
+        username: user.username,
+        user: user,
+      };
+      user.bmiEntries.push(bmiEntry);
+      mockUsersService.getUser.mockResolvedValue(user);
+      await expect(
+        provider.getAllBmiEntriesFromUser(username),
+      ).resolves.toHaveLength(1);
     });
   });
 });
