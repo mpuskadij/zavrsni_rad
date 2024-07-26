@@ -30,6 +30,7 @@
     "@nestlab/google-recaptcha": "^3.7.0",
     "@types/csprng": "^0.1.4",
     "bcrypt": "^5.1.1",
+    "class-transformer": "^0.5.1",
     "cookie-parser": "^1.4.6",
     "csprng": "^0.1.2",
     "reflect-metadata": "^0.2.0",

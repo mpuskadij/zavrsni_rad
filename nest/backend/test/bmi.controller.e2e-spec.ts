@@ -25,6 +25,8 @@ import { NewBmiEntryGuard } from '../src/guards/new-bmi-entry/new-bmi-entry.guar
 import { BmiService } from '../src/bmi/bmi-service/bmi-service';
 import { BmiModule } from '../src/bmi/bmi.module';
 import { JwtPayload } from '../src/authentication/jwt-payload/jwt-payload';
+import { BmiEntryDto } from '../src/dtos/bmi-entry-dto/bmi-entry-dto';
+import { DtosModule } from '../src/dtos/dtos.module';
 
 describe('BmiController (e2e)', () => {
   let app: INestApplication;
@@ -37,6 +39,7 @@ describe('BmiController (e2e)', () => {
       imports: [
         BmiModule,
         GuardsModule,
+        DtosModule,
         UsersModule,
         CrpytoModule,
         ConfigModule.forRoot(),
@@ -117,14 +120,19 @@ describe('BmiController (e2e)', () => {
     await request(app.getHttpServer())
       .post('/api/users/register')
       .send({ username: username, password: password });
-    const loginResponse = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .post('/api/users/login')
       .send({ username: username, password: password });
-    return await request(app.getHttpServer())
-      .get('/api/bmi')
+    await request(app.getHttpServer())
+      .post('/api/bmi')
       .set('jwtPayload', JSON.stringify(payload))
-      .send({ weight: 65, height: 1.8 })
-      .expect(HttpStatus.OK);
+      .send({ weight: 65, height: 1.8 });
+    const response = await request(app.getHttpServer())
+      .get('/api/bmi')
+      .set('jwtPayload', JSON.stringify(payload));
+    expect(response.status).toBe(HttpStatus.OK);
+    expect(response.body).toBeInstanceOf(Array<BmiEntryDto>);
+    console.log(response.body);
   });
 
   afterEach(async () => {

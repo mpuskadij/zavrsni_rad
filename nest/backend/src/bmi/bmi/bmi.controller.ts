@@ -13,6 +13,8 @@ import { NewBmiEntryGuard } from '../../guards/new-bmi-entry/new-bmi-entry.guard
 import { Payload } from '../../decorators/payload/payload.decorator';
 import { JwtPayload } from '../../authentication/jwt-payload/jwt-payload';
 import { BmiService } from '../bmi-service/bmi-service';
+import { plainToInstance } from 'class-transformer';
+import { BmiEntryDto } from '../../dtos/bmi-entry-dto/bmi-entry-dto';
 
 @Controller('api/bmi')
 export class BmiController {
@@ -31,6 +33,7 @@ export class BmiController {
   @Get()
   @UseGuards(JwtGuard)
   async getAll(@Payload('username') username: string): Promise<any> {
-    throw new ForbiddenException();
+    const bmiEntries = await this.bmiService.getAllBmiEntriesFromUser(username);
+    return plainToInstance(BmiEntryDto, bmiEntries);
   }
 }
