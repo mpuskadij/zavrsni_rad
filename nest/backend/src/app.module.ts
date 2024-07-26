@@ -17,6 +17,7 @@ import { Bmientry } from './entities/bmientry/bmientry';
 import { DecoratorsModule } from './decorators/decorators.module';
 import { DtosModule } from './dtos/dtos.module';
 import { JournalEntry } from './entities/journal-entry/journal-entry';
+import { JournalModule } from './journal/journal.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { JournalEntry } from './entities/journal-entry/journal-entry';
     BmiModule,
     DecoratorsModule,
     DtosModule,
+    JournalModule,
   ],
   controllers: [AppController],
   providers: [AppService, AuthenticationService],
