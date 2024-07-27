@@ -19,6 +19,7 @@ import { JournalEntry } from '../../entities/journal-entry/journal-entry';
 describe('UsersService (integration tests)', () => {
   let provider: UsersService;
   let repository: Repository<User>;
+  let journalRepo: Repository<JournalEntry>;
 
   const username = 'marin';
   const password = 'ajskfnU7';
@@ -51,6 +52,9 @@ describe('UsersService (integration tests)', () => {
 
     provider = module.get<UsersService>(UsersService);
     repository = module.get<Repository<User>>(getRepositoryToken(User));
+    journalRepo = module.get<Repository<JournalEntry>>(
+      getRepositoryToken(JournalEntry),
+    );
   });
 
   describe('checkIfUsernameIsAlreadyInDatabase', () => {
@@ -211,7 +215,7 @@ describe('UsersService (integration tests)', () => {
     it('should return true if user is saved', async () => {
       const usernameInDatabase = await repository.findOne({
         where: { username: username },
-        relations: ['bmiEntries'],
+        relations: ['bmiEntries', 'journalEntries'],
       });
       if (usernameInDatabase != null) {
         await repository.remove(usernameInDatabase);
@@ -221,10 +225,40 @@ describe('UsersService (integration tests)', () => {
         password: password,
         isAdmin: 0,
         bmiEntries: [],
+        journalEntries: [],
       });
       const result = await provider.saveUserData(user);
 
       expect(result).toBe(true);
+    });
+  });
+
+  describe('assignJournalEntry', () => {
+    it('should push new journal entry when no previous journal entries', async () => {
+      const usernameInDatabase = await repository.findOne({
+        where: { username: username },
+        relations: ['bmiEntries', 'journalEntries'],
+      });
+      if (usernameInDatabase != null) {
+        await repository.remove(usernameInDatabase);
+      }
+      const user: User = repository.create({
+        username: username,
+        password: password,
+        isAdmin: 0,
+        bmiEntries: [],
+        journalEntries: [],
+      });
+      const result = await provider.saveUserData(user);
+      const journalEntry: JournalEntry = journalRepo.create({
+        dateAdded: new Date(),
+        description: 'asdas',
+        title: 'asd',
+        user: user,
+        username: username,
+      });
+      await provider.assignJournalEntry(user, journalEntry);
+      expect(user.journalEntries).toHaveLength(1);
     });
   });
 });

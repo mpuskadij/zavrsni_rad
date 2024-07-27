@@ -16,13 +16,14 @@ export class JournalService {
     description: string,
   ): Promise<JournalEntry> {
     await this.canNewJournalEntryBeCreated(user);
-    return this.journalEntryRepository.create({
+    const journalEntry: JournalEntry = this.journalEntryRepository.create({
       dateAdded: new Date(),
       description: description,
       user: user,
       username: user.username,
       title: title,
     });
+    return journalEntry;
   }
 
   private async canNewJournalEntryBeCreated(user: User): Promise<void> {

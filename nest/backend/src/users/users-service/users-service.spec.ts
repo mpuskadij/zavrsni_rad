@@ -14,6 +14,8 @@ import { AuthenticationModule } from '../../authentication/authentication.module
 import { AuthenticationService } from '../../authentication/authentication-service/authentication-service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JournalEntry } from '../../entities/journal-entry/journal-entry';
+import { InternalServerErrorException } from '@nestjs/common';
 
 describe('UsersService (unit tests)', () => {
   let provider: UsersService;
@@ -280,6 +282,43 @@ describe('UsersService (unit tests)', () => {
       const result = await provider.saveUserData(user);
 
       expect(result).toBe(false);
+    });
+  });
+
+  describe('assignJournalEntry', () => {
+    const user: User = {
+      password: password,
+      username: username,
+      isAdmin: 0,
+      bmiEntries: [],
+      journalEntries: [],
+    };
+    const journalEntry: JournalEntry = {
+      dateAdded: new Date(),
+      description: 'sda',
+      title: 'asda',
+      user: user,
+      username: username,
+    };
+
+    it('should throw InternalServerException if user null', async () => {
+      await expect(
+        provider.assignJournalEntry(null, journalEntry),
+      ).rejects.toBeInstanceOf(InternalServerErrorException);
+    });
+
+    it('should throw InternalServerException if journal entry null', async () => {
+      await expect(
+        provider.assignJournalEntry(user, null),
+      ).rejects.toBeInstanceOf(InternalServerErrorException);
+    });
+
+    it('should assign journal entry to user when no entries', async () => {
+      jest.spyOn(provider, 'saveUserData').mockResolvedValue(true);
+
+      await provider.assignJournalEntry(user, journalEntry);
+
+      expect(user.journalEntries).toHaveLength(1);
     });
   });
 });

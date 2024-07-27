@@ -13,13 +13,6 @@ import { JournalEntry } from 'src/entities/journal-entry/journal-entry';
 
 @Injectable()
 export class UsersService {
-  async assignJournalEntry(
-    user: User,
-    journalEntry: JournalEntry,
-  ): Promise<void> {
-    user.journalEntries.push(journalEntry);
-    await this.saveUserData(user);
-  }
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
     private cryptoService: CryptoService,
@@ -85,5 +78,17 @@ export class UsersService {
 
   async saveUserData(user: User): Promise<boolean> {
     return (await this.userRepository.save(user)) != null;
+  }
+
+  async assignJournalEntry(
+    user: User,
+    journalEntry: JournalEntry,
+  ): Promise<void> {
+    if (!user || !journalEntry)
+      throw new InternalServerErrorException(
+        'Error assigning journal entry to user!',
+      );
+    user.journalEntries.push(journalEntry);
+    await this.saveUserData(user);
   }
 }
