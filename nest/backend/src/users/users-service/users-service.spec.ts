@@ -115,14 +115,9 @@ describe('UsersService (unit tests)', () => {
         .spyOn(repository, 'save')
         .mockResolvedValue(userToAdd);
 
-      let createMockFunction = jest
-        .spyOn(repository, 'create')
-        .mockReturnValue(userToAdd);
-
       const result = await provider.addUser('alex', 'jfdhgt6H');
 
       expect(mockFunction).toHaveBeenCalled();
-      expect(createMockFunction).toHaveBeenCalled();
     });
 
     it('should return false when username already exists', async () => {

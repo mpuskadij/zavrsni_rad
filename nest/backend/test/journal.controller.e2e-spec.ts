@@ -107,6 +107,32 @@ describe('Journal Controller (e2e)', () => {
       .expect(HttpStatus.BAD_REQUEST);
   });
 
+  it('/api/journal (POST) should  FORBIDDEN if user attempts to create 2 entries on same day', async () => {
+    const userInDatabase: User = await userRepo.findOne({
+      where: { username: username },
+      relations: ['journalEntries', 'bmiEntries'],
+    });
+    if (userInDatabase != null) {
+      await userRepo.remove(userInDatabase);
+    }
+    const user: User = new User();
+    user.isAdmin = 0;
+    user.password = password;
+    user.username = username;
+    await userRepo.save(user);
+    await request(app.getHttpServer())
+      .post('/api/journal')
+      .set('jwtPayload', JSON.stringify(payload))
+      .send({ title: 'My first entry :D', description: 'Boring...' })
+      .expect(HttpStatus.CREATED);
+
+    return await request(app.getHttpServer())
+      .post('/api/journal')
+      .set('jwtPayload', JSON.stringify(payload))
+      .send({ title: 'My first entry same day :D', description: 'Boring...' })
+      .expect(HttpStatus.FORBIDDEN);
+  });
+
   afterEach(async () => {
     await app.close();
   });

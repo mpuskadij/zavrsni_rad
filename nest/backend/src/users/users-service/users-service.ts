@@ -52,13 +52,10 @@ export class UsersService {
     const hashedPasswordData: HashedPasswordData =
       await this.cryptoService.hashPassword(password);
 
-    const newUser = this.userRepository.create({
-      isAdmin: 0,
-      password: hashedPasswordData.HashedPassword,
-      username: username,
-      bmiEntries: [],
-      journalEntries: [],
-    });
+    const newUser = new User();
+    newUser.isAdmin = 0;
+    newUser.password = hashedPasswordData.HashedPassword;
+    newUser.username = username;
 
     await this.saveUserData(newUser);
 

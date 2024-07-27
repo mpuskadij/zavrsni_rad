@@ -29,6 +29,11 @@ describe('UserController (e2e)', () => {
   let usersService: UsersService;
   const username = 'marin';
   const password = 'ajskfnU7';
+  const userCredentials = { username: username, password: password };
+  let user: User = new User();
+  user.isAdmin = 0;
+  user.password = password;
+  user.username = username;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -62,27 +67,23 @@ describe('UserController (e2e)', () => {
       .compile();
     repo = moduleFixture.get<Repository<User>>(getRepositoryToken(User));
     usersService = moduleFixture.get<UsersService>(UsersService);
+    let userInDatabase = await repo.findOne({
+      where: { username: username },
+      relations: ['bmiEntries', 'journalEntries'],
+    });
+    if (userInDatabase) {
+      await repo.remove(userInDatabase);
+    }
     app = moduleFixture.createNestApplication();
     app.use(cookieParser());
     await app.init();
   });
 
   it('/api/users/register (POST) should return 409 response when username already in database', async () => {
-    const userCredentials = { username: username, password: password };
-    let userAlreadyExists: boolean =
-      await usersService.checkIfUsernameIsAlreadyInDatabase(
-        userCredentials.username,
-      );
-    if (userAlreadyExists == false) {
-      const user = repo.create({
-        isAdmin: 0,
-        password: userCredentials.password,
-        username: userCredentials.username,
-        bmiEntries: [],
-        journalEntries: [],
-      });
-      await repo.save(user);
-    }
+    await request(app.getHttpServer())
+      .post('/api/users/register')
+      .send(userCredentials);
+
     return await request(app.getHttpServer())
       .post('/api/users/register')
       .send(userCredentials)
@@ -90,15 +91,6 @@ describe('UserController (e2e)', () => {
   });
 
   it('/api/users/register (POST) should add user into database and return 201 when username not in database', async () => {
-    const userCredentials = { username: username, password: password };
-    let userAlreadyExists: boolean = await repo.existsBy({ username });
-    if (userAlreadyExists == true) {
-      const user = await repo.findOne({
-        where: { username: username },
-        relations: ['bmiEntries', 'journalEntries'],
-      });
-      await repo.remove(user);
-    }
     return await request(app.getHttpServer())
       .post('/api/users/register')
       .send(userCredentials)
@@ -106,15 +98,6 @@ describe('UserController (e2e)', () => {
   });
 
   it('/api/users/login (POST) should return 400 when username not recognized in database', async () => {
-    const userCredentials = { username: username, password: password };
-    let userAlreadyExists: boolean = await repo.existsBy({ username });
-    if (userAlreadyExists == true) {
-      const user = await repo.findOne({
-        where: { username: username },
-        relations: ['bmiEntries'],
-      });
-      await repo.remove(user);
-    }
     return await request(app.getHttpServer())
       .post('/api/users/login')
       .send(userCredentials)
@@ -122,17 +105,6 @@ describe('UserController (e2e)', () => {
   });
 
   it('/api/users/login (POST) should return 200 with correct username and password after /api/users/register', async () => {
-    const userCredentials = { username: username, password: password };
-    let userAlreadyExists: boolean = await repo.existsBy({
-      username,
-    });
-    if (userAlreadyExists == true) {
-      const user = await repo.findOne({
-        where: { username: username },
-        relations: ['bmiEntries', 'journalEntries'],
-      });
-      await repo.remove(user);
-    }
     await request(app.getHttpServer())
       .post('/api/users/register')
       .send(userCredentials);
@@ -149,12 +121,6 @@ describe('UserController (e2e)', () => {
       username: username,
       password: password + 's',
     };
-    let userAlreadyExists: boolean = await repo.existsBy({
-      username,
-    });
-    if (userAlreadyExists == true) {
-      await repo.delete({ username: username });
-    }
     await request(app.getHttpServer())
       .post('/api/users/register')
       .send(userCredentials);
@@ -167,12 +133,6 @@ describe('UserController (e2e)', () => {
 
   it('/api/users/register (POST) should return 200 with jwt in cookie', async () => {
     const userCredentials = { username: username, password: password };
-    let userAlreadyExists: boolean = await repo.existsBy({
-      username,
-    });
-    if (userAlreadyExists == true) {
-      await repo.delete({ username: username });
-    }
     await request(app.getHttpServer())
       .post('/api/users/register')
       .send(userCredentials);
