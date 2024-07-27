@@ -55,61 +55,65 @@ describe('RegistrationGuard (e2e)', () => {
     await app.init();
   });
 
-  it('/api/users/register (POST) should return NOT_ACCEPTABLE HTTP response when no body is passed', () => {
-    return request(app.getHttpServer()).post('/api/users/register').expect(406);
+  it('/api/users/register (POST) should return NOT_ACCEPTABLE HTTP response when no body is passed', async () => {
+    return await request(app.getHttpServer())
+      .post('/api/users/register')
+      .expect(406);
   });
 
-  it('/api/users/register (POST) should return NOT_ACCEPTABLE HTTP response when no username sent', () => {
-    return request(app.getHttpServer())
+  it('/api/users/register (POST) should return NOT_ACCEPTABLE HTTP response when no username sent', async () => {
+    return await request(app.getHttpServer())
       .post('/api/users/register')
       .send({ username: '', password: 'sadksg6H' })
       .expect(406);
   });
 
-  it('/api/users/register (POST) should return NOT_ACCEPTABLE HTTP response when no password sent', () => {
-    return request(app.getHttpServer())
+  it('/api/users/register (POST) should return NOT_ACCEPTABLE HTTP response when no password sent', async () => {
+    return await request(app.getHttpServer())
       .post('/api/users/register')
       .send({ username: 'marin', password: '' })
       .expect(406);
   });
 
-  it('/api/users/register (POST) should return NOT_ACCEPTABLE HTTP response when username length < 5', () => {
-    return request(app.getHttpServer())
+  it('/api/users/register (POST) should return NOT_ACCEPTABLE HTTP response when username length < 5', async () => {
+    return await request(app.getHttpServer())
       .post('/api/users/register')
       .send({ username: 'mari', password: 'mghkzi8H' })
       .expect(406);
   });
 
-  it('/api/users/register (POST) should return NOT_ACCEPTABLE HTTP response when username length > 25', () => {
-    return request(app.getHttpServer())
+  it('/api/users/register (POST) should return NOT_ACCEPTABLE HTTP response when username length > 25', async () => {
+    return await request(app.getHttpServer())
       .post('/api/users/register')
       .send({ username: 'qwertzuioplkjhgfdsayxcvbnm', password: 'mghkzi8H' })
       .expect(406);
   });
 
-  it('/api/users/register (POST) should return NOT_ACCEPTABLE HTTP response when password length < 8', () => {
-    return request(app.getHttpServer())
+  it('/api/users/register (POST) should return NOT_ACCEPTABLE HTTP response when password length < 8', async () => {
+    return await request(app.getHttpServer())
       .post('/api/users/register')
       .send({ username: 'marin', password: 'mghkzi8' })
       .expect(406);
   });
 
-  it('/api/users/register (POST) should return NOT_ACCEPTABLE HTTP response when password length doesnt have number', () => {
-    return request(app.getHttpServer())
+  it('/api/users/register (POST) should return NOT_ACCEPTABLE HTTP response when password length doesnt have number', async () => {
+    return await request(app.getHttpServer())
       .post('/api/users/register')
       .send({ username: 'marin', password: 'mghkzikg' })
       .expect(406);
   });
 
-  it('/api/users/register (POST) should return NOT_ACCEPTABLE HTTP response when password length doesnt have uppercase character', () => {
-    return request(app.getHttpServer())
+  it('/api/users/register (POST) should return NOT_ACCEPTABLE HTTP response when password length doesnt have uppercase character', async () => {
+    return await request(app.getHttpServer())
       .post('/api/users/register')
       .send({ username: 'marin', password: 'mghkzikg12' })
       .expect(406);
   });
 
-  it('/api/users/login (POST) should use RegistrationGuard for username and password', () => {
-    return request(app.getHttpServer()).post('/api/users/login').expect(406);
+  it('/api/users/login (POST) should use RegistrationGuard for username and password', async () => {
+    return await request(app.getHttpServer())
+      .post('/api/users/login')
+      .expect(406);
   });
 
   afterEach(async () => {

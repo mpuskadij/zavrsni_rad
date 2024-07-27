@@ -85,7 +85,7 @@ describe('BmiController (e2e)', () => {
     if ((await userRepo.existsBy({ username })) == true) {
       const user = await userRepo.findOne({
         where: { username: username },
-        relations: ['bmiEntries'],
+        relations: ['bmiEntries', 'journalEntries'],
       });
       await userRepo.remove(user);
     }
@@ -93,12 +93,11 @@ describe('BmiController (e2e)', () => {
     await request(app.getHttpServer())
       .post('/api/users/register')
       .send({ username: username, password: password });
-    const response = await request(app.getHttpServer())
+    return await request(app.getHttpServer())
       .post('/api/bmi')
       .set('jwtPayload', JSON.stringify(payload))
-      .send({ weight: 65, height: 1.8 });
-
-    expect(response.status).toBe(HttpStatus.CREATED);
+      .send({ weight: 65, height: 1.8 })
+      .expect(HttpStatus.CREATED);
   });
 
   it('/api/bmi (GET) should return 406 FORBIDDEN when user doesnt have at least 1 bmi entry', async () => {
@@ -123,7 +122,7 @@ describe('BmiController (e2e)', () => {
     if ((await userRepo.existsBy({ username })) == true) {
       const user = await userRepo.findOne({
         where: { username: username },
-        relations: ['bmiEntries'],
+        relations: ['bmiEntries', 'journalEntries'],
       });
       await userRepo.remove(user);
     }

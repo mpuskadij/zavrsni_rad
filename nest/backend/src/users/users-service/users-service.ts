@@ -1,4 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../entities/user/user';
 import { Repository } from 'typeorm';
@@ -62,6 +66,8 @@ export class UsersService {
 
   async createJWT(username: string): Promise<string> {
     const user: User = await this.getUser(username);
+
+    if (user == null) throw new InternalServerErrorException('User not found!');
 
     return await this.authenticationService.generateJWT(
       user.username,

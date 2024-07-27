@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common';
+import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
@@ -79,10 +79,11 @@ describe('UserController (e2e)', () => {
         password: userCredentials.password,
         username: userCredentials.username,
         bmiEntries: [],
+        journalEntries: [],
       });
-      await repo.insert(user);
+      await repo.save(user);
     }
-    return request(app.getHttpServer())
+    return await request(app.getHttpServer())
       .post('/api/users/register')
       .send(userCredentials)
       .expect(409);
@@ -94,23 +95,27 @@ describe('UserController (e2e)', () => {
     if (userAlreadyExists == true) {
       const user = await repo.findOne({
         where: { username: username },
-        relations: ['bmiEntries'],
+        relations: ['bmiEntries', 'journalEntries'],
       });
       await repo.remove(user);
     }
-    return request(app.getHttpServer())
+    return await request(app.getHttpServer())
       .post('/api/users/register')
       .send(userCredentials)
-      .expect(201);
+      .expect(HttpStatus.CREATED);
   });
 
   it('/api/users/login (POST) should return 400 when username not recognized in database', async () => {
     const userCredentials = { username: username, password: password };
     let userAlreadyExists: boolean = await repo.existsBy({ username });
     if (userAlreadyExists == true) {
-      await repo.delete({ username: username });
+      const user = await repo.findOne({
+        where: { username: username },
+        relations: ['bmiEntries'],
+      });
+      await repo.remove(user);
     }
-    return request(app.getHttpServer())
+    return await request(app.getHttpServer())
       .post('/api/users/login')
       .send(userCredentials)
       .expect(401);
@@ -124,7 +129,7 @@ describe('UserController (e2e)', () => {
     if (userAlreadyExists == true) {
       const user = await repo.findOne({
         where: { username: username },
-        relations: ['bmiEntries'],
+        relations: ['bmiEntries', 'journalEntries'],
       });
       await repo.remove(user);
     }
@@ -132,10 +137,10 @@ describe('UserController (e2e)', () => {
       .post('/api/users/register')
       .send(userCredentials);
 
-    return request(app.getHttpServer())
+    return await request(app.getHttpServer())
       .post('/api/users/login')
       .send(userCredentials)
-      .expect(200);
+      .expect(HttpStatus.OK);
   });
 
   it('/api/users/login (POST) should return 400 HTTP response with correct username,but incorrect password after /api/users/register', async () => {
@@ -154,7 +159,7 @@ describe('UserController (e2e)', () => {
       .post('/api/users/register')
       .send(userCredentials);
 
-    return request(app.getHttpServer())
+    return await request(app.getHttpServer())
       .post('/api/users/login')
       .send(invalidUserCredentials)
       .expect(401);
