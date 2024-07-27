@@ -7,12 +7,14 @@ import { JournalService } from './journal-service/journal-service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JournalEntry } from '../entities/journal-entry/journal-entry';
 import { UsersModule } from '../users/users.module';
+import { DtosModule } from '../dtos/dtos.module';
 
 @Module({
   imports: [
     GuardsModule,
     AuthenticationModule,
     DecoratorsModule,
+    DtosModule,
     UsersModule,
     TypeOrmModule.forFeature([JournalEntry]),
   ],

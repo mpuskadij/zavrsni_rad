@@ -46,19 +46,23 @@ describe('GoogleRecaptchaGuard (e2e)', () => {
     await app.init();
   });
 
-  it('/api/users/register (POST) should return 400 response when no recaptcha token is passed in header', () => {
-    return request(app.getHttpServer()).post('/api/users/register').expect(400);
+  it('/api/users/register (POST) should return 400 response when no recaptcha token is passed in header', async () => {
+    return await request(app.getHttpServer())
+      .post('/api/users/register')
+      .expect(400);
   });
 
-  it('/api/users/register (POST) should return 400 response when invalid key is passed in header', () => {
-    return request(app.getHttpServer())
+  it('/api/users/register (POST) should return 400 response when invalid key is passed in header', async () => {
+    return await request(app.getHttpServer())
       .post('/api/users/register')
       .set('recaptcha', '123')
       .expect(400);
   });
 
-  it('/api/users/login (POST) should return 400 response when no recaptcha token is passed in header', () => {
-    return request(app.getHttpServer()).post('/api/users/login').expect(400);
+  it('/api/users/login (POST) should return 400 response when no recaptcha token is passed in header', async () => {
+    return await request(app.getHttpServer())
+      .post('/api/users/login')
+      .expect(400);
   });
 
   afterEach(async () => {

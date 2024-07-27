@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   ForbiddenException,
+  Get,
   InternalServerErrorException,
   Post,
   UseGuards,
@@ -13,6 +14,8 @@ import { UsersService } from '../../users/users-service/users-service';
 import { User } from '../../entities/user/user';
 import { JournalEntry } from '../../entities/journal-entry/journal-entry';
 import { JournalService } from '../journal-service/journal-service';
+import { plainToInstance } from 'class-transformer';
+import { JournalEntryDto } from '../../dtos/journal-entry-dto/journal-entry-dto';
 
 @Controller('api/journal')
 export class JournalController {
@@ -20,6 +23,21 @@ export class JournalController {
     private usersService: UsersService,
     private journalEntryService: JournalService,
   ) {}
+
+  @Get()
+  @UseGuards(JwtGuard)
+  async getAllJournalEntries(
+    @Payload('username') username: string,
+  ): Promise<any> {
+    const user = await this.usersService.getUser(username);
+    if (!user) {
+      throw new InternalServerErrorException('User not found in database!');
+    }
+    const journalEntries =
+      await this.journalEntryService.getJournalEntries(user);
+    return plainToInstance(JournalEntryDto, journalEntries);
+  }
+
   @Post()
   @UseGuards(JwtGuard)
   async createJournalEntry(

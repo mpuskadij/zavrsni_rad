@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { JournalEntry } from '../../entities/journal-entry/journal-entry';
 import { User } from '../../entities/user/user';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,6 +10,17 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class JournalService {
+  async getJournalEntries(user: User): Promise<JournalEntry[]> {
+    if (!user) {
+      throw new InternalServerErrorException('User not found!');
+    }
+    const noJournalEntries = !user.journalEntries.length;
+    if (noJournalEntries) {
+      throw new ForbiddenException("You don't have any journal entries!");
+    }
+
+    return user.journalEntries;
+  }
   constructor(
     @InjectRepository(JournalEntry)
     private journalEntryRepository: Repository<JournalEntry>,
@@ -16,11 +31,12 @@ export class JournalService {
     description: string,
   ): Promise<JournalEntry> {
     await this.canNewJournalEntryBeCreated(user);
-    const journalEntry: JournalEntry = this.journalEntryRepository.create({
-      dateAdded: new Date(),
-      description: description,
-      title: title,
-    });
+    const journalEntry: JournalEntry = new JournalEntry();
+    journalEntry.dateAdded = new Date();
+    journalEntry.description = description;
+    journalEntry.title = title;
+    journalEntry.username = user.username;
+
     return journalEntry;
   }
 

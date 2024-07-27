@@ -4,7 +4,11 @@ import { User } from '../../entities/user/user';
 import { Repository } from 'typeorm';
 import { JournalEntry } from '../../entities/journal-entry/journal-entry';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { ForbiddenException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  InternalServerErrorException,
+} from '@nestjs/common';
+import { constants } from 'node:buffer';
 
 describe('JournalService (unit tests)', () => {
   let provider: JournalService;
@@ -73,11 +77,14 @@ describe('JournalService (unit tests)', () => {
   describe('createJournalEntry', () => {
     it('should create journal entry with parameters when no entries exist', async () => {
       mockJournalRepository.create.mockReturnValue(journalEntry);
-      await expect(
-        provider.createJournalEntry(user, title, description),
-      ).resolves.toEqual(journalEntry);
+      const result = await provider.createJournalEntry(
+        user,
+        title,
+        description,
+      );
 
-      expect(mockJournalRepository.create).toHaveBeenCalled();
+      expect(result.title).toEqual(title);
+      expect(result.description).toEqual(description);
     });
 
     it('should throw exception if journal entry with current date exists', async () => {
@@ -89,13 +96,32 @@ describe('JournalService (unit tests)', () => {
 
     it('should create new journal entry if journal entry with different date date exists', async () => {
       mockJournalRepository.create.mockReturnValue(journalEntry);
+      const result = await provider.createJournalEntry(
+        userWithJournalEntryPreviousDay,
+        title,
+        description,
+      );
+      expect(result.title).toEqual(title);
+      expect(result.description).toEqual(description);
+    });
+  });
+
+  describe('getJournalEntries', () => {
+    it('should throw ForbiddenException if user has no journal entries', async () => {
+      await expect(provider.getJournalEntries(user)).rejects.toBeInstanceOf(
+        ForbiddenException,
+      );
+    });
+
+    it('should throw InternalServer Exception is user is null', async () => {
+      await expect(provider.getJournalEntries(null)).rejects.toBeInstanceOf(
+        InternalServerErrorException,
+      );
+    });
+    it('should return array if one entry exists', async () => {
       await expect(
-        provider.createJournalEntry(
-          userWithJournalEntryPreviousDay,
-          title,
-          description,
-        ),
-      ).resolves.toEqual(journalEntry);
+        provider.getJournalEntries(userWithJournalEntry),
+      ).resolves.toHaveLength(1);
     });
   });
 });

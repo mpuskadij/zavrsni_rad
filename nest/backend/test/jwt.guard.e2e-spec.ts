@@ -44,8 +44,8 @@ describe('JWTGuard (e2e)', () => {
     await app.init();
   });
 
-  it('should return 401 when no jwt token passed', () => {
-    return request(app.getHttpServer()).post('/api/bmi').expect(401);
+  it('should return 401 when no jwt token passed', async () => {
+    return await request(app.getHttpServer()).post('/api/bmi').expect(401);
   });
 
   afterEach(async () => {

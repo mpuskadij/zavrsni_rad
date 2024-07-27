@@ -20,6 +20,8 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { GoogleRecaptchaGuard } from '@nestlab/google-recaptcha';
 import { Repository } from 'typeorm';
+import { JournalEntryDto } from '../src/dtos/journal-entry-dto/journal-entry-dto';
+import { DtosModule } from '../src/dtos/dtos.module';
 describe('Journal Controller (e2e)', () => {
   let app: INestApplication;
   const username = 'marin';
@@ -30,6 +32,7 @@ describe('Journal Controller (e2e)', () => {
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
+        DtosModule,
         GuardsModule,
         UsersModule,
         JournalModule,
@@ -59,10 +62,7 @@ describe('Journal Controller (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     userRepo = moduleFixture.get<Repository<User>>(getRepositoryToken(User));
-    await app.init();
-  });
 
-  it('/api/journal (POST) should create a new journal entry when user enters the first journal entry and return 201', async () => {
     const userInDatabase: User = await userRepo.findOne({
       where: { username: username },
       relations: ['journalEntries', 'bmiEntries'],
@@ -70,13 +70,14 @@ describe('Journal Controller (e2e)', () => {
     if (userInDatabase != null) {
       await userRepo.remove(userInDatabase);
     }
-    const user: User = userRepo.create({
-      bmiEntries: [],
-      isAdmin: 0,
-      journalEntries: [],
-      password: password,
-      username: username,
-    });
+    await app.init();
+  });
+
+  it('/api/journal (POST) should create a new journal entry when user enters the first journal entry and return 201', async () => {
+    const user: User = new User();
+    user.isAdmin = 0;
+    user.password = password;
+    user.username = username;
     await userRepo.save(user);
     return await request(app.getHttpServer())
       .post('/api/journal')
@@ -86,13 +87,6 @@ describe('Journal Controller (e2e)', () => {
   });
 
   it('/api/journal (POST) should return INTERNAL SERVER ERROR if user not in database', async () => {
-    const userInDatabase: User = await userRepo.findOne({
-      where: { username: username },
-      relations: ['journalEntries', 'bmiEntries'],
-    });
-    if (userInDatabase != null) {
-      await userRepo.remove(userInDatabase);
-    }
     return await request(app.getHttpServer())
       .post('/api/journal')
       .set('jwtPayload', JSON.stringify(payload))
@@ -108,13 +102,6 @@ describe('Journal Controller (e2e)', () => {
   });
 
   it('/api/journal (POST) should  FORBIDDEN if user attempts to create 2 entries on same day', async () => {
-    const userInDatabase: User = await userRepo.findOne({
-      where: { username: username },
-      relations: ['journalEntries', 'bmiEntries'],
-    });
-    if (userInDatabase != null) {
-      await userRepo.remove(userInDatabase);
-    }
     const user: User = new User();
     user.isAdmin = 0;
     user.password = password;
@@ -131,6 +118,46 @@ describe('Journal Controller (e2e)', () => {
       .set('jwtPayload', JSON.stringify(payload))
       .send({ title: 'My first entry same day :D', description: 'Boring...' })
       .expect(HttpStatus.FORBIDDEN);
+  });
+
+  it('/api/journal (GET) should throw FORBIDDEN if user has no entries', async () => {
+    const user: User = new User();
+    user.isAdmin = 0;
+    user.password = password;
+    user.username = username;
+    await userRepo.save(user);
+    return await request(app.getHttpServer())
+      .get('/api/journal')
+      .set('jwtPayload', JSON.stringify(payload))
+      .expect(HttpStatus.FORBIDDEN);
+  });
+
+  it('/api/journal (GET) should throw INTERNAL SERVER ERROR if user not found', async () => {
+    return await request(app.getHttpServer())
+      .get('/api/journal')
+      .set('jwtPayload', JSON.stringify(payload))
+      .expect(HttpStatus.INTERNAL_SERVER_ERROR);
+  });
+
+  it('/api/journal (GET) should throw FORBIDDEN if user has no entries', async () => {
+    const user: User = new User();
+    user.isAdmin = 0;
+    user.password = password;
+    user.username = username;
+    const entry: JournalEntry = new JournalEntry();
+    entry.dateAdded = new Date();
+    entry.description = 'asdasd';
+    entry.title = 'First entry :D';
+    user.journalEntries = new Array<JournalEntry>();
+    user.journalEntries.push(entry);
+
+    await userRepo.save(user);
+
+    const response = await request(app.getHttpServer())
+      .get('/api/journal')
+      .set('jwtPayload', JSON.stringify(payload));
+    expect(response.status).toEqual(HttpStatus.OK);
+    expect(response.body).toBeInstanceOf(Array<JournalEntryDto>);
   });
 
   afterEach(async () => {
