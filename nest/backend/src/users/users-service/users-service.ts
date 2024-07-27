@@ -9,9 +9,17 @@ import { Repository } from 'typeorm';
 import { CryptoService } from '../../crpyto/crypto-service/crypto-service';
 import { HashedPasswordData } from '../../crpyto/hashed-password-data/hashed-password-data';
 import { AuthenticationService } from '../../authentication/authentication-service/authentication-service';
+import { JournalEntry } from 'src/entities/journal-entry/journal-entry';
 
 @Injectable()
 export class UsersService {
+  async assignJournalEntry(
+    user: User,
+    journalEntry: JournalEntry,
+  ): Promise<void> {
+    user.journalEntries.push(journalEntry);
+    await this.saveUserData(user);
+  }
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
     private cryptoService: CryptoService,
