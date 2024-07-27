@@ -19,8 +19,6 @@ export class JournalService {
     const journalEntry: JournalEntry = this.journalEntryRepository.create({
       dateAdded: new Date(),
       description: description,
-      user: user,
-      username: user.username,
       title: title,
     });
     return journalEntry;

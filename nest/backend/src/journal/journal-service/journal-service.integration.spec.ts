@@ -88,7 +88,6 @@ describe('JournalService (unit tests)', () => {
       expect(result).not.toBeNull();
       expect(result.description).toEqual(description);
       expect(result.title).toEqual(title);
-      expect(result.username).toEqual(username);
       expect(result.dateAdded.getDay()).toEqual(currentDate.getDay());
       expect(result.dateAdded.getFullYear()).toEqual(currentDate.getFullYear());
       expect(result.dateAdded.getMonth()).toEqual(currentDate.getMonth());
@@ -110,7 +109,6 @@ describe('JournalService (unit tests)', () => {
       expect(result).not.toBeNull();
       expect(result.description).toEqual(description);
       expect(result.title).toEqual(title);
-      expect(result.username).toEqual(username);
       expect(result.dateAdded.getDay()).toEqual(currentDate.getDay());
       expect(result.dateAdded.getFullYear()).toEqual(currentDate.getFullYear());
       expect(result.dateAdded.getMonth()).toEqual(currentDate.getMonth());

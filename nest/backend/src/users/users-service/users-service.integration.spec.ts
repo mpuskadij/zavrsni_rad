@@ -260,5 +260,35 @@ describe('UsersService (integration tests)', () => {
       await provider.assignJournalEntry(user, journalEntry);
       expect(user.journalEntries).toHaveLength(1);
     });
+
+    it('should push new journal entry when 1 previous journal entry exists', async () => {
+      const usernameInDatabase = await repository.findOne({
+        where: { username: username },
+        relations: ['bmiEntries', 'journalEntries'],
+      });
+      if (usernameInDatabase != null) {
+        await repository.remove(usernameInDatabase);
+      }
+      const user: User = repository.create({
+        username: username,
+        password: password,
+        isAdmin: 0,
+        bmiEntries: [],
+        journalEntries: [],
+      });
+      const journalEntryThreeDaysAgo = journalRepo.create({
+        dateAdded: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+        description: 'asd',
+        title: 'asda',
+      });
+      await provider.assignJournalEntry(user, journalEntryThreeDaysAgo);
+      const journalEntryToday: JournalEntry = journalRepo.create({
+        dateAdded: new Date(),
+        description: 'asdas',
+        title: 'asd',
+      });
+      await provider.assignJournalEntry(user, journalEntryToday);
+      expect(user.journalEntries).toHaveLength(2);
+    });
   });
 });
