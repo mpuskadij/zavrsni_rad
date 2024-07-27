@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   ForbiddenException,
@@ -26,6 +27,10 @@ export class JournalController {
     @Body('title') title: string,
     @Body('description') description: string,
   ): Promise<any> {
+    if (!title || !description)
+      throw new BadRequestException(
+        'Title and/or description not sent or empty!',
+      );
     const user: User = await this.usersService.getUser(username);
     if (user == null) {
       throw new InternalServerErrorException(

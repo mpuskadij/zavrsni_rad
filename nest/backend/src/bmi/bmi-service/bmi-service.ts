@@ -43,8 +43,6 @@ export class BmiService {
     const bmiEntry: Bmientry = this.bmiRepository.create({
       bmi: bmi,
       dateAdded: new Date(),
-      username: user.username,
-      user: user,
     });
     user.bmiEntries.push(bmiEntry);
     const saveResult: boolean = await this.usersService.saveUserData(user);
