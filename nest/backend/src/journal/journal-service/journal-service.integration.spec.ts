@@ -8,11 +8,18 @@ import { Bmientry } from '../../entities/bmientry/bmientry';
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { BmiEntryDto } from 'src/dtos/bmi-entry-dto/bmi-entry-dto';
 import { JournalEntryDto } from 'src/dtos/journal-entry-dto/journal-entry-dto';
+import { UsersService } from '../../users/users-service/users-service';
+import { CryptoService } from '../../crpyto/crypto-service/crypto-service';
+import { AuthenticationService } from '../../authentication/authentication-service/authentication-service';
+import { CrpytoModule } from '../../crpyto/crpyto.module';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 describe('JournalService (integration tests)', () => {
   let provider: JournalService;
   let repo: Repository<JournalEntry>;
   let userRepo: Repository<User>;
+  let usersService: UsersService;
   const password = 'ajskfnU7';
   const username = 'marin';
   const title = 'My first entry';
@@ -65,9 +72,16 @@ describe('JournalService (integration tests)', () => {
           autoLoadEntities: true,
           entities: [JournalEntry, User, Bmientry],
         }),
+        CrpytoModule,
         TypeOrmModule.forFeature([JournalEntry, User, Bmientry]),
       ],
-      providers: [JournalService],
+      providers: [
+        JournalService,
+        UsersService,
+        AuthenticationService,
+        JwtService,
+        ConfigService,
+      ],
     }).compile();
 
     provider = module.get<JournalService>(JournalService);
@@ -84,6 +98,8 @@ describe('JournalService (integration tests)', () => {
     if (userInDatabase) {
       await userRepo.remove(userInDatabase);
     }
+
+    usersService = module.get<UsersService>(UsersService);
   });
 
   it('should be defined', () => {
@@ -222,6 +238,58 @@ describe('JournalService (integration tests)', () => {
       await expect(
         provider.updateEntry(userWithEntryDatabase.journalEntries, sentData),
       ).rejects.toBeInstanceOf(BadRequestException);
+    });
+  });
+
+  describe('deleteEntry', () => {
+    const incorrectlySentDto: JournalEntryDto = {
+      dateAdded: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+      description: description,
+      title: title,
+    };
+
+    it('should create throw ForbiddenException if user has 0 journal entries', async () => {
+      await usersService.addUser(username, password);
+
+      const userInDatabase = await usersService.getUser(username);
+
+      await expect(
+        provider.deleteEntry(userInDatabase.journalEntries, incorrectlySentDto),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+    });
+
+    it('should create throw BadRequestException if user has 1 entry, but incorrect date was sent', async () => {
+      await usersService.addUser(username, password);
+
+      const userInDatabase = await usersService.getUser(username);
+
+      const entry = await provider.createJournalEntry(user, title, description);
+
+      await usersService.assignJournalEntry(userInDatabase, entry);
+
+      await expect(
+        provider.deleteEntry(userInDatabase.journalEntries, incorrectlySentDto),
+      ).rejects.toBeInstanceOf(BadRequestException);
+    });
+
+    it('should create delete entry if correct date sent', async () => {
+      await usersService.addUser(username, password);
+
+      const userInDatabase = await usersService.getUser(username);
+
+      const entry = await provider.createJournalEntry(user, title, description);
+
+      const userSentData: JournalEntryDto = {
+        dateAdded: entry.dateAdded,
+        description: description,
+        title: title,
+      };
+
+      await usersService.assignJournalEntry(userInDatabase, entry);
+
+      await provider.deleteEntry(userInDatabase.journalEntries, userSentData);
+
+      expect(userInDatabase.journalEntries).toHaveLength(0);
     });
   });
 });
