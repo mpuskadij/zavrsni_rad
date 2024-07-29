@@ -13,26 +13,32 @@ import { title } from 'node:process';
 
 @Injectable()
 export class JournalService {
+  async deleteEntry(
+    journalEntriesOfUser: JournalEntry[],
+    journalEntryUserWantsToDelete: JournalEntryDto,
+  ): Promise<void> {
+    this.checkDoesUserHaveAtLeastOneEntry(journalEntriesOfUser);
+
+    const foundJournalEntry = await this.findJournalEntry(
+      journalEntriesOfUser,
+      journalEntryUserWantsToDelete,
+    );
+
+    journalEntriesOfUser.splice(
+      journalEntriesOfUser.indexOf(foundJournalEntry),
+    );
+
+    return;
+  }
   async updateEntry(
     allJournalEntries: JournalEntry[],
     journalEntryToUpdate: JournalEntryDto,
   ): Promise<void> {
-    if (!allJournalEntries?.length) {
-      throw new ForbiddenException("You don't have any journal entries!");
-    }
-    const foundJournalEntry = await this.compareDates(
+    this.checkDoesUserHaveAtLeastOneEntry(allJournalEntries);
+    const foundJournalEntry = await this.findJournalEntry(
       allJournalEntries,
-      journalEntryToUpdate.dateAdded,
+      journalEntryToUpdate,
     );
-    if (!foundJournalEntry)
-      throw new BadRequestException(
-        "You don't have a journal entry on the date: " +
-          journalEntryToUpdate.dateAdded.getDate() +
-          '.' +
-          journalEntryToUpdate.dateAdded.getMonth() +
-          '.' +
-          journalEntryToUpdate.dateAdded.getFullYear(),
-      );
     if (
       foundJournalEntry.title == journalEntryToUpdate.title &&
       foundJournalEntry.description == journalEntryToUpdate.description
@@ -46,6 +52,32 @@ export class JournalService {
 
     return;
   }
+  private checkDoesUserHaveAtLeastOneEntry(allJournalEntries: JournalEntry[]) {
+    if (!allJournalEntries?.length) {
+      throw new ForbiddenException("You don't have any journal entries!");
+    }
+  }
+
+  private async findJournalEntry(
+    allJournalEntries: JournalEntry[],
+    journalEntryToUpdate: JournalEntryDto,
+  ) {
+    const foundJournalEntry = await this.compareDates(
+      allJournalEntries,
+      journalEntryToUpdate.dateAdded,
+    );
+    if (!foundJournalEntry)
+      throw new BadRequestException(
+        "You don't have a journal entry on the date: " +
+          journalEntryToUpdate.dateAdded.getDate() +
+          '.' +
+          journalEntryToUpdate.dateAdded.getMonth() +
+          '.' +
+          journalEntryToUpdate.dateAdded.getFullYear(),
+      );
+    return foundJournalEntry;
+  }
+
   private async compareDates(
     journalEntries: JournalEntry[],
     dateToCompareTo: Date,
@@ -62,10 +94,7 @@ export class JournalService {
     if (!user) {
       throw new InternalServerErrorException('User not found!');
     }
-    const noJournalEntries = !user.journalEntries?.length;
-    if (noJournalEntries) {
-      throw new ForbiddenException("You don't have any journal entries!");
-    }
+    this.checkDoesUserHaveAtLeastOneEntry(user.journalEntries);
 
     return user.journalEntries;
   }

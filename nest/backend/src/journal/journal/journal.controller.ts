@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   ForbiddenException,
   Get,
   HttpCode,
@@ -87,6 +88,28 @@ export class JournalController {
     await this.journalEntryService.updateEntry(
       journalEntries,
       journalEntryToUpdate,
+    );
+    await this.usersService.saveUserData(user);
+    return;
+  }
+
+  @Delete()
+  @UseGuards(JwtGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteEntry(
+    @Payload('username') username: string,
+    @Body(new ValidationPipe({ transform: true }))
+    journalEntryToDelete: JournalEntryDto,
+  ): Promise<any> {
+    const user = await this.usersService.getUser(username);
+    if (!user) {
+      throw new InternalServerErrorException('User not found!');
+    }
+    const journalEntries =
+      await this.journalEntryService.getJournalEntries(user);
+    await this.journalEntryService.deleteEntry(
+      journalEntries,
+      journalEntryToDelete,
     );
     await this.usersService.saveUserData(user);
     return;

@@ -232,4 +232,29 @@ describe('JournalService (unit tests)', () => {
       ).toEqual(journalDTOPreviousDayDifferentTitleAndDescription.description);
     });
   });
+
+  describe('deleteEntry', () => {
+    it('should throw ForbiddenException if user has no journal entries', async () => {
+      await expect(
+        provider.deleteEntry(user.journalEntries, journalDTONow),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+    });
+
+    it('should throw BadRequestException if user has journal entry, but the date sent is incorrect', async () => {
+      await expect(
+        provider.deleteEntry(
+          userWithJournalEntry.journalEntries,
+          journalDTOPreviousDay,
+        ),
+      ).rejects.toBeInstanceOf(BadRequestException);
+    });
+
+    it('should remove entry from user and user should have number of entries == 0 when the only entry was removed', async () => {
+      await provider.deleteEntry(
+        userWithJournalEntry.journalEntries,
+        journalDTONow,
+      );
+      expect(userWithJournalEntry.journalEntries).toHaveLength(0);
+    });
+  });
 });
