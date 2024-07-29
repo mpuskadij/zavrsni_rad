@@ -169,23 +169,20 @@ describe('JournalService (unit tests)', () => {
   });
 
   describe('updateEntry', () => {
-    it('should throw InternalServerException if user null', async () => {
-      await expect(
-        provider.updateEntry(null, journalDTONow),
-      ).rejects.toBeInstanceOf(InternalServerErrorException);
-    });
-
     it('should throw ForbiddenException if user has 0 journal entries', async () => {
       const dateAdded = new Date();
       await expect(
-        provider.updateEntry(user, journalDTONow),
+        provider.updateEntry(user.journalEntries, journalDTONow),
       ).rejects.toBeInstanceOf(ForbiddenException);
     });
 
     it('should throw BadRequestException if user doesnt have any entry with matching date', async () => {
       const currentDate = new Date();
       await expect(
-        provider.updateEntry(userWithJournalEntryPreviousDay, journalDTONow),
+        provider.updateEntry(
+          userWithJournalEntry.journalEntries,
+          journalDTONow,
+        ),
       ).rejects.toBeInstanceOf(BadRequestException);
     });
 
@@ -193,7 +190,7 @@ describe('JournalService (unit tests)', () => {
       const currentDate = new Date();
       await expect(
         provider.updateEntry(
-          userWithJournalEntryPreviousDay,
+          userWithJournalEntryPreviousDay.journalEntries,
           journalDTOPreviousDay,
         ),
       ).rejects.toBeInstanceOf(BadRequestException);
@@ -201,7 +198,7 @@ describe('JournalService (unit tests)', () => {
 
     it('should update journal entry when title different', async () => {
       await provider.updateEntry(
-        userWithJournalEntryPreviousDay,
+        userWithJournalEntryPreviousDay.journalEntries,
         journalDTOPreviousDayDifferent,
       );
       expect(userWithJournalEntryPreviousDay.journalEntries).toHaveLength(1);
@@ -212,7 +209,7 @@ describe('JournalService (unit tests)', () => {
 
     it('should update journal entry when description different', async () => {
       await provider.updateEntry(
-        userWithJournalEntryPreviousDay,
+        userWithJournalEntryPreviousDay.journalEntries,
         journalDTOPreviousDayDifferentDescription,
       );
       expect(userWithJournalEntryPreviousDay.journalEntries).toHaveLength(1);
@@ -223,7 +220,7 @@ describe('JournalService (unit tests)', () => {
 
     it('should update journal entry when title and description different', async () => {
       await provider.updateEntry(
-        userWithJournalEntryPreviousDay,
+        userWithJournalEntryPreviousDay.journalEntries,
         journalDTOPreviousDayDifferentTitleAndDescription,
       );
       expect(userWithJournalEntryPreviousDay.journalEntries).toHaveLength(1);

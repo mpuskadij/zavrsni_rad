@@ -82,7 +82,10 @@ export class JournalController {
     if (!user) {
       throw new InternalServerErrorException('User not found!');
     }
-    await this.journalEntryService.updateEntry(user, journalEntryToUpdate);
+    await this.journalEntryService.updateEntry(
+      user.journalEntries,
+      journalEntryToUpdate,
+    );
     await this.usersService.saveUserData(user);
     return;
   }

@@ -14,15 +14,14 @@ import { title } from 'node:process';
 @Injectable()
 export class JournalService {
   async updateEntry(
-    user: User,
+    allJournalEntries: JournalEntry[],
     journalEntryToUpdate: JournalEntryDto,
   ): Promise<void> {
-    if (!user) throw new InternalServerErrorException('User not found!');
-    if (!user.journalEntries.length) {
+    if (!allJournalEntries?.length) {
       throw new ForbiddenException("You don't have any journal entries!");
     }
     const foundJournalEntry = await this.compareDates(
-      user.journalEntries,
+      allJournalEntries,
       journalEntryToUpdate.dateAdded,
     );
     if (!foundJournalEntry)
