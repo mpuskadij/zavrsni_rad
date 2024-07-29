@@ -160,6 +160,29 @@ describe('Journal Controller (e2e)', () => {
     expect(response.body).toBeInstanceOf(Array<JournalEntryDto>);
   });
 
+  it('/api/journal (PUT) should throw BAD REQUEST if date not passed', async () => {
+    return await request(app.getHttpServer())
+      .put('/api/journal')
+      .set('jwtPayload', JSON.stringify(payload))
+      .expect(HttpStatus.BAD_REQUEST);
+  });
+
+  it('/api/journal (PUT) should return INTERNAL SERVER ERROR if user not found', async () => {
+    return await request(app.getHttpServer())
+      .put('/api/journal')
+      .set('jwtPayload', JSON.stringify(payload))
+      .send({ date: new Date() })
+      .expect(HttpStatus.INTERNAL_SERVER_ERROR);
+  });
+
+  it('/api/journal (PUT) should return FORBIDDEN EXCEPTION user has 0 journal entries', async () => {
+    return await request(app.getHttpServer())
+      .put('/api/journal')
+      .set('jwtPayload', JSON.stringify(payload))
+      .send({ date: new Date() })
+      .expect(HttpStatus.FORBIDDEN);
+  });
+
   afterEach(async () => {
     await app.close();
   });

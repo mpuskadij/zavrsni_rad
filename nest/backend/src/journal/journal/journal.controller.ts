@@ -6,6 +6,7 @@ import {
   Get,
   InternalServerErrorException,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import { JwtGuard } from '../../guards/jwt/jwt.guard';
@@ -63,6 +64,23 @@ export class JournalController {
       );
     await this.usersService.assignJournalEntry(user, journalEntry);
 
+    return;
+  }
+
+  @Put()
+  @UseGuards(JwtGuard)
+  async updateJournalEntry(
+    @Payload('username') username: string,
+    @Body() journalEntryToUpdate: JournalEntryDto,
+  ): Promise<any> {
+    if (!journalEntryToUpdate) {
+      throw new BadRequestException(
+        'Server did not receive journal entry to delete!',
+      );
+    }
+    const user = await this.usersService.getUser(username);
+    const journalEntries =
+      await this.journalEntryService.getJournalEntries(user);
     return;
   }
 }

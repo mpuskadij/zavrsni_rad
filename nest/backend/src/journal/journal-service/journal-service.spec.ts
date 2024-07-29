@@ -5,10 +5,12 @@ import { Repository } from 'typeorm';
 import { JournalEntry } from '../../entities/journal-entry/journal-entry';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import {
+  BadRequestException,
   ForbiddenException,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { constants } from 'node:buffer';
+import { JournalEntryDto } from '../../dtos/journal-entry-dto/journal-entry-dto';
 
 describe('JournalService (unit tests)', () => {
   let provider: JournalService;
@@ -56,8 +58,49 @@ describe('JournalService (unit tests)', () => {
     password: password,
     username: username,
   };
+
+  const journalDTOPreviousDay: JournalEntryDto = {
+    dateAdded: userWithJournalEntryPreviousDay.journalEntries[0].dateAdded,
+    description: userWithJournalEntryPreviousDay.journalEntries[0].description,
+    title: userWithJournalEntryPreviousDay.journalEntries[0].title,
+    username: userWithJournalEntryPreviousDay.username,
+  };
+
+  const journalDTOPreviousDayDifferent: JournalEntryDto = {
+    dateAdded: userWithJournalEntryPreviousDay.journalEntries[0].dateAdded,
+    description: userWithJournalEntryPreviousDay.journalEntries[0].description,
+    title:
+      userWithJournalEntryPreviousDay.journalEntries[0].title + '. It was fun.',
+    username: userWithJournalEntryPreviousDay.username,
+  };
+
+  const journalDTOPreviousDayDifferentTitleAndDescription: JournalEntryDto = {
+    dateAdded: userWithJournalEntryPreviousDay.journalEntries[0].dateAdded,
+    description:
+      userWithJournalEntryPreviousDay.journalEntries[0].description + ' Cool.',
+    title:
+      userWithJournalEntryPreviousDay.journalEntries[0].title + '. It was fun.',
+    username: userWithJournalEntryPreviousDay.username,
+  };
+
+  const journalDTOPreviousDayDifferentDescription: JournalEntryDto = {
+    dateAdded: userWithJournalEntryPreviousDay.journalEntries[0].dateAdded,
+    description:
+      userWithJournalEntryPreviousDay.journalEntries[0].description +
+      '. It was fun.',
+    title: userWithJournalEntryPreviousDay.journalEntries[0].title,
+    username: userWithJournalEntryPreviousDay.username,
+  };
+  const journalDTONow: JournalEntryDto = {
+    dateAdded: userWithJournalEntry.journalEntries[0].dateAdded,
+    description: userWithJournalEntry.journalEntries[0].description,
+    title: userWithJournalEntry.journalEntries[0].title,
+    username: userWithJournalEntry.username,
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [JournalEntryDto],
       providers: [
         JournalService,
         {
@@ -122,6 +165,74 @@ describe('JournalService (unit tests)', () => {
       await expect(
         provider.getJournalEntries(userWithJournalEntry),
       ).resolves.toHaveLength(1);
+    });
+  });
+
+  describe('updateEntry', () => {
+    it('should throw InternalServerException if user null', async () => {
+      await expect(
+        provider.updateEntry(null, journalDTONow),
+      ).rejects.toBeInstanceOf(InternalServerErrorException);
+    });
+
+    it('should throw ForbiddenException if user has 0 journal entries', async () => {
+      const dateAdded = new Date();
+      await expect(
+        provider.updateEntry(user, journalDTONow),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+    });
+
+    it('should throw BadRequestException if user doesnt have any entry with matching date', async () => {
+      const currentDate = new Date();
+      await expect(
+        provider.updateEntry(userWithJournalEntryPreviousDay, journalDTONow),
+      ).rejects.toBeInstanceOf(BadRequestException);
+    });
+
+    it('should throw BadRequestException if title and description have not changed', async () => {
+      const currentDate = new Date();
+      await expect(
+        provider.updateEntry(
+          userWithJournalEntryPreviousDay,
+          journalDTOPreviousDay,
+        ),
+      ).rejects.toBeInstanceOf(BadRequestException);
+    });
+
+    it('should update journal entry when title different', async () => {
+      await provider.updateEntry(
+        userWithJournalEntryPreviousDay,
+        journalDTOPreviousDayDifferent,
+      );
+      expect(userWithJournalEntryPreviousDay.journalEntries).toHaveLength(1);
+      expect(userWithJournalEntryPreviousDay.journalEntries[0].title).toEqual(
+        journalDTOPreviousDayDifferent.title,
+      );
+    });
+
+    it('should update journal entry when description different', async () => {
+      await provider.updateEntry(
+        userWithJournalEntryPreviousDay,
+        journalDTOPreviousDayDifferentDescription,
+      );
+      expect(userWithJournalEntryPreviousDay.journalEntries).toHaveLength(1);
+      expect(
+        userWithJournalEntryPreviousDay.journalEntries[0].description,
+      ).toEqual(journalDTOPreviousDayDifferentDescription.description);
+    });
+
+    it('should update journal entry when title and description different', async () => {
+      await provider.updateEntry(
+        userWithJournalEntryPreviousDay,
+        journalDTOPreviousDayDifferentTitleAndDescription,
+      );
+      expect(userWithJournalEntryPreviousDay.journalEntries).toHaveLength(1);
+      expect(userWithJournalEntryPreviousDay.journalEntries[0].title).toEqual(
+        journalDTOPreviousDayDifferentTitleAndDescription.title,
+      );
+      expect(
+        userWithJournalEntryPreviousDay.journalEntries[0].description,
+      ).toEqual(journalDTOPreviousDayDifferentTitleAndDescription.description);
     });
   });
 });

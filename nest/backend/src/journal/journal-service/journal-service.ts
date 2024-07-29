@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
@@ -7,9 +8,57 @@ import { JournalEntry } from '../../entities/journal-entry/journal-entry';
 import { User } from '../../entities/user/user';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { JournalEntryDto } from '../../dtos/journal-entry-dto/journal-entry-dto';
+import { title } from 'node:process';
 
 @Injectable()
 export class JournalService {
+  async updateEntry(
+    user: User,
+    journalEntryToUpdate: JournalEntryDto,
+  ): Promise<void> {
+    if (!user) throw new InternalServerErrorException('User not found!');
+    if (!user.journalEntries.length) {
+      throw new ForbiddenException("You don't have any journal entries!");
+    }
+    const foundJournalEntry = await this.compareDates(
+      user.journalEntries,
+      journalEntryToUpdate.dateAdded,
+    );
+    if (!foundJournalEntry)
+      throw new BadRequestException(
+        "You don't have a journal entry on the date: " +
+          journalEntryToUpdate.dateAdded.getDate() +
+          '.' +
+          journalEntryToUpdate.dateAdded.getMonth() +
+          '.' +
+          journalEntryToUpdate.dateAdded.getFullYear(),
+      );
+    if (
+      foundJournalEntry.title == journalEntryToUpdate.title &&
+      foundJournalEntry.description == journalEntryToUpdate.description
+    ) {
+      throw new BadRequestException(
+        'Server requires different title and/or description to update entry!',
+      );
+    }
+    foundJournalEntry.title = journalEntryToUpdate.title;
+    foundJournalEntry.description = journalEntryToUpdate.description;
+
+    return;
+  }
+  private async compareDates(
+    journalEntries: JournalEntry[],
+    dateToCompareTo: Date,
+  ): Promise<JournalEntry> {
+    return journalEntries.find(
+      (entry) =>
+        entry.dateAdded.getDate() == dateToCompareTo.getDate() &&
+        entry.dateAdded.getFullYear() == dateToCompareTo.getFullYear() &&
+        entry.dateAdded.getMonth() == dateToCompareTo.getMonth(),
+    );
+  }
+
   async getJournalEntries(user: User): Promise<JournalEntry[]> {
     if (!user) {
       throw new InternalServerErrorException('User not found!');
@@ -45,12 +94,8 @@ export class JournalService {
     if (hasAtLeastOneJournalEntry) {
       const currentDate = new Date();
       const entryWithSameDateExists: boolean =
-        user.journalEntries.find(
-          (entry) =>
-            entry.dateAdded.getDate() == currentDate.getDate() &&
-            entry.dateAdded.getFullYear() == currentDate.getFullYear() &&
-            entry.dateAdded.getMonth() == currentDate.getMonth(),
-        ) != undefined;
+        (await this.compareDates(user.journalEntries, currentDate)) !=
+        undefined;
       if (entryWithSameDateExists) {
         throw new ForbiddenException(
           'There can only be 1 journal entry in the same day!',

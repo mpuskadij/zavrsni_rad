@@ -5,10 +5,10 @@ export class JournalEntryDto {
   username: string;
 
   @Expose()
-  title: number;
+  title: string;
 
   @Expose()
-  description: number;
+  description: string;
 
   @Expose()
   dateAdded: Date;
