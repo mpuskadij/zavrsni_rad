@@ -5,7 +5,9 @@ import { Repository } from 'typeorm';
 import { JournalEntry } from '../../entities/journal-entry/journal-entry';
 import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
 import { Bmientry } from '../../entities/bmientry/bmientry';
-import { ForbiddenException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException } from '@nestjs/common';
+import { BmiEntryDto } from 'src/dtos/bmi-entry-dto/bmi-entry-dto';
+import { JournalEntryDto } from 'src/dtos/journal-entry-dto/journal-entry-dto';
 
 describe('JournalService (integration tests)', () => {
   let provider: JournalService;
@@ -147,6 +149,79 @@ describe('JournalService (integration tests)', () => {
       await expect(
         provider.getJournalEntries(userWithEntry),
       ).resolves.toHaveLength(1);
+    });
+  });
+
+  describe('updateEntry', () => {
+    it('should throw ForbiddenException if user has 0 entries', async () => {
+      await userRepo.save(user);
+
+      const userNoEntries = await userRepo.findOne({
+        where: { username: user.username },
+        relations: ['journalEntries'],
+      });
+
+      await expect(
+        provider.updateEntry(userNoEntries.journalEntries, null),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+    });
+
+    it('should throw BadRequestException if user has journal entries, but the date that is passed is incorrect', async () => {
+      const userWithEntry: User = {
+        bmiEntries: [],
+        isAdmin: 0,
+        journalEntries: [],
+        password: password,
+        username: username,
+      };
+      const entry = new JournalEntry();
+      entry.dateAdded = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000);
+      entry.description = 'Boring...';
+      entry.title = 'First day!';
+      userWithEntry.journalEntries.push(entry);
+      await userRepo.save(userWithEntry);
+
+      const userWithEntryDatabase = await userRepo.findOne({
+        where: { username: userWithEntry.username },
+        relations: ['journalEntries'],
+      });
+      const sentData: JournalEntryDto = {
+        dateAdded: new Date(),
+        description: 'a',
+        title: 'as',
+      };
+      await expect(
+        provider.updateEntry(userWithEntryDatabase.journalEntries, sentData),
+      ).rejects.toBeInstanceOf(BadRequestException);
+    });
+
+    it('should throw BadRequestException if user has journal entries, but the title and description passed are the same', async () => {
+      const userWithEntry: User = {
+        bmiEntries: [],
+        isAdmin: 0,
+        journalEntries: [],
+        password: password,
+        username: username,
+      };
+      const entry = new JournalEntry();
+      entry.dateAdded = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000);
+      entry.description = 'Boring...';
+      entry.title = 'First day!';
+      userWithEntry.journalEntries.push(entry);
+      await userRepo.save(userWithEntry);
+
+      const userWithEntryDatabase = await userRepo.findOne({
+        where: { username: userWithEntry.username },
+        relations: ['journalEntries'],
+      });
+      const sentData: JournalEntryDto = {
+        dateAdded: new Date(),
+        description: entry.description,
+        title: entry.title,
+      };
+      await expect(
+        provider.updateEntry(userWithEntryDatabase.journalEntries, sentData),
+      ).rejects.toBeInstanceOf(BadRequestException);
     });
   });
 });

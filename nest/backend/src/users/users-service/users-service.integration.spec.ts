@@ -61,13 +61,14 @@ describe('UsersService (integration tests)', () => {
     it('should return true when username already in database', async () => {
       const user: User = await repository.findOneBy({ username: username });
       if (user == null) {
-        await repository.insert({
+        const user: User = {
           isAdmin: 0,
           username: username,
           password: password,
           bmiEntries: [],
           journalEntries: [],
-        });
+        };
+        await repository.save(user);
       }
       const result =
         await provider.checkIfUsernameIsAlreadyInDatabase(username);
@@ -125,11 +126,13 @@ describe('UsersService (integration tests)', () => {
     it('should return User object if username found in database', async () => {
       const usernameInDatabase = await repository.findOneBy({ username });
       if (usernameInDatabase == null) {
-        const user = repository.create({
+        const user: User = {
           username: username,
           password: password,
           isAdmin: 0,
-        });
+          bmiEntries: [],
+          journalEntries: [],
+        };
 
         await repository.save(user);
       }
@@ -143,9 +146,12 @@ describe('UsersService (integration tests)', () => {
 
   describe('checkLoginCredentials', () => {
     it('should return false if username not found', async () => {
-      const usernameInDatabase = await repository.findOneBy({ username });
+      const usernameInDatabase = await repository.findOne({
+        where: { username: username },
+        relations: ['bmiEntries', 'journalEntries'],
+      });
       if (usernameInDatabase != null) {
-        await repository.delete({ username: username });
+        await repository.remove(usernameInDatabase);
       }
 
       const result: boolean = await provider.checkLoginCredentials(
@@ -157,17 +163,21 @@ describe('UsersService (integration tests)', () => {
     });
 
     it('should return false if username exists, but incorrect password', async () => {
-      const usernameInDatabase = await repository.findOneBy({ username });
+      const usernameInDatabase = await repository.findOne({
+        where: { username: username },
+        relations: ['bmiEntries', 'journalEntries'],
+      });
       if (usernameInDatabase != null) {
-        await repository.delete({ username: username });
+        await repository.remove(usernameInDatabase);
       }
-      await repository.insert(
-        repository.create({
-          username: username,
-          password: password,
-          isAdmin: 0,
-        }),
-      );
+      const user: User = {
+        username: username,
+        password: password,
+        isAdmin: 0,
+        bmiEntries: [],
+        journalEntries: [],
+      };
+      await repository.save(user);
 
       const result: boolean = await provider.checkLoginCredentials(
         username,
@@ -178,17 +188,21 @@ describe('UsersService (integration tests)', () => {
     });
 
     it('should return true if username exists nad password is correct', async () => {
-      const usernameInDatabase = await repository.findOneBy({ username });
+      const usernameInDatabase = await repository.findOne({
+        where: { username: username },
+        relations: ['bmiEntries', 'journalEntries'],
+      });
       if (usernameInDatabase != null) {
-        await repository.delete({ username: username });
+        await repository.remove(usernameInDatabase);
       }
-      await repository.insert(
-        repository.create({
-          username: username,
-          password: password,
-          isAdmin: 0,
-        }),
-      );
+      const user: User = {
+        username: username,
+        password: password,
+        isAdmin: 0,
+        bmiEntries: [],
+        journalEntries: [],
+      };
+      await repository.save(user);
 
       const result: boolean = await provider.checkLoginCredentials(
         username,
@@ -201,15 +215,19 @@ describe('UsersService (integration tests)', () => {
 
   describe('createJWT', () => {
     it('should generate jwt when valid username passed', async () => {
-      const usernameInDatabase = await repository.findOneBy({ username });
+      const usernameInDatabase = await repository.findOne({
+        where: { username: username },
+        relations: ['bmiEntries', 'journalEntries'],
+      });
       if (usernameInDatabase == null) {
-        await repository.insert(
-          repository.create({
-            username: username,
-            password: password,
-            isAdmin: 0,
-          }),
-        );
+        const user: User = {
+          bmiEntries: [],
+          isAdmin: 0,
+          journalEntries: [],
+          password: password,
+          username: username,
+        };
+        await repository.save(user);
       }
       const token = await provider.createJWT(username);
       const tokenParts = token?.split('.');
@@ -228,13 +246,13 @@ describe('UsersService (integration tests)', () => {
       if (usernameInDatabase != null) {
         await repository.remove(usernameInDatabase);
       }
-      const user: User = repository.create({
+      const user: User = {
         username: username,
         password: password,
         isAdmin: 0,
         bmiEntries: [],
         journalEntries: [],
-      });
+      };
       const result = await provider.saveUserData(user);
 
       expect(result).toBe(true);
