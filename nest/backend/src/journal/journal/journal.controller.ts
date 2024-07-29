@@ -4,10 +4,13 @@ import {
   Controller,
   ForbiddenException,
   Get,
+  HttpCode,
+  HttpStatus,
   InternalServerErrorException,
   Post,
   Put,
   UseGuards,
+  ValidationPipe,
 } from '@nestjs/common';
 import { JwtGuard } from '../../guards/jwt/jwt.guard';
 import { Payload } from '../../decorators/payload/payload.decorator';
@@ -69,18 +72,18 @@ export class JournalController {
 
   @Put()
   @UseGuards(JwtGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async updateJournalEntry(
     @Payload('username') username: string,
-    @Body() journalEntryToUpdate: JournalEntryDto,
+    @Body(new ValidationPipe({ transform: true }))
+    journalEntryToUpdate: JournalEntryDto,
   ): Promise<any> {
-    if (!journalEntryToUpdate) {
-      throw new BadRequestException(
-        'Server did not receive journal entry to delete!',
-      );
-    }
     const user = await this.usersService.getUser(username);
-    const journalEntries =
-      await this.journalEntryService.getJournalEntries(user);
+    if (!user) {
+      throw new InternalServerErrorException('User not found!');
+    }
+    await this.journalEntryService.updateEntry(user, journalEntryToUpdate);
+    await this.usersService.saveUserData(user);
     return;
   }
 }

@@ -160,27 +160,150 @@ describe('Journal Controller (e2e)', () => {
     expect(response.body).toBeInstanceOf(Array<JournalEntryDto>);
   });
 
-  it('/api/journal (PUT) should throw BAD REQUEST if date not passed', async () => {
+  it('/api/journal (PUT) should throw BAD REQUEST if body is empty', async () => {
     return await request(app.getHttpServer())
       .put('/api/journal')
       .set('jwtPayload', JSON.stringify(payload))
       .expect(HttpStatus.BAD_REQUEST);
   });
 
-  it('/api/journal (PUT) should return INTERNAL SERVER ERROR if user not found', async () => {
+  it('/api/journal (PUT) should throw BAD REQUEST if title not passed', async () => {
     return await request(app.getHttpServer())
       .put('/api/journal')
       .set('jwtPayload', JSON.stringify(payload))
-      .send({ date: new Date() })
-      .expect(HttpStatus.INTERNAL_SERVER_ERROR);
+      .send({ description: 'Boring', dateAdded: new Date() })
+      .expect(HttpStatus.BAD_REQUEST);
+  });
+
+  it('/api/journal (PUT) should throw BAD REQUEST if title empty string', async () => {
+    return await request(app.getHttpServer())
+      .put('/api/journal')
+      .set('jwtPayload', JSON.stringify(payload))
+      .send({
+        title: '',
+        description: 'Boring',
+        dateAdded: new Date().toDateString(),
+      })
+      .expect(HttpStatus.BAD_REQUEST);
+  });
+
+  it('/api/journal (PUT) should throw BAD REQUEST if title bigger than 50 characters', async () => {
+    return await request(app.getHttpServer())
+      .put('/api/journal')
+      .set('jwtPayload', JSON.stringify(payload))
+      .send({
+        title: 'VPUfFHj7h95GEjhVQ4PZ67YmiQIq5O7tbQ3RVOdU2XR9AhzdvIx',
+        description: 'Boring',
+        dateAdded: new Date().toDateString(),
+      })
+      .expect(HttpStatus.BAD_REQUEST);
+  });
+
+  it('/api/journal (PUT) should throw BAD REQUEST if description empty', async () => {
+    return await request(app.getHttpServer())
+      .put('/api/journal')
+      .set('jwtPayload', JSON.stringify(payload))
+      .send({
+        title: 'Bad day',
+        description: '',
+        dateAdded: new Date().toDateString(),
+      })
+      .expect(HttpStatus.BAD_REQUEST);
+  });
+
+  it('/api/journal (PUT) should throw BAD REQUEST if description not passed', async () => {
+    return await request(app.getHttpServer())
+      .put('/api/journal')
+      .set('jwtPayload', JSON.stringify(payload))
+      .send({
+        title: 'Bad day',
+        dateAdded: new Date().toDateString(),
+      })
+      .expect(HttpStatus.BAD_REQUEST);
+  });
+
+  it('/api/journal (PUT) should throw BAD REQUEST if date not passed', async () => {
+    return await request(app.getHttpServer())
+      .put('/api/journal')
+      .set('jwtPayload', JSON.stringify(payload))
+      .send({
+        title: 'Bad day',
+      })
+      .expect(HttpStatus.BAD_REQUEST);
+  });
+
+  it('/api/journal (PUT) should throw BAD REQUEST if date is in the future', async () => {
+    const response = await request(app.getHttpServer())
+      .put('/api/journal')
+      .set('jwtPayload', JSON.stringify(payload))
+      .send({
+        title: 'Bad day',
+        description: 'It was bad...',
+        dateAdded: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
+      });
+    expect(response.text).toContain(
+      'Journal entry date cannot be in the future!',
+    );
+  });
+
+  it('/api/journal (PUT) should return INTERNAL SERVER ERROR if user not found', async () => {
+    const response = await request(app.getHttpServer())
+      .put('/api/journal')
+      .set('jwtPayload', JSON.stringify(payload))
+      .send({
+        dateAdded: new Date().toDateString(),
+        title: 'First day',
+        description: 'Boring D:',
+      });
+    expect(response.status).toEqual(HttpStatus.INTERNAL_SERVER_ERROR);
   });
 
   it('/api/journal (PUT) should return FORBIDDEN EXCEPTION user has 0 journal entries', async () => {
+    const user: User = {
+      bmiEntries: new Array<Bmientry>(),
+      journalEntries: new Array<JournalEntry>(),
+      username: username,
+      password: password,
+      isAdmin: 0,
+    };
+    await userRepo.save(user);
     return await request(app.getHttpServer())
       .put('/api/journal')
       .set('jwtPayload', JSON.stringify(payload))
-      .send({ date: new Date() })
+      .send({
+        dateAdded: new Date().toDateString(),
+        title: 'First day',
+        description: 'Boring D:',
+      })
       .expect(HttpStatus.FORBIDDEN);
+  });
+
+  it('/api/journal (PUT) should return BAD REQUEST if entry with sent date doesnt exist', async () => {
+    const user: User = {
+      bmiEntries: new Array<Bmientry>(),
+      journalEntries: new Array<JournalEntry>(),
+      username: username,
+      password: password,
+      isAdmin: 0,
+    };
+    await userRepo.save(user);
+    const journalEntry: JournalEntry = new JournalEntry();
+    journalEntry.dateAdded = new Date();
+    journalEntry.description = 'Boring...';
+    journalEntry.title = 'First day!';
+    user.journalEntries.push(journalEntry);
+    await userRepo.save(user);
+    return await request(app.getHttpServer())
+      .put('/api/journal')
+      .set('jwtPayload', JSON.stringify(payload))
+      .send({
+        dateAdded: new Date(
+          Date.now() - 1 * 24 * 60 * 60 * 1000,
+        ).toDateString(),
+        title: 'First day',
+        description: 'Boring D:',
+      })
+      .expect(HttpStatus.BAD_REQUEST);
   });
 
   afterEach(async () => {
