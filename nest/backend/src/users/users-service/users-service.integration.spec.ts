@@ -75,9 +75,12 @@ describe('UsersService (integration tests)', () => {
     });
 
     it('should return false when username not in database', async () => {
-      const user: User = await repository.findOneBy({ username: username });
-      if (user != null) {
-        await repository.delete({ username: username });
+      const usernameInDatabase = await repository.findOne({
+        where: { username: username },
+        relations: ['bmiEntries', 'journalEntries'],
+      });
+      if (usernameInDatabase != null) {
+        await repository.remove(usernameInDatabase);
       }
       const result =
         await provider.checkIfUsernameIsAlreadyInDatabase(username);
@@ -87,10 +90,12 @@ describe('UsersService (integration tests)', () => {
 
   describe('addUser', () => {
     it('should add user, hash the password using CryptoService and insert hashed password with salt into database', async () => {
-      const usernameInDatabase =
-        await provider.checkIfUsernameIsAlreadyInDatabase(username);
-      if (usernameInDatabase == true) {
-        await repository.delete({ username: username });
+      const usernameInDatabase = await repository.findOne({
+        where: { username: username },
+        relations: ['bmiEntries', 'journalEntries'],
+      });
+      if (usernameInDatabase != null) {
+        await repository.remove(usernameInDatabase);
       }
 
       const result: boolean = await provider.addUser(username, password);
@@ -105,9 +110,12 @@ describe('UsersService (integration tests)', () => {
 
   describe('getUser', () => {
     it('should return null if username not found in database', async () => {
-      const usernameInDatabase = await repository.findOneBy({ username });
+      const usernameInDatabase = await repository.findOne({
+        where: { username: username },
+        relations: ['bmiEntries', 'journalEntries'],
+      });
       if (usernameInDatabase != null) {
-        await repository.delete({ username: username });
+        await repository.remove(usernameInDatabase);
       }
       const result = await provider.getUser(username);
 
@@ -123,7 +131,7 @@ describe('UsersService (integration tests)', () => {
           isAdmin: 0,
         });
 
-        await repository.insert(user);
+        await repository.save(user);
       }
       const result = await provider.getUser(username);
 

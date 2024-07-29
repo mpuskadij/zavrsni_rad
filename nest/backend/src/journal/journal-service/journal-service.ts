@@ -62,7 +62,7 @@ export class JournalService {
     if (!user) {
       throw new InternalServerErrorException('User not found!');
     }
-    const noJournalEntries = !user.journalEntries.length;
+    const noJournalEntries = !user.journalEntries?.length;
     if (noJournalEntries) {
       throw new ForbiddenException("You don't have any journal entries!");
     }

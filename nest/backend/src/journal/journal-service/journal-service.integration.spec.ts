@@ -7,9 +7,10 @@ import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
 import { Bmientry } from '../../entities/bmientry/bmientry';
 import { ForbiddenException } from '@nestjs/common';
 
-describe('JournalService (unit tests)', () => {
+describe('JournalService (integration tests)', () => {
   let provider: JournalService;
   let repo: Repository<JournalEntry>;
+  let userRepo: Repository<User>;
   const password = 'ajskfnU7';
   const username = 'marin';
   const title = 'My first entry';
@@ -71,6 +72,16 @@ describe('JournalService (unit tests)', () => {
     repo = module.get<Repository<JournalEntry>>(
       getRepositoryToken(JournalEntry),
     );
+
+    userRepo = module.get<Repository<User>>(getRepositoryToken(User));
+
+    let userInDatabase = await userRepo.findOne({
+      where: { username: username },
+      relations: ['journalEntries', 'bmiEntries'],
+    });
+    if (userInDatabase) {
+      await userRepo.remove(userInDatabase);
+    }
   });
 
   it('should be defined', () => {
@@ -112,6 +123,30 @@ describe('JournalService (unit tests)', () => {
       expect(result.dateAdded.getDay()).toEqual(currentDate.getDay());
       expect(result.dateAdded.getFullYear()).toEqual(currentDate.getFullYear());
       expect(result.dateAdded.getMonth()).toEqual(currentDate.getMonth());
+    });
+  });
+
+  describe('getJournalEntries', () => {
+    it('should throw ForbiddenException if user has no journal entries', async () => {
+      await userRepo.save(user);
+      const userNoEntries = await userRepo.findOne({
+        where: { username: user.username },
+        relations: ['journalEntries'],
+      });
+      await expect(
+        provider.getJournalEntries(userNoEntries),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+    });
+
+    it('should return correct number of entries if entries exist', async () => {
+      await userRepo.save(userWithJournalEntry);
+      const userWithEntry = await userRepo.findOne({
+        where: { username: userWithJournalEntry.username },
+        relations: ['journalEntries'],
+      });
+      await expect(
+        provider.getJournalEntries(userWithEntry),
+      ).resolves.toHaveLength(1);
     });
   });
 });
