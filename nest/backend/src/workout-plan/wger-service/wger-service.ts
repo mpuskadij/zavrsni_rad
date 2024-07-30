@@ -9,13 +9,14 @@ import { plainToClass, plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class WgerService {
-  wgerExerciseApiUrl: string = 'https://wger.de/api/v2/exercise/';
+  private wgerExerciseApiUrl: string = 'https://wger.de/api/v2/exercise/';
+  private language: string = '&language=2';
 
   async getExerciseBySearchTerm(searchTerm: string): Promise<any> {
     if (!searchTerm) {
       throw new BadRequestException('Search term is empty!');
     }
-    const apiQuery: string = '?name=' + searchTerm;
+    const apiQuery: string = '?name=' + searchTerm + this.language;
     const wgerResponse: Response = await fetch(
       this.wgerExerciseApiUrl + apiQuery,
     );
