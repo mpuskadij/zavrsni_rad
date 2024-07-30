@@ -2,8 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { WgerService } from './wger-service';
 import { WgerExerciseResultDto } from '../../dtos/wger-exercise-result-dto/wger-exercise-result-dto';
 import { DtosModule } from '../../dtos/dtos.module';
+import { WgerExerciseDto } from '../../dtos/wger-variaton-dto/wger-variaton-dto';
 
-describe('WgerService', () => {
+describe('WgerService (unit tests)', () => {
   let provider: WgerService;
   const mockFetch = jest.fn();
   global.fetch = mockFetch as jest.Mock;
@@ -21,7 +22,7 @@ describe('WgerService', () => {
     const searchTerm = '2 Handed Kettlebell Swing';
 
     it('should throw BadRequestException if search term not provided', async () => {
-      await expect(provider.getExerciseBySearchTerm('')).rejects.toThrow(
+      await expect(provider.getExercisesBySearchTerm('')).rejects.toThrow(
         'Search term is empty!',
       );
     });
@@ -30,7 +31,7 @@ describe('WgerService', () => {
       const incorrectTerm = 'asdlksjdgj';
       mockFetch.mockResolvedValue({ ok: false });
       await expect(
-        provider.getExerciseBySearchTerm(incorrectTerm),
+        provider.getExercisesBySearchTerm(incorrectTerm),
       ).rejects.toThrow('Error while communnicating with external API!');
     });
 
@@ -47,7 +48,7 @@ describe('WgerService', () => {
         text: async () => JSON.stringify(wgerResponse),
       });
       await expect(
-        provider.getExerciseBySearchTerm(incorrectTerm),
+        provider.getExercisesBySearchTerm(incorrectTerm),
       ).rejects.toThrow('No exercises matching search term found!');
     });
 
@@ -62,9 +63,9 @@ describe('WgerService', () => {
         ok: true,
         text: async () => JSON.stringify(wgerResponse),
       });
-      const result = await provider.getExerciseBySearchTerm(searchTerm);
+      const result = await provider.getExercisesBySearchTerm(searchTerm);
 
-      expect(result).toBeInstanceOf(WgerExerciseResultDto);
+      expect(result).toBeInstanceOf(Array<WgerExerciseDto>);
     });
   });
 });

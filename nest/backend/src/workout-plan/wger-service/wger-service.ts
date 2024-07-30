@@ -6,13 +6,16 @@ import {
 import { WgerExerciseResultDto } from '../../dtos/wger-exercise-result-dto/wger-exercise-result-dto';
 import { response } from 'express';
 import { plainToClass, plainToInstance } from 'class-transformer';
+import { WgerExerciseDto } from '../../dtos/wger-variaton-dto/wger-variaton-dto';
 
 @Injectable()
 export class WgerService {
   private wgerExerciseApiUrl: string = 'https://wger.de/api/v2/exercise/';
   private language: string = '&language=2';
 
-  async getExerciseBySearchTerm(searchTerm: string): Promise<any> {
+  async getExercisesBySearchTerm(
+    searchTerm: string,
+  ): Promise<WgerExerciseDto[]> {
     if (!searchTerm) {
       throw new BadRequestException('Search term is empty!');
     }
@@ -32,6 +35,6 @@ export class WgerService {
     if (result.count == 0) {
       throw new BadRequestException('No exercises matching search term found!');
     }
-    return result;
+    return result.results;
   }
 }

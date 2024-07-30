@@ -6,6 +6,13 @@ import { JournalEntryDto } from './journal-entry-dto/journal-entry-dto';
 import { DeleteJournalEntryDto } from './journal-entry-dto/delete-journal-entry-dto';
 import { SearchExerciseDto } from './search-exercise-dto/search-exercise-dto';
 import { WgerExerciseResultDto } from './wger-exercise-result-dto/wger-exercise-result-dto';
+import { WgerCategoryDto } from './wger-category-dto/wger-category-dto';
+import { WgerEquipmentDto } from './wger-equipment-dto/wger-equipment-dto';
+import {
+  WgerExerciseDto,
+  WgerVariatonDto,
+} from './wger-variaton-dto/wger-variaton-dto';
+import { WgerMuscleDto } from './wger-muscle-dto/wger-muscle-dto';
 
 @Module({
   imports: [EntitiesModule],
@@ -15,6 +22,11 @@ import { WgerExerciseResultDto } from './wger-exercise-result-dto/wger-exercise-
     DeleteJournalEntryDto,
     SearchExerciseDto,
     WgerExerciseResultDto,
+    WgerCategoryDto,
+    WgerEquipmentDto,
+    WgerExerciseDto,
+    WgerMuscleDto,
+    WgerVariatonDto,
   ],
   providers: [
     BmiEntryDto,
@@ -23,6 +35,11 @@ import { WgerExerciseResultDto } from './wger-exercise-result-dto/wger-exercise-
     DeleteJournalEntryDto,
     SearchExerciseDto,
     WgerExerciseResultDto,
+    WgerCategoryDto,
+    WgerEquipmentDto,
+    WgerExerciseDto,
+    WgerMuscleDto,
+    WgerVariatonDto,
   ],
 })
 export class DtosModule {}
