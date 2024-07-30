@@ -1,4 +1,9 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
+import { JwtGuard } from '../../guards/jwt/jwt.guard';
 
-@Controller('exercise')
-export class ExerciseController {}
+@Controller('api/exercise')
+export class ExerciseController {
+  @Get()
+  @UseGuards(JwtGuard)
+  async getExercise(): Promise<any> {}
+}
