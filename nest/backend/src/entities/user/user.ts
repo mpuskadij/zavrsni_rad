@@ -16,10 +16,10 @@ export class User {
   @OneToMany(() => Bmientry, (bmiEntry) => bmiEntry.user, {
     cascade: ['insert', 'remove', 'update'],
   })
-  bmiEntries: Bmientry[];
+  bmiEntries?: Bmientry[];
 
   @OneToMany(() => JournalEntry, (journalEntry) => journalEntry.user, {
     cascade: ['insert', 'remove', 'update'],
   })
-  journalEntries: JournalEntry[];
+  journalEntries?: JournalEntry[];
 }

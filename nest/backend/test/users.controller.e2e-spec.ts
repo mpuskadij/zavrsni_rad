@@ -30,10 +30,6 @@ describe('UserController (e2e)', () => {
   const username = 'marin';
   const password = 'ajskfnU7';
   const userCredentials = { username: username, password: password };
-  let user: User = new User();
-  user.isAdmin = 0;
-  user.password = password;
-  user.username = username;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({

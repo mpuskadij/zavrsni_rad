@@ -26,7 +26,7 @@ describe('JournalService (unit tests)', () => {
     username: username,
   };
 
-  const mockJournalRepository = { create: jest.fn() };
+  const mockJournalRepository = { remove: jest.fn() };
   const journalEntry: JournalEntry = {
     dateAdded: new Date(),
     description: description,
@@ -119,7 +119,6 @@ describe('JournalService (unit tests)', () => {
 
   describe('createJournalEntry', () => {
     it('should create journal entry with parameters when no entries exist', async () => {
-      mockJournalRepository.create.mockReturnValue(journalEntry);
       const result = await provider.createJournalEntry(
         user,
         title,
@@ -131,14 +130,12 @@ describe('JournalService (unit tests)', () => {
     });
 
     it('should throw exception if journal entry with current date exists', async () => {
-      mockJournalRepository.create.mockReturnValue(journalEntry);
       await expect(
         provider.createJournalEntry(userWithJournalEntry, title, description),
       ).rejects.toBeInstanceOf(ForbiddenException);
     });
 
     it('should create new journal entry if journal entry with different date date exists', async () => {
-      mockJournalRepository.create.mockReturnValue(journalEntry);
       const result = await provider.createJournalEntry(
         userWithJournalEntryPreviousDay,
         title,
@@ -250,11 +247,16 @@ describe('JournalService (unit tests)', () => {
     });
 
     it('should remove entry from user and user should have number of entries == 0 when the only entry was removed', async () => {
-      await provider.deleteEntry(
+      mockJournalRepository.remove.mockResolvedValue(
+        userWithJournalEntry.journalEntries[0],
+      );
+      const result = await provider.deleteEntry(
         userWithJournalEntry.journalEntries,
         journalDTONow,
       );
-      expect(userWithJournalEntry.journalEntries).toHaveLength(0);
+
+      expect(result.dateAdded).toEqual(journalDTONow.dateAdded);
+      expect(result.username).toEqual(userWithJournalEntry.username);
     });
   });
 });

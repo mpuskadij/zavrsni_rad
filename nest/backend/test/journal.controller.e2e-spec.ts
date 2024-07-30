@@ -74,11 +74,9 @@ describe('Journal Controller (e2e)', () => {
   });
 
   it('/api/journal (POST) should create a new journal entry when user enters the first journal entry and return 201', async () => {
-    const user: User = new User();
-    user.isAdmin = 0;
-    user.password = password;
-    user.username = username;
-    await userRepo.save(user);
+    await request(app.getHttpServer())
+      .post('/api/users/register')
+      .send({ username: username, password: password });
     return await request(app.getHttpServer())
       .post('/api/journal')
       .set('jwtPayload', JSON.stringify(payload))
@@ -102,11 +100,9 @@ describe('Journal Controller (e2e)', () => {
   });
 
   it('/api/journal (POST) should  FORBIDDEN if user attempts to create 2 entries on same day', async () => {
-    const user: User = new User();
-    user.isAdmin = 0;
-    user.password = password;
-    user.username = username;
-    await userRepo.save(user);
+    await request(app.getHttpServer())
+      .post('/api/users/register')
+      .send({ username: username, password: password });
     await request(app.getHttpServer())
       .post('/api/journal')
       .set('jwtPayload', JSON.stringify(payload))
@@ -304,6 +300,96 @@ describe('Journal Controller (e2e)', () => {
         description: 'Boring D:',
       })
       .expect(HttpStatus.BAD_REQUEST);
+  });
+
+  describe('DELETE /api/journal', () => {
+    const title = 'First day!';
+    const description = 'Bad';
+    const dateAdded = new Date();
+    it('should return 400 BAD REQUEST if no body was sent', async () => {
+      const response = await request(app.getHttpServer())
+        .delete('/api/journal')
+        .set('jwtPayload', JSON.stringify(payload));
+      expect(response.status).toEqual(HttpStatus.BAD_REQUEST);
+    });
+
+    it('should return 400 BAD REQUEST if date in the future', async () => {
+      const response = await request(app.getHttpServer())
+        .delete('/api/journal')
+        .set('jwtPayload', JSON.stringify(payload))
+        .send({
+          dateAdded: new Date(
+            Date.now() + 1 * 24 * 60 * 60 * 1000,
+          ).toDateString(),
+        });
+      expect(response.status).toEqual(HttpStatus.BAD_REQUEST);
+    });
+
+    it('should return 500 INTERNAL SERVER ERROR if user not found', async () => {
+      const response = await request(app.getHttpServer())
+        .delete('/api/journal')
+        .set('jwtPayload', JSON.stringify(payload))
+        .send({
+          dateAdded: new Date().toDateString(),
+        });
+      expect(response.status).toEqual(HttpStatus.INTERNAL_SERVER_ERROR);
+    });
+
+    it('should return 403 FORBIDDEN if user has 0 entries', async () => {
+      const register = await request(app.getHttpServer())
+        .post('/api/users/register')
+        .send({ username: username, password: password });
+      expect(register.status).toEqual(HttpStatus.CREATED);
+      const response = await request(app.getHttpServer())
+        .delete('/api/journal')
+        .set('jwtPayload', JSON.stringify(payload))
+        .send({
+          dateAdded: new Date().toDateString(),
+        });
+      expect(response.status).toEqual(HttpStatus.FORBIDDEN);
+    });
+
+    it('should return 400 BAD REQUEST if entry exists, but wrong date was sent', async () => {
+      const register = await request(app.getHttpServer())
+        .post('/api/users/register')
+        .send({ username: username, password: password });
+      expect(register.status).toEqual(HttpStatus.CREATED);
+      await request(app.getHttpServer())
+        .post('/api/journal')
+        .set('jwtPayload', JSON.stringify(payload))
+        .send({ title: title, description: description });
+      const response = await request(app.getHttpServer())
+        .delete('/api/journal')
+        .send({
+          dateAdded: new Date(
+            Date.now() - 1 * 24 * 60 * 60 * 1000,
+          ).toDateString(),
+        });
+      expect(response.status).toEqual(HttpStatus.BAD_REQUEST);
+    });
+
+    it('should return 204 NO CONTENT if entry exists and correct date was sent', async () => {
+      const register = await request(app.getHttpServer())
+        .post('/api/users/register')
+        .send({ username: username, password: password });
+
+      expect(register.status).toEqual(HttpStatus.CREATED);
+
+      const createEntry = await request(app.getHttpServer())
+        .post('/api/journal')
+        .set('jwtPayload', JSON.stringify(payload))
+        .send({ title: title, description: description });
+
+      expect(createEntry.status).toEqual(HttpStatus.CREATED);
+
+      const response = await request(app.getHttpServer())
+        .delete('/api/journal')
+        .set('jwtPayload', JSON.stringify(payload))
+        .send({
+          dateAdded: new Date().toDateString(),
+        });
+      expect(response.status).toEqual(HttpStatus.NO_CONTENT);
+    });
   });
 
   afterEach(async () => {

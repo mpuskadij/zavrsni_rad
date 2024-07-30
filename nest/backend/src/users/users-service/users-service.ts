@@ -13,6 +13,31 @@ import { JournalEntry } from 'src/entities/journal-entry/journal-entry';
 
 @Injectable()
 export class UsersService {
+  async unassignJournalEntry(
+    user: User,
+    journalEntryToRemove: JournalEntry,
+  ): Promise<void> {
+    if (!user) {
+      throw new InternalServerErrorException('Invalid user passed!');
+    }
+    if (!user.journalEntries?.length) {
+      throw new InternalServerErrorException(
+        "You don't have any journal entries!",
+      );
+    }
+    const indexOfEntryToDelete =
+      user.journalEntries.indexOf(journalEntryToRemove);
+    if (indexOfEntryToDelete === -1) {
+      throw new InternalServerErrorException(
+        'Journal entry to delete not found!',
+      );
+    }
+    user.journalEntries.splice(indexOfEntryToDelete);
+
+    await this.saveUserData(user);
+
+    return;
+  }
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
     private cryptoService: CryptoService,
@@ -52,10 +77,11 @@ export class UsersService {
     const hashedPasswordData: HashedPasswordData =
       await this.cryptoService.hashPassword(password);
 
-    const newUser = new User();
-    newUser.isAdmin = 0;
-    newUser.password = hashedPasswordData.HashedPassword;
-    newUser.username = username;
+    const newUser: User = {
+      isAdmin: 0,
+      password: hashedPasswordData.HashedPassword,
+      username: username,
+    };
 
     await this.saveUserData(newUser);
 

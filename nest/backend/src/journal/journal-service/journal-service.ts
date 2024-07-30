@@ -9,26 +9,23 @@ import { User } from '../../entities/user/user';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JournalEntryDto } from '../../dtos/journal-entry-dto/journal-entry-dto';
-import { title } from 'node:process';
+import { DeleteJournalEntryDto } from '../../dtos/journal-entry-dto/delete-journal-entry-dto';
 
 @Injectable()
 export class JournalService {
   async deleteEntry(
     journalEntriesOfUser: JournalEntry[],
-    journalEntryUserWantsToDelete: JournalEntryDto,
-  ): Promise<void> {
+    journalEntryUserWantsToDelete: DeleteJournalEntryDto,
+  ): Promise<JournalEntry> {
     this.checkDoesUserHaveAtLeastOneEntry(journalEntriesOfUser);
 
     const foundJournalEntry = await this.findJournalEntry(
       journalEntriesOfUser,
       journalEntryUserWantsToDelete,
     );
+    await this.journalEntryRepository.remove(foundJournalEntry);
 
-    journalEntriesOfUser.splice(
-      journalEntriesOfUser.indexOf(foundJournalEntry),
-    );
-
-    return;
+    return foundJournalEntry;
   }
   async updateEntry(
     allJournalEntries: JournalEntry[],
@@ -60,7 +57,7 @@ export class JournalService {
 
   private async findJournalEntry(
     allJournalEntries: JournalEntry[],
-    journalEntryToUpdate: JournalEntryDto,
+    journalEntryToUpdate: DeleteJournalEntryDto,
   ) {
     const foundJournalEntry = await this.compareDates(
       allJournalEntries,
@@ -112,7 +109,6 @@ export class JournalService {
     journalEntry.dateAdded = new Date();
     journalEntry.description = description;
     journalEntry.title = title;
-    journalEntry.username = user.username;
 
     return journalEntry;
   }

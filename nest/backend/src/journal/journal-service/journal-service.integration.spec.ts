@@ -14,6 +14,7 @@ import { AuthenticationService } from '../../authentication/authentication-servi
 import { CrpytoModule } from '../../crpyto/crpyto.module';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { DeleteJournalEntryDto } from '../../dtos/journal-entry-dto/delete-journal-entry-dto';
 
 describe('JournalService (integration tests)', () => {
   let provider: JournalService;
@@ -272,24 +273,26 @@ describe('JournalService (integration tests)', () => {
       ).rejects.toBeInstanceOf(BadRequestException);
     });
 
-    it('should create delete entry if correct date sent', async () => {
+    it('should return deleted entry if correct date sent', async () => {
       await usersService.addUser(username, password);
 
       const userInDatabase = await usersService.getUser(username);
 
       const entry = await provider.createJournalEntry(user, title, description);
 
-      const userSentData: JournalEntryDto = {
+      const userSentData: DeleteJournalEntryDto = {
         dateAdded: entry.dateAdded,
-        description: description,
-        title: title,
       };
 
       await usersService.assignJournalEntry(userInDatabase, entry);
 
-      await provider.deleteEntry(userInDatabase.journalEntries, userSentData);
+      const result = await provider.deleteEntry(
+        userInDatabase.journalEntries,
+        userSentData,
+      );
 
-      expect(userInDatabase.journalEntries).toHaveLength(0);
+      expect(result.dateAdded).toEqual(entry.dateAdded);
+      expect(result.username).toEqual(entry.username);
     });
   });
 });

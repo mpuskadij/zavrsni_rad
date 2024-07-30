@@ -21,6 +21,7 @@ import { JournalEntry } from '../../entities/journal-entry/journal-entry';
 import { JournalService } from '../journal-service/journal-service';
 import { plainToInstance } from 'class-transformer';
 import { JournalEntryDto } from '../../dtos/journal-entry-dto/journal-entry-dto';
+import { DeleteJournalEntryDto } from '../../dtos/journal-entry-dto/delete-journal-entry-dto';
 
 @Controller('api/journal')
 export class JournalController {
@@ -99,7 +100,7 @@ export class JournalController {
   async deleteEntry(
     @Payload('username') username: string,
     @Body(new ValidationPipe({ transform: true }))
-    journalEntryToDelete: JournalEntryDto,
+    journalEntryToDelete: DeleteJournalEntryDto,
   ): Promise<any> {
     const user = await this.usersService.getUser(username);
     if (!user) {
@@ -107,11 +108,11 @@ export class JournalController {
     }
     const journalEntries =
       await this.journalEntryService.getJournalEntries(user);
-    await this.journalEntryService.deleteEntry(
+    const deletedJournalEntry = await this.journalEntryService.deleteEntry(
       journalEntries,
       journalEntryToDelete,
     );
-    await this.usersService.saveUserData(user);
+    await this.usersService.unassignJournalEntry(user, deletedJournalEntry);
     return;
   }
 }

@@ -316,4 +316,66 @@ describe('UsersService (unit tests)', () => {
       expect(user.journalEntries).toHaveLength(1);
     });
   });
+
+  describe('unassignJournalEntry', () => {
+    const userWithNoJournalEntries: User = {
+      password: password,
+      username: username,
+      isAdmin: 0,
+      bmiEntries: [],
+      journalEntries: [],
+    };
+    const userWithEntry: User = {
+      isAdmin: 0,
+      password: password,
+      username: username,
+      bmiEntries: [],
+      journalEntries: [],
+    };
+    const journalEntry: JournalEntry = {
+      dateAdded: new Date(),
+      description: 'sda',
+      title: 'asda',
+      user: userWithEntry,
+      username: username,
+    };
+    userWithEntry.journalEntries.push(journalEntry);
+
+    it('should throw InternalServerException if user received is null', async () => {
+      await expect(
+        provider.unassignJournalEntry(userWithNoJournalEntries, journalEntry),
+      ).rejects.toBeInstanceOf(InternalServerErrorException);
+    });
+
+    it('should throw InternalServerException if user has 0 journal entries', async () => {
+      await expect(
+        provider.unassignJournalEntry(userWithNoJournalEntries, journalEntry),
+      ).rejects.toThrow("You don't have any journal entries!");
+    });
+
+    it('should throw InternalServerException if entry passed doesnt exist in the array', async () => {
+      const wrongJournalEntry: JournalEntry = {
+        dateAdded: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+        description: 'Fun',
+        title: 'Boring',
+        username: userWithEntry.username,
+        user: userWithEntry,
+      };
+      await expect(
+        provider.unassignJournalEntry(userWithEntry, wrongJournalEntry),
+      ).rejects.toThrow('Journal entry to delete not found!');
+    });
+
+    it('should remove journal entry from users array of journal entries if entry found', async () => {
+      const mockSave = jest
+        .spyOn(provider, 'saveUserData')
+        .mockResolvedValue(true);
+
+      await provider.unassignJournalEntry(userWithEntry, journalEntry);
+
+      expect(userWithEntry.journalEntries).toHaveLength(0);
+
+      expect(mockSave).toHaveBeenCalled();
+    });
+  });
 });

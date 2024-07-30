@@ -34,6 +34,7 @@ describe('BmiController (e2e)', () => {
   let userRepo: Repository<User>;
   const username = 'marin';
   const password = 'ajskfnU7';
+  const payload: JwtPayload = { username: username, isAdmin: 0 };
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -78,10 +79,7 @@ describe('BmiController (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     userRepo = moduleFixture.get<Repository<User>>(getRepositoryToken(User));
-    await app.init();
-  });
 
-  it('api/bmi (POST) should return 201 when user logged in', async () => {
     if ((await userRepo.existsBy({ username })) == true) {
       const user = await userRepo.findOne({
         where: { username: username },
@@ -89,7 +87,10 @@ describe('BmiController (e2e)', () => {
       });
       await userRepo.remove(user);
     }
-    const payload: JwtPayload = { username: username, isAdmin: 0 };
+    await app.init();
+  });
+
+  it('api/bmi (POST) should return 201 when user logged in', async () => {
     await request(app.getHttpServer())
       .post('/api/users/register')
       .send({ username: username, password: password });
@@ -101,14 +102,6 @@ describe('BmiController (e2e)', () => {
   });
 
   it('/api/bmi (GET) should return 406 FORBIDDEN when user doesnt have at least 1 bmi entry', async () => {
-    if ((await userRepo.existsBy({ username })) == true) {
-      const user = await userRepo.findOne({
-        where: { username: username },
-        relations: ['bmiEntries'],
-      });
-      await userRepo.remove(user);
-    }
-    const payload: JwtPayload = { isAdmin: 0, username: username };
     await request(app.getHttpServer())
       .post('/api/users/register')
       .send({ username: username, password: password });
@@ -119,14 +112,6 @@ describe('BmiController (e2e)', () => {
   });
 
   it('/api/bmi (GET) should return 200 OK when user has at least 1 bmi entry', async () => {
-    if ((await userRepo.existsBy({ username })) == true) {
-      const user = await userRepo.findOne({
-        where: { username: username },
-        relations: ['bmiEntries', 'journalEntries'],
-      });
-      await userRepo.remove(user);
-    }
-    const payload: JwtPayload = { username: username, isAdmin: 0 };
     const registrationREsponse = await request(app.getHttpServer())
       .post('/api/users/register')
       .send({ username: username, password: password });
