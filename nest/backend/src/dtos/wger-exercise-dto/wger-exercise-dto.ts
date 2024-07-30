@@ -21,12 +21,16 @@ export class WgerExerciseDto {
   @Exclude()
   created: string;
 
+  @Exclude()
   category: number | WgerCategoryDto;
 
+  @Exclude()
   muscles: number[] | WgerMuscleDto[];
 
+  @Exclude()
   muscles_secondary: number[] | WgerMuscleDto[];
 
+  @Exclude()
   equipment: number[] | WgerEquipmentDto[];
 
   @Exclude()
@@ -38,6 +42,7 @@ export class WgerExerciseDto {
   @Exclude()
   license_author: string;
 
+  @Exclude()
   variations: number[] | WgerVariatonDto[];
 
   @Exclude()
