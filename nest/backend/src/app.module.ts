@@ -18,6 +18,7 @@ import { DecoratorsModule } from './decorators/decorators.module';
 import { DtosModule } from './dtos/dtos.module';
 import { JournalEntry } from './entities/journal-entry/journal-entry';
 import { JournalModule } from './journal/journal.module';
+import { WorkoutPlanModule } from './workout-plan/workout-plan.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { JournalModule } from './journal/journal.module';
     DecoratorsModule,
     DtosModule,
     JournalModule,
+    WorkoutPlanModule,
   ],
   controllers: [AppController],
   providers: [AppService, AuthenticationService],
