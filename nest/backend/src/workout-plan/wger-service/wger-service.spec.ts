@@ -24,11 +24,11 @@ describe('WgerService (unit tests)', () => {
     provider = module.get<WgerService>(WgerService);
   });
 
-  describe('getExerciseBySearchTerm', () => {
+  describe('getExercises', () => {
     const searchTerm = '2 Handed Kettlebell Swing';
 
     it('should throw BadRequestException if page is not a number', async () => {
-      await expect(provider.getExercisesBySearchTerm(null)).rejects.toThrow(
+      await expect(provider.getExercises(null)).rejects.toThrow(
         'Page must be a number',
       );
     });
@@ -36,9 +36,9 @@ describe('WgerService (unit tests)', () => {
     it('should throw ServiceUnavailable if Wger returns status different than 200', async () => {
       const incorrectTerm = 'asdlksjdgj';
       mockFetch.mockResolvedValue({ ok: false });
-      await expect(
-        provider.getExercisesBySearchTerm(1, incorrectTerm),
-      ).rejects.toThrow('Error while communnicating with external API!');
+      await expect(provider.getExercises(1, incorrectTerm)).rejects.toThrow(
+        'Error while communnicating with external API!',
+      );
     });
 
     it('should throw BadRequestException if Wger returns 0 exercises', async () => {
@@ -53,9 +53,9 @@ describe('WgerService (unit tests)', () => {
         ok: true,
         text: async () => JSON.stringify(wgerResponse),
       });
-      await expect(
-        provider.getExercisesBySearchTerm(1, incorrectTerm),
-      ).rejects.toThrow(BadRequestException);
+      await expect(provider.getExercises(1, incorrectTerm)).rejects.toThrow(
+        BadRequestException,
+      );
     });
 
     it('should return matching exercises if search term not empty and exercises are found', async () => {
@@ -69,7 +69,7 @@ describe('WgerService (unit tests)', () => {
         ok: true,
         text: async () => JSON.stringify(wgerResponse),
       });
-      const result = await provider.getExercisesBySearchTerm(1, searchTerm);
+      const result = await provider.getExercises(1, searchTerm);
 
       expect(result).toBeInstanceOf(Array<WgerExerciseDto>);
     });

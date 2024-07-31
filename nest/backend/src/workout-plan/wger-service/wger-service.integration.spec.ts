@@ -18,25 +18,25 @@ describe('WgerService (integration tests)', () => {
     provider = module.get<WgerService>(WgerService);
   });
 
-  describe('getExercisesBySearchTerm', () => {
+  describe('getExercises', () => {
     const searchTerm = '2 Handed Kettlebell Swing';
 
     it('should throw BadRequestException if Wger returns 0 exercises', async () => {
       const incorrectTerm = 'agodiljsidbjweiosjvksadjvka';
-      await expect(
-        provider.getExercisesBySearchTerm(1, incorrectTerm),
-      ).rejects.toThrow(BadRequestException);
+      await expect(provider.getExercises(1, incorrectTerm)).rejects.toThrow(
+        BadRequestException,
+      );
     });
 
     it('should return matching exercises if search term not empty and exercises are found', async () => {
-      const result = await provider.getExercisesBySearchTerm(1, searchTerm);
+      const result = await provider.getExercises(1, searchTerm);
 
       expect(result).toBeInstanceOf(Array<WgerExerciseDto>);
     });
 
     it('should return different exercises based on page ', async () => {
-      const resultFirstPage = await provider.getExercisesBySearchTerm(1);
-      const resultSecondPage = await provider.getExercisesBySearchTerm(2);
+      const resultFirstPage = await provider.getExercises(1);
+      const resultSecondPage = await provider.getExercises(2);
 
       expect(resultFirstPage).not.toEqual(resultSecondPage);
     });

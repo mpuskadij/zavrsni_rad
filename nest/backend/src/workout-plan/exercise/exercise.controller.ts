@@ -21,7 +21,7 @@ export class ExerciseController {
     searchExercise: SearchExerciseDto,
   ): Promise<any> {
     const exercisesFromExternalApi: WgerExerciseDto[] =
-      await this.wgerService.getExercisesBySearchTerm(
+      await this.wgerService.getExercises(
         searchExercise.page,
         searchExercise.searchTerm,
         searchExercise.category,

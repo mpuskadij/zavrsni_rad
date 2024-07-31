@@ -38,7 +38,7 @@ export class WgerService {
   private language: string = '&language=2';
   private wgerCategoryApiUrl = this.wgerUrl + '/exercisecategory/';
 
-  async getExercisesBySearchTerm(
+  async getExercises(
     page: number,
     searchTerm: string = null,
     category: string = null,
