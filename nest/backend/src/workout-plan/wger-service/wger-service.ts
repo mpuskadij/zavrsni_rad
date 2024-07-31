@@ -9,9 +9,34 @@ import { plainToClass, plainToInstance } from 'class-transformer';
 import { WgerExerciseDto } from '../../dtos/wger-variaton-dto/wger-variaton-dto';
 import { WgerCategoryDto } from '../../dtos/wger-category-dto/wger-category-dto';
 import { WgerCategoryResponseDto } from '../../dtos/wger-category-response-dto/wger-category-response-dto';
+import { WgerEquipmentDto } from '../../dtos/wger-equipment-dto/wger-equipment-dto';
+import { WgerEquipmentResponseDto } from '../../dtos/wger-equipment-response-dto/wger-equipment-response-dto';
 
 @Injectable()
 export class WgerService {
+  async getEquipment(
+    equipmentName: string = null,
+  ): Promise<WgerEquipmentDto[]> {
+    let url: string = this.wgerEquipmentApiUrl;
+    if (equipmentName) {
+      url += '?name=' + equipmentName;
+    }
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new ServiceUnavailableException(
+        'Error while communicating with external API!',
+      );
+    }
+    const responseText = JSON.parse(await response.text());
+    const equipmentResponse = plainToInstance(
+      WgerEquipmentResponseDto,
+      responseText,
+    );
+    if (equipmentResponse.count == 0) {
+      throw new BadRequestException('Equipment with requested name not found!');
+    }
+    return equipmentResponse.results;
+  }
   async getCategories(categoryName: string = null): Promise<WgerCategoryDto[]> {
     let url: string = this.wgerCategoryApiUrl;
     if (categoryName) {
@@ -37,6 +62,7 @@ export class WgerService {
   private wgerExerciseApiUrl: string = this.wgerUrl + '/exercise/';
   private language: string = '&language=2';
   private wgerCategoryApiUrl = this.wgerUrl + '/exercisecategory/';
+  private wgerEquipmentApiUrl = this.wgerUrl + '/equipment/';
 
   async getExercises(
     page: number,

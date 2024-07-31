@@ -9,6 +9,7 @@ import {
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { WgerCategoryDto } from 'src/dtos/wger-category-dto/wger-category-dto';
+import { WgerEquipmentDto } from 'src/dtos/wger-equipment-dto/wger-equipment-dto';
 
 describe('WgerService (unit tests)', () => {
   let provider: WgerService;
@@ -112,6 +113,48 @@ describe('WgerService (unit tests)', () => {
         text: async () => JSON.stringify(wgerResponseEmpty),
       });
       await expect(provider.getCategories('asd')).rejects.toThrow(
+        BadRequestException,
+      );
+    });
+  });
+
+  describe('getEquipment', () => {
+    it('should throw ServiceUnavailable if wger doesnt return 200 OK response', async () => {
+      mockFetch.mockResolvedValue({ ok: false });
+      await expect(provider.getEquipment()).rejects.toThrow(
+        ServiceUnavailableException,
+      );
+    });
+
+    it('should return list of all equipment if no parameter passed', async () => {
+      const equipment: WgerEquipmentDto = { id: 1, name: 'Kettlebell' };
+      const wgerResponse: WgerCategoryResponseDto = {
+        count: 1,
+        next: null,
+        previous: null,
+        results: [equipment],
+      };
+      mockFetch.mockResolvedValue({
+        ok: true,
+        text: async () => JSON.stringify(wgerResponse),
+      });
+      const result = await provider.getEquipment();
+
+      expect(result).toHaveLength(1);
+    });
+
+    it('should throw BadRequestException when equipment name passed, but not found ', async () => {
+      const wgerResponse: WgerCategoryResponseDto = {
+        count: 0,
+        next: null,
+        previous: null,
+        results: [],
+      };
+      mockFetch.mockResolvedValue({
+        ok: true,
+        text: async () => JSON.stringify(wgerResponse),
+      });
+      await expect(provider.getEquipment('k')).rejects.toThrow(
         BadRequestException,
       );
     });

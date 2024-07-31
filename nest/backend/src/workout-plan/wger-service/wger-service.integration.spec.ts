@@ -3,7 +3,6 @@ import { WgerService } from './wger-service';
 import { WgerExerciseResultDto } from '../../dtos/wger-exercise-result-dto/wger-exercise-result-dto';
 import { DtosModule } from '../../dtos/dtos.module';
 import { WgerExerciseDto } from '../../dtos/wger-variaton-dto/wger-variaton-dto';
-import { rejects } from 'assert';
 import { BadRequestException } from '@nestjs/common';
 
 describe('WgerService (integration tests)', () => {
@@ -57,6 +56,25 @@ describe('WgerService (integration tests)', () => {
       await expect(provider.getCategories('sba')).rejects.toThrow(
         BadRequestException,
       );
+    });
+  });
+
+  describe('getEquipment', () => {
+    it('should return all equipment if no parameter passed', async () => {
+      const result = await provider.getEquipment();
+
+      expect(result).toHaveLength(10);
+    });
+
+    it('throw BadRequestException if equipment with specific name not found', async () => {
+      await expect(provider.getEquipment('k')).rejects.toThrow(
+        BadRequestException,
+      );
+    });
+
+    it('return specific equipment if equipment name found in Wger API', async () => {
+      const result = await provider.getEquipment('Bench');
+      expect(result).toHaveLength(1);
     });
   });
 });
