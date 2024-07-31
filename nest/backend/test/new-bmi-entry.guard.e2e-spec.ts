@@ -15,6 +15,7 @@ import { GoogleRecaptchaGuard } from '@nestlab/google-recaptcha';
 import { BmiService } from '../src/bmi/bmi-service/bmi-service';
 import { JournalEntry } from '../src/entities/journal-entry/journal-entry';
 import { WorkoutPlan } from '../src/entities/workout-plan/workout-plan';
+import { Exercise } from '../src/entities/exercise/exercise';
 
 describe('NewBmiEntryGuard (e2e)', () => {
   let app: INestApplication;
@@ -30,7 +31,7 @@ describe('NewBmiEntryGuard (e2e)', () => {
           type: 'sqlite',
           database: './database/test.sqlite',
           synchronize: true,
-          entities: [User, Bmientry, JournalEntry, WorkoutPlan],
+          entities: [User, Bmientry, JournalEntry, WorkoutPlan, Exercise],
         }),
       ],
       controllers: [BmiController],

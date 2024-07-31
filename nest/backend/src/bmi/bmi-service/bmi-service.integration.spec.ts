@@ -27,6 +27,7 @@ import {
 import { AppModule } from '../../app.module';
 import { JournalEntry } from '../../entities/journal-entry/journal-entry';
 import { WorkoutPlan } from '../../entities/workout-plan/workout-plan';
+import { Exercise } from '../../entities/exercise/exercise';
 
 describe('BmiService (integration tests)', () => {
   let provider: BmiService;
@@ -43,9 +44,15 @@ describe('BmiService (integration tests)', () => {
           database: './database/test.sqlite',
           synchronize: true,
           autoLoadEntities: true,
-          entities: [User, Bmientry, JournalEntry, WorkoutPlan],
+          entities: [User, Bmientry, JournalEntry, WorkoutPlan, Exercise],
         }),
-        TypeOrmModule.forFeature([User, Bmientry, JournalEntry, WorkoutPlan]),
+        TypeOrmModule.forFeature([
+          User,
+          Bmientry,
+          JournalEntry,
+          WorkoutPlan,
+          Exercise,
+        ]),
       ],
       providers: [
         BmiService,

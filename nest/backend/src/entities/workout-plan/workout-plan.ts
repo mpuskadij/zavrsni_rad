@@ -3,10 +3,13 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../user/user';
+import { Exercise } from '../exercise/exercise';
 
 @Entity()
 export class WorkoutPlan {
@@ -25,4 +28,8 @@ export class WorkoutPlan {
   @ManyToOne(() => User, (user) => user.workoutPlans, { onDelete: 'CASCADE' })
   @JoinColumn({ referencedColumnName: 'username', name: 'username' })
   user: User;
+
+  @ManyToMany(() => Exercise)
+  @JoinTable()
+  exercises: Exercise[];
 }

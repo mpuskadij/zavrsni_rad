@@ -22,6 +22,7 @@ import { AuthenticationService } from '../src/authentication/authentication-serv
 import { Bmientry } from '../src/entities/bmientry/bmientry';
 import { JournalEntry } from '../src/entities/journal-entry/journal-entry';
 import { WorkoutPlan } from '../src/entities/workout-plan/workout-plan';
+import { Exercise } from '../src/entities/exercise/exercise';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
@@ -43,7 +44,7 @@ describe('UserController (e2e)', () => {
           database: './database/test.sqlite',
           synchronize: true,
           autoLoadEntities: true,
-          entities: [User, Bmientry, JournalEntry, WorkoutPlan],
+          entities: [User, Bmientry, JournalEntry, WorkoutPlan, Exercise],
         }),
         AuthenticationModule,
         JwtModule.register({ secret: process.env.JWT_SECRET }),
