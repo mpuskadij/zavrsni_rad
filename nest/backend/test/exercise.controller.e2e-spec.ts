@@ -100,12 +100,89 @@ describe('Exercise controller (e2e)', () => {
       expect(responseFirstPage.body).not.toEqual(responseSecondPage.body);
     });
 
-    it('should return 200 OK with exercises that target abs on first page', async () => {
+    it('should return 200 OK with exercises that target abs', async () => {
       const responseFirstPage = await request(app.getHttpServer())
         .get(path)
         .set('jwtPayload', JSON.stringify(payload))
         .query({ page: 1, category: 'Abs' });
       expect(responseFirstPage.status).toBe(HttpStatus.OK);
+    });
+
+    it('should return 200 OK with exercises that match equipment', async () => {
+      const responseFirstPage = await request(app.getHttpServer())
+        .get(path)
+        .set('jwtPayload', JSON.stringify(payload))
+        .query({ page: 1, equipment: 'Bench' });
+      expect(responseFirstPage.status).toBe(HttpStatus.OK);
+    });
+
+    it('should return 200 OK with different exercises that match equipment, but with different pages', async () => {
+      const responseFirstPage = await request(app.getHttpServer())
+        .get(path)
+        .set('jwtPayload', JSON.stringify(payload))
+        .query({ page: 1, equipment: 'Bench' });
+
+      const responseSecondPage = await request(app.getHttpServer())
+        .get(path)
+        .set('jwtPayload', JSON.stringify(payload))
+        .query({ page: 2, equipment: 'Bench' });
+
+      expect(responseFirstPage.status).toBe(HttpStatus.OK);
+      expect(responseSecondPage.status).toBe(HttpStatus.OK);
+      expect(responseFirstPage.body).not.toEqual(responseSecondPage.body);
+    });
+
+    it('should return 200 OK with exercises that match search term', async () => {
+      const responseFirstPage = await request(app.getHttpServer())
+        .get(path)
+        .set('jwtPayload', JSON.stringify(payload))
+        .query({ page: 1, searchTerm: 'Bench Press' });
+      expect(responseFirstPage.status).toBe(HttpStatus.OK);
+    });
+
+    it('should return 200 OK with exercises that match search term, category and equipment ', async () => {
+      const responseFirstPage = await request(app.getHttpServer())
+        .get(path)
+        .set('jwtPayload', JSON.stringify(payload))
+        .query({
+          page: 1,
+          searchTerm: 'Bench Press',
+          category: 'Chest',
+          equipment: 'Bench',
+        });
+      expect(responseFirstPage.status).toBe(HttpStatus.OK);
+    });
+
+    it('should return 200 OK with different exercises that match equipment, but have different pages', async () => {
+      const responseFirstPage = await request(app.getHttpServer())
+        .get(path)
+        .set('jwtPayload', JSON.stringify(payload))
+        .query({ page: 1, equipment: 'Bench' });
+
+      const responseSecondPage = await request(app.getHttpServer())
+        .get(path)
+        .set('jwtPayload', JSON.stringify(payload))
+        .query({ page: 2, equipment: 'Bench' });
+
+      expect(responseFirstPage.status).toBe(HttpStatus.OK);
+      expect(responseSecondPage.status).toBe(HttpStatus.OK);
+      expect(responseFirstPage.body).not.toEqual(responseSecondPage.body);
+    });
+
+    it('should return 200 OK with different exercises that match category, but have different pages', async () => {
+      const responseFirstPage = await request(app.getHttpServer())
+        .get(path)
+        .set('jwtPayload', JSON.stringify(payload))
+        .query({ page: 1, category: 'Chest' });
+
+      const responseSecondPage = await request(app.getHttpServer())
+        .get(path)
+        .set('jwtPayload', JSON.stringify(payload))
+        .query({ page: 2, category: 'Chest' });
+
+      expect(responseFirstPage.status).toBe(HttpStatus.OK);
+      expect(responseSecondPage.status).toBe(HttpStatus.OK);
+      expect(responseFirstPage.body).not.toEqual(responseSecondPage.body);
     });
   });
 
