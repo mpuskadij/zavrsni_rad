@@ -28,14 +28,8 @@ describe('WgerService (unit tests)', () => {
     const searchTerm = '2 Handed Kettlebell Swing';
 
     it('should throw BadRequestException if page is not a number', async () => {
-      await expect(provider.getExercisesBySearchTerm(null, '')).rejects.toThrow(
+      await expect(provider.getExercisesBySearchTerm(null)).rejects.toThrow(
         'Page must be a number',
-      );
-    });
-
-    it('should throw BadRequestException if search term,category and equipment not provided', async () => {
-      await expect(provider.getExercisesBySearchTerm(1, '')).rejects.toThrow(
-        'Server requires search term and/or category and/or equipment',
       );
     });
 
@@ -61,13 +55,13 @@ describe('WgerService (unit tests)', () => {
       });
       await expect(
         provider.getExercisesBySearchTerm(1, incorrectTerm),
-      ).rejects.toThrow('No exercises matching search term found!');
+      ).rejects.toThrow(BadRequestException);
     });
 
     it('should return matching exercises if search term not empty and exercises are found', async () => {
       const wgerResponse: WgerExerciseResultDto = {
         count: 1,
-        results: [],
+        results: [null],
         previous: null,
         next: null,
       };

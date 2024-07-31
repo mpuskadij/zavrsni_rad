@@ -46,13 +46,66 @@ describe('Exercise controller (e2e)', () => {
       expect(response.status).toBe(HttpStatus.BAD_REQUEST);
     });
 
-    it('should return 200 OK if correct query passed', async () => {
+    it('should return 400 BAD REQUEST if page is 0', async () => {
       const response = await request(app.getHttpServer())
         .get(path)
         .set('jwtPayload', JSON.stringify(payload))
-        .query({ searchTerm: '2 Handed Kettlebell Swing' });
+        .query({ page: 0 });
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+    });
+
+    it('should return 400 BAD REQUEST if page is not a number', async () => {
+      const response = await request(app.getHttpServer())
+        .get(path)
+        .set('jwtPayload', JSON.stringify(payload))
+        .query({ page: 'sdas' });
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+    });
+
+    it('should return 400 BAD REQUEST if page is decimal', async () => {
+      const response = await request(app.getHttpServer())
+        .get(path)
+        .set('jwtPayload', JSON.stringify(payload))
+        .query({ page: 1.2 });
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+    });
+
+    it('should return 400 BAD REQUEST if page too high', async () => {
+      const response = await request(app.getHttpServer())
+        .get(path)
+        .set('jwtPayload', JSON.stringify(payload))
+        .query({ page: 999 });
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+    });
+
+    it('should return 200 OK if correct page sent', async () => {
+      const response = await request(app.getHttpServer())
+        .get(path)
+        .set('jwtPayload', JSON.stringify(payload))
+        .query({ page: 1 });
       expect(response.status).toBe(HttpStatus.OK);
-      expect(response.body).toBeInstanceOf(Array<WgerExerciseDto>);
+    });
+
+    it('should return 200 OK and different exercises if different pages sent', async () => {
+      const responseFirstPage = await request(app.getHttpServer())
+        .get(path)
+        .set('jwtPayload', JSON.stringify(payload))
+        .query({ page: 1 });
+
+      const responseSecondPage = await request(app.getHttpServer())
+        .get(path)
+        .set('jwtPayload', JSON.stringify(payload))
+        .query({ page: 2 });
+
+      expect(responseFirstPage.body).not.toEqual(responseSecondPage.body);
+    });
+
+    it('should return 200 OK with exercises that target abs on first page', async () => {
+      const responseFirstPage = await request(app.getHttpServer())
+        .get(path)
+        .set('jwtPayload', JSON.stringify(payload))
+        .query({ page: 1, category: 'Abs' });
+      expect(responseFirstPage.status).toBe(HttpStatus.OK);
     });
   });
 

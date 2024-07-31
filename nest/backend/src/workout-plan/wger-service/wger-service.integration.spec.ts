@@ -25,13 +25,20 @@ describe('WgerService (integration tests)', () => {
       const incorrectTerm = 'agodiljsidbjweiosjvksadjvka';
       await expect(
         provider.getExercisesBySearchTerm(1, incorrectTerm),
-      ).rejects.toThrow('No exercises matching search term found!');
+      ).rejects.toThrow(BadRequestException);
     });
 
     it('should return matching exercises if search term not empty and exercises are found', async () => {
       const result = await provider.getExercisesBySearchTerm(1, searchTerm);
 
       expect(result).toBeInstanceOf(Array<WgerExerciseDto>);
+    });
+
+    it('should return different exercises based on page ', async () => {
+      const resultFirstPage = await provider.getExercisesBySearchTerm(1);
+      const resultSecondPage = await provider.getExercisesBySearchTerm(2);
+
+      expect(resultFirstPage).not.toEqual(resultSecondPage);
     });
   });
 

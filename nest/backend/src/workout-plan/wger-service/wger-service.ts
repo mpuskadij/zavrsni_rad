@@ -44,25 +44,23 @@ export class WgerService {
     category: string = null,
     equipment: string = null,
   ): Promise<WgerExerciseDto[]> {
-    if (!page) {
+    if (!page || page < 1) {
       throw new BadRequestException('Page must be a number');
     }
-    if (!searchTerm && !category && !equipment) {
-      throw new BadRequestException(
-        'Server requires search term and/or category and/or equipment',
-      );
-    }
+    const offset = ((page - 1) * 20).toString().replace('.', '');
     let apiQuery: string = '';
     if (searchTerm) {
       apiQuery += '?name=' + searchTerm;
     }
     if (category) {
-      const categoryFromWger: WgerCategoryDto =
-        await this.getCategories(category)[0];
+      const categoryFromWger: WgerCategoryDto = (
+        await this.getCategories(category)
+      ).at(0);
       searchTerm ? (apiQuery += '&') : (apiQuery += '?');
       apiQuery += 'category=' + categoryFromWger.id;
     }
-
+    apiQuery ? (apiQuery += '&') : (apiQuery += '?');
+    apiQuery += 'offset=' + offset;
     const wgerResponse: Response = await fetch(
       this.wgerExerciseApiUrl + apiQuery + this.language,
     );
@@ -75,8 +73,10 @@ export class WgerService {
       WgerExerciseResultDto,
       foundExercisesFromWger,
     );
-    if (result.count == 0) {
-      throw new BadRequestException('No exercises matching search term found!');
+    if (result.count == 0 || !result.results?.length) {
+      throw new BadRequestException(
+        'You have reached the end of found exercises!',
+      );
     }
     return result.results;
   }
