@@ -8,7 +8,7 @@ import {
 import { JwtGuard } from '../../guards/jwt/jwt.guard';
 import { SearchExerciseDto } from '../../dtos/search-exercise-dto/search-exercise-dto';
 import { WgerService } from '../wger-service/wger-service';
-import { WgerExerciseDto } from '../../dtos/wger-variaton-dto/wger-variaton-dto';
+import { WgerExerciseDto } from '../../dtos/wger-exercise-dto/wger-exercise-dto';
 
 @Controller('api/exercise')
 export class ExerciseController {

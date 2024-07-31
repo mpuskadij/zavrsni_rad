@@ -6,7 +6,7 @@ import {
 import { WgerExerciseResultDto } from '../../dtos/wger-exercise-result-dto/wger-exercise-result-dto';
 import { response } from 'express';
 import { plainToClass, plainToInstance } from 'class-transformer';
-import { WgerExerciseDto } from '../../dtos/wger-variaton-dto/wger-variaton-dto';
+import { WgerExerciseDto } from '../../dtos/wger-exercise-dto/wger-exercise-dto';
 import { WgerCategoryDto } from '../../dtos/wger-category-dto/wger-category-dto';
 import { WgerCategoryResponseDto } from '../../dtos/wger-category-response-dto/wger-category-response-dto';
 import { WgerEquipmentDto } from '../../dtos/wger-equipment-dto/wger-equipment-dto';
@@ -84,6 +84,14 @@ export class WgerService {
       ).at(0);
       searchTerm ? (apiQuery += '&') : (apiQuery += '?');
       apiQuery += 'category=' + categoryFromWger.id;
+    }
+
+    if (equipment) {
+      const equipmentFromWger: WgerEquipmentDto = (
+        await this.getEquipment(equipment)
+      ).at(0);
+      searchTerm || category ? (apiQuery += '&') : (apiQuery += '?');
+      apiQuery += 'equipment=' + equipmentFromWger.id;
     }
     apiQuery ? (apiQuery += '&') : (apiQuery += '?');
     apiQuery += 'offset=' + offset;

@@ -7,7 +7,7 @@ import { JwtPayload } from '../src/authentication/jwt-payload/jwt-payload';
 import { AuthenticationModule } from '../src/authentication/authentication.module';
 import { JwtGuard } from '../src/guards/jwt/jwt.guard';
 import { GuardsModule } from '../src/guards/guards.module';
-import { WgerExerciseDto } from '../src/dtos/wger-variaton-dto/wger-variaton-dto';
+import { WgerExerciseDto } from '../src/dtos/wger-exercise-dto/wger-exercise-dto';
 import { DtosModule } from '../src/dtos/dtos.module';
 import { WgerService } from '../src/workout-plan/wger-service/wger-service';
 

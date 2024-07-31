@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { WgerService } from './wger-service';
 import { WgerExerciseResultDto } from '../../dtos/wger-exercise-result-dto/wger-exercise-result-dto';
 import { DtosModule } from '../../dtos/dtos.module';
-import { WgerExerciseDto } from '../../dtos/wger-variaton-dto/wger-variaton-dto';
+import { WgerExerciseDto } from '../../dtos/wger-exercise-dto/wger-exercise-dto';
 import { WgerCategoryResponseDto } from 'src/dtos/wger-category-response-dto/wger-category-response-dto';
 import {
   BadRequestException,

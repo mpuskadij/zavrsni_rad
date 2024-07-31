@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { WgerService } from './wger-service';
 import { WgerExerciseResultDto } from '../../dtos/wger-exercise-result-dto/wger-exercise-result-dto';
 import { DtosModule } from '../../dtos/dtos.module';
-import { WgerExerciseDto } from '../../dtos/wger-variaton-dto/wger-variaton-dto';
+import { WgerExerciseDto } from '../../dtos/wger-exercise-dto/wger-exercise-dto';
 import { BadRequestException } from '@nestjs/common';
 
 describe('WgerService (integration tests)', () => {
@@ -38,6 +38,118 @@ describe('WgerService (integration tests)', () => {
       const resultSecondPage = await provider.getExercises(2);
 
       expect(resultFirstPage).not.toEqual(resultSecondPage);
+    });
+
+    it('should return exercises that match sent equipment', async () => {
+      const resultFirstPage = await provider.getExercises(1, '', '', 'Bench');
+      const equipment = (await provider.getEquipment('Bench')).at(0);
+
+      resultFirstPage.forEach((exercise) => {
+        expect(
+          exercise.equipment.some(
+            (equipmentNumber) => equipmentNumber === equipment.id,
+          ),
+        ).toBe(true);
+      });
+    });
+
+    it('should return exercises that match sent equipment, but should be different exercises on different pages', async () => {
+      const resultFirstPage = await provider.getExercises(1, '', '', 'Bench');
+      const resultSecondPage = await provider.getExercises(2, '', '', 'Bench');
+
+      expect(resultFirstPage).not.toEqual(resultSecondPage);
+    });
+
+    it('should return exercises that match sent equipment and category', async () => {
+      const resultFirstPage = await provider.getExercises(
+        1,
+        '',
+        'Chest',
+        'Bench',
+      );
+      const category = (await provider.getCategories('Chest')).at(0);
+      const equipment = (await provider.getEquipment('Bench')).at(0);
+
+      resultFirstPage.forEach((exercise) => {
+        expect(
+          exercise.equipment.some(
+            (equipmentNumber) => equipmentNumber === equipment.id,
+          ),
+        ).toBe(true);
+
+        expect(exercise.category).toBe(category.id);
+      });
+    });
+
+    it('should return exercises that match search term, category and equipment', async () => {
+      const resultFirstPage = await provider.getExercises(
+        1,
+        'Bench Press',
+        'Chest',
+        'Bench',
+      );
+      const category = (await provider.getCategories('Chest')).at(0);
+      const equipment = (await provider.getEquipment('Bench')).at(0);
+
+      resultFirstPage.forEach((exercise) => {
+        expect(exercise.name).toContain('Bench Press');
+        expect(
+          exercise.equipment.some(
+            (equipmentNumber) => equipmentNumber === equipment.id,
+          ),
+        ).toBe(true);
+
+        expect(exercise.category).toBe(category.id);
+      });
+    });
+
+    it('should return exercises that match search term and category', async () => {
+      const resultFirstPage = await provider.getExercises(
+        1,
+        'Bench Press',
+        'Chest',
+        '',
+      );
+      const category = (await provider.getCategories('Chest')).at(0);
+
+      resultFirstPage.forEach((exercise) => {
+        expect(exercise.name).toContain('Bench Press');
+        expect(exercise.category).toBe(category.id);
+      });
+    });
+
+    it('should return exercises that match category', async () => {
+      const resultFirstPage = await provider.getExercises(1, '', 'Chest', '');
+      const category = (await provider.getCategories('Chest')).at(0);
+
+      resultFirstPage.forEach((exercise) => {
+        expect(exercise.category).toBe(category.id);
+      });
+    });
+
+    it('should return differnt exercises that match category, but have different page', async () => {
+      const resultFirstPage = await provider.getExercises(1, '', 'Chest', '');
+      const resultSecondPage = await provider.getExercises(2, '', 'Chest', '');
+
+      expect(resultFirstPage).not.toEqual(resultSecondPage);
+    });
+
+    it('should return exercises that match equipment and search term', async () => {
+      const resultFirstPage = await provider.getExercises(
+        1,
+        'Bench Press',
+        '',
+        'Bench',
+      );
+      const equipment = (await provider.getEquipment('Bench')).at(0);
+
+      resultFirstPage.forEach((exercise) => {
+        expect(
+          exercise.equipment.some(
+            (equipmentNumber) => equipmentNumber === equipment.id,
+          ),
+        );
+      });
     });
   });
 

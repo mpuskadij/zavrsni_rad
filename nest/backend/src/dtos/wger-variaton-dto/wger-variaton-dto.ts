@@ -4,7 +4,7 @@ import { WgerMuscleDto } from '../wger-muscle-dto/wger-muscle-dto';
 import { WgerEquipmentDto } from '../wger-equipment-dto/wger-equipment-dto';
 import { WgerCategoryDto } from '../wger-category-dto/wger-category-dto';
 
-export class WgerExerciseDto {
+export class WgerVariationDto {
   @Exclude()
   id: number;
 

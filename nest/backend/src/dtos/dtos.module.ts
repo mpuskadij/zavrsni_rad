@@ -8,13 +8,11 @@ import { SearchExerciseDto } from './search-exercise-dto/search-exercise-dto';
 import { WgerExerciseResultDto } from './wger-exercise-result-dto/wger-exercise-result-dto';
 import { WgerCategoryDto } from './wger-category-dto/wger-category-dto';
 import { WgerEquipmentDto } from './wger-equipment-dto/wger-equipment-dto';
-import {
-  WgerExerciseDto,
-  WgerVariatonDto,
-} from './wger-variaton-dto/wger-variaton-dto';
+import { WgerVariatonDto } from './wger-variaton-dto/wger-variaton-dto';
 import { WgerMuscleDto } from './wger-muscle-dto/wger-muscle-dto';
 import { WgerCategoryResponseDto } from './wger-category-response-dto/wger-category-response-dto';
 import { WgerEquipmentResponseDto } from './wger-equipment-response-dto/wger-equipment-response-dto';
+import { WgerExerciseDto } from './wger-exercise-dto/wger-exercise-dto';
 
 @Module({
   imports: [EntitiesModule],

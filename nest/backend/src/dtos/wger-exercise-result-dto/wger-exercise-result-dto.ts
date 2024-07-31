@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { WgerExerciseDto } from '../wger-variaton-dto/wger-variaton-dto';
+import { WgerExerciseDto } from '../wger-exercise-dto/wger-exercise-dto';
 
 export class WgerExerciseResultDto {
   count: number;

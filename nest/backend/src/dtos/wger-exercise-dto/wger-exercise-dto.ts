@@ -21,8 +21,7 @@ export class WgerExerciseDto {
   @Exclude()
   created: string;
 
-  @Exclude()
-  category: number | WgerCategoryDto;
+  category: number;
 
   @Exclude()
   muscles: number[] | WgerMuscleDto[];
@@ -30,8 +29,7 @@ export class WgerExerciseDto {
   @Exclude()
   muscles_secondary: number[] | WgerMuscleDto[];
 
-  @Exclude()
-  equipment: number[] | WgerEquipmentDto[];
+  equipment: number[];
 
   @Exclude()
   language: number;
