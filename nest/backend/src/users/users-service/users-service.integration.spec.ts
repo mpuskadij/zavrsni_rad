@@ -15,6 +15,7 @@ import { AuthenticationService } from '../../authentication/authentication-servi
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { Bmientry } from '../../entities/bmientry/bmientry';
 import { JournalEntry } from '../../entities/journal-entry/journal-entry';
+import { WorkoutPlan } from '../../entities/workout-plan/workout-plan';
 
 describe('UsersService (integration tests)', () => {
   let provider: UsersService;
@@ -33,9 +34,9 @@ describe('UsersService (integration tests)', () => {
           database: './database/test.sqlite',
           synchronize: true,
           autoLoadEntities: true,
-          entities: [User, Bmientry, JournalEntry],
+          entities: [User, Bmientry, JournalEntry, WorkoutPlan],
         }),
-        TypeOrmModule.forFeature([User, JournalEntry, Bmientry]),
+        TypeOrmModule.forFeature([User, JournalEntry, Bmientry, WorkoutPlan]),
         ConfigModule.forRoot(),
         AuthenticationModule,
         JwtModule.register({ secret: process.env.JWT_SECRET }),

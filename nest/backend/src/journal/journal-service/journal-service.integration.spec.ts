@@ -15,6 +15,7 @@ import { CrpytoModule } from '../../crpyto/crpyto.module';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { DeleteJournalEntryDto } from '../../dtos/journal-entry-dto/delete-journal-entry-dto';
+import { WorkoutPlan } from '../../entities/workout-plan/workout-plan';
 
 describe('JournalService (integration tests)', () => {
   let provider: JournalService;
@@ -71,10 +72,10 @@ describe('JournalService (integration tests)', () => {
           database: './database/test.sqlite',
           synchronize: true,
           autoLoadEntities: true,
-          entities: [JournalEntry, User, Bmientry],
+          entities: [JournalEntry, User, Bmientry, WorkoutPlan],
         }),
         CrpytoModule,
-        TypeOrmModule.forFeature([JournalEntry, User, Bmientry]),
+        TypeOrmModule.forFeature([JournalEntry, User, Bmientry, WorkoutPlan]),
       ],
       providers: [
         JournalService,

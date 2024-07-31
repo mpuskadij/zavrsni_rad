@@ -15,6 +15,7 @@ import {
 import { ConfigModule } from '@nestjs/config';
 import { Bmientry } from '../src/entities/bmientry/bmientry';
 import { JournalEntry } from '../src/entities/journal-entry/journal-entry';
+import { WorkoutPlan } from '../src/entities/workout-plan/workout-plan';
 
 describe('GoogleRecaptchaGuard (e2e)', () => {
   let app: INestApplication;
@@ -35,7 +36,7 @@ describe('GoogleRecaptchaGuard (e2e)', () => {
           database: './database/test.sqlite',
           synchronize: true,
           autoLoadEntities: true,
-          entities: [User, Bmientry, JournalEntry],
+          entities: [User, Bmientry, JournalEntry, WorkoutPlan],
         }),
       ],
       controllers: [UsersController],

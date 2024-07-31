@@ -22,6 +22,7 @@ import { GoogleRecaptchaGuard } from '@nestlab/google-recaptcha';
 import { Repository } from 'typeorm';
 import { JournalEntryDto } from '../src/dtos/journal-entry-dto/journal-entry-dto';
 import { DtosModule } from '../src/dtos/dtos.module';
+import { WorkoutPlan } from '../src/entities/workout-plan/workout-plan';
 describe('Journal Controller (e2e)', () => {
   let app: INestApplication;
   const username = 'marin';
@@ -42,9 +43,9 @@ describe('Journal Controller (e2e)', () => {
           database: './database/test.sqlite',
           synchronize: true,
           autoLoadEntities: true,
-          entities: [JournalEntry, User, Bmientry],
+          entities: [JournalEntry, User, Bmientry, WorkoutPlan],
         }),
-        TypeOrmModule.forFeature([JournalEntry, User, Bmientry]),
+        TypeOrmModule.forFeature([JournalEntry, User, Bmientry, WorkoutPlan]),
       ],
       controllers: [JournalController],
       providers: [

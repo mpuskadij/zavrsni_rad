@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import { Bmientry } from '../bmientry/bmientry';
 import { JournalEntry } from '../journal-entry/journal-entry';
+import { WorkoutPlan } from '../workout-plan/workout-plan';
 
 @Entity()
 export class User {
@@ -22,4 +23,9 @@ export class User {
     cascade: ['insert', 'remove', 'update'],
   })
   journalEntries?: JournalEntry[];
+
+  @OneToMany(() => WorkoutPlan, (workoutPlan) => workoutPlan.user, {
+    onDelete: 'CASCADE',
+  })
+  workoutPlans?: WorkoutPlan[];
 }

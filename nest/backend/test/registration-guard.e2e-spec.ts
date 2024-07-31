@@ -20,6 +20,7 @@ import { HashedPasswordData } from '../src/crpyto/hashed-password-data/hashed-pa
 import { AuthenticationModule } from '../src/authentication/authentication.module';
 import { Bmientry } from '../src/entities/bmientry/bmientry';
 import { JournalEntry } from '../src/entities/journal-entry/journal-entry';
+import { WorkoutPlan } from '../src/entities/workout-plan/workout-plan';
 
 describe('RegistrationGuard (e2e)', () => {
   let app: INestApplication;
@@ -33,7 +34,7 @@ describe('RegistrationGuard (e2e)', () => {
           type: 'sqlite',
           database: './database/test.sqlite',
           synchronize: true,
-          entities: [User, Bmientry, JournalEntry],
+          entities: [User, Bmientry, JournalEntry, WorkoutPlan],
         }),
         AuthenticationModule,
       ],

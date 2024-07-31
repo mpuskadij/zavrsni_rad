@@ -26,6 +26,7 @@ import {
 } from '@nestlab/google-recaptcha';
 import { AppModule } from '../../app.module';
 import { JournalEntry } from '../../entities/journal-entry/journal-entry';
+import { WorkoutPlan } from '../../entities/workout-plan/workout-plan';
 
 describe('BmiService (integration tests)', () => {
   let provider: BmiService;
@@ -42,9 +43,9 @@ describe('BmiService (integration tests)', () => {
           database: './database/test.sqlite',
           synchronize: true,
           autoLoadEntities: true,
-          entities: [User, Bmientry, JournalEntry],
+          entities: [User, Bmientry, JournalEntry, WorkoutPlan],
         }),
-        TypeOrmModule.forFeature([User, Bmientry, JournalEntry]),
+        TypeOrmModule.forFeature([User, Bmientry, JournalEntry, WorkoutPlan]),
       ],
       providers: [
         BmiService,
