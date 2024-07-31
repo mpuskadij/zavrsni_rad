@@ -22,7 +22,10 @@ export class ExerciseController {
   ): Promise<any> {
     const exercisesFromExternalApi: WgerExerciseDto[] =
       await this.wgerService.getExercisesBySearchTerm(
+        searchExercise.page,
         searchExercise.searchTerm,
+        searchExercise.category,
+        searchExercise.equipment,
       );
     return exercisesFromExternalApi;
   }

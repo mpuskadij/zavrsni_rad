@@ -13,6 +13,7 @@ import {
   WgerVariatonDto,
 } from './wger-variaton-dto/wger-variaton-dto';
 import { WgerMuscleDto } from './wger-muscle-dto/wger-muscle-dto';
+import { WgerCategoryResponseDto } from './wger-category-response-dto/wger-category-response-dto';
 
 @Module({
   imports: [EntitiesModule],
@@ -27,6 +28,7 @@ import { WgerMuscleDto } from './wger-muscle-dto/wger-muscle-dto';
     WgerExerciseDto,
     WgerMuscleDto,
     WgerVariatonDto,
+    WgerCategoryResponseDto,
   ],
   providers: [
     BmiEntryDto,
@@ -40,6 +42,7 @@ import { WgerMuscleDto } from './wger-muscle-dto/wger-muscle-dto';
     WgerExerciseDto,
     WgerMuscleDto,
     WgerVariatonDto,
+    WgerCategoryResponseDto,
   ],
 })
 export class DtosModule {}
