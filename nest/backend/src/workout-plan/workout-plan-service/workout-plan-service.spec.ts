@@ -1,16 +1,27 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { WorkoutPlanService } from './workout-plan-service';
-import { BadRequestException } from '@nestjs/common';
+import {
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { WorkoutPlan } from '../../entities/workout-plan/workout-plan';
 import { EntitiesModule } from '../../entities/entities.module';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 describe('WorkoutPlanService (unit tests)', () => {
   let provider: WorkoutPlanService;
+  const mockWorkoutPlanRepository = { findOne: jest.fn() };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [EntitiesModule],
-      providers: [WorkoutPlanService],
+      providers: [
+        WorkoutPlanService,
+        {
+          provide: getRepositoryToken(WorkoutPlan),
+          useValue: mockWorkoutPlanRepository,
+        },
+      ],
     }).compile();
 
     provider = module.get<WorkoutPlanService>(WorkoutPlanService);
@@ -30,6 +41,33 @@ describe('WorkoutPlanService (unit tests)', () => {
 
       expect(workoutPlan).toBeInstanceOf(WorkoutPlan);
       expect(workoutPlan.title).toEqual(title);
+    });
+  });
+
+  describe('getWorkoutPlanByID', () => {
+    const id: number = 1;
+
+    it('should throw BadRequestException if id is not a number, null or undefined', async () => {
+      await expect(provider.getWorkoutPlanByID(null)).rejects.toThrow(
+        BadRequestException,
+      );
+    });
+
+    it('should throw InternalServer if workout plan with id not found', async () => {
+      mockWorkoutPlanRepository.findOne.mockResolvedValue(null);
+      await expect(provider.getWorkoutPlanByID(id)).rejects.toThrow(
+        InternalServerErrorException,
+      );
+    });
+
+    it('should return workout plan that matches the id', async () => {
+      const foundWorkoutPlan: WorkoutPlan = new WorkoutPlan();
+      foundWorkoutPlan.id = id;
+      mockWorkoutPlanRepository.findOne.mockResolvedValue(foundWorkoutPlan);
+      const result: WorkoutPlan = await provider.getWorkoutPlanByID(id);
+
+      expect(mockWorkoutPlanRepository.findOne).toHaveBeenCalled();
+      expect(result.id).toEqual(id);
     });
   });
 });

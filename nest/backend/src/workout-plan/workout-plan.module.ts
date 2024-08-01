@@ -10,6 +10,8 @@ import { WorkoutPlanService } from './workout-plan-service/workout-plan-service'
 import { UsersModule } from '../users/users.module';
 import { UsersService } from '../users/users-service/users-service';
 import { CrpytoModule } from '../crpyto/crpyto.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { WorkoutPlan } from '../entities/workout-plan/workout-plan';
 
 @Module({
   imports: [
@@ -19,6 +21,7 @@ import { CrpytoModule } from '../crpyto/crpyto.module';
     DecoratorsModule,
     UsersModule,
     CrpytoModule,
+    TypeOrmModule.forFeature([WorkoutPlan]),
   ],
   controllers: [ExerciseController, WorkoutPlanController],
   providers: [WgerService, WorkoutPlanService, UsersService],

@@ -2,7 +2,10 @@ import {
   Body,
   Controller,
   Get,
+  HttpStatus,
   InternalServerErrorException,
+  Param,
+  ParseIntPipe,
   Post,
   Query,
   UseGuards,
@@ -37,6 +40,22 @@ export class WorkoutPlanController {
         createWorkoutPlanData.title,
       );
     await this.usersService.assignWorkoutPlan(user, workoutPlan);
+    return;
+  }
+
+  @Post('/:id')
+  @UseGuards(JwtGuard)
+  async addExerciseToPlan(
+    @Param(
+      'id',
+      new ParseIntPipe({
+        optional: false,
+        errorHttpStatusCode: HttpStatus.BAD_REQUEST,
+      }),
+    )
+    id: number,
+    @Payload('username') username: string,
+  ): Promise<any> {
     return;
   }
 }
