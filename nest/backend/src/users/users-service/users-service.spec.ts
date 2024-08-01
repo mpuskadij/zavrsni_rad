@@ -167,6 +167,7 @@ describe('UsersService (unit tests)', () => {
       isAdmin: 0,
       bmiEntries: [],
       journalEntries: [],
+      workoutPlans: [],
     };
     it('should return true if username and password are correct', async () => {
       jest.spyOn(provider, 'getUser').mockResolvedValue(user);
@@ -216,6 +217,7 @@ describe('UsersService (unit tests)', () => {
       isAdmin: 0,
       bmiEntries: [],
       journalEntries: [],
+      workoutPlans: [],
     };
     it('should get user when username passed exists in database', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(user);
@@ -242,6 +244,7 @@ describe('UsersService (unit tests)', () => {
       isAdmin: 0,
       bmiEntries: [],
       journalEntries: [],
+      workoutPlans: [],
     };
     it('should use AuthenticationService', async () => {
       mockAuthenticationService.generateJWT.mockResolvedValue(
@@ -266,6 +269,7 @@ describe('UsersService (unit tests)', () => {
       isAdmin: 0,
       bmiEntries: [],
       journalEntries: [],
+      workoutPlans: [],
     };
     it('should use userRepository to save user and return updated user if save is successful', async () => {
       jest.spyOn(repository, 'save').mockResolvedValue(user);
@@ -289,6 +293,7 @@ describe('UsersService (unit tests)', () => {
       isAdmin: 0,
       bmiEntries: [],
       journalEntries: [],
+      workoutPlans: [],
     };
     const journalEntry: JournalEntry = {
       dateAdded: new Date(),
@@ -326,6 +331,7 @@ describe('UsersService (unit tests)', () => {
       isAdmin: 0,
       bmiEntries: [],
       journalEntries: [],
+      workoutPlans: [],
     };
     const userWithEntry: User = {
       isAdmin: 0,
@@ -333,6 +339,7 @@ describe('UsersService (unit tests)', () => {
       username: username,
       bmiEntries: [],
       journalEntries: [],
+      workoutPlans: [],
     };
     const journalEntry: JournalEntry = {
       dateAdded: new Date(),

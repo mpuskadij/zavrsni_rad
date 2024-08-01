@@ -67,7 +67,7 @@ export class UsersService {
   async getUser(username: string): Promise<User> {
     return await this.userRepository.findOne({
       where: { username: username },
-      relations: ['bmiEntries', 'journalEntries'],
+      relations: ['bmiEntries', 'journalEntries', 'workoutPlans'],
     });
   }
 
@@ -94,11 +94,10 @@ export class UsersService {
     const hashedPasswordData: HashedPasswordData =
       await this.cryptoService.hashPassword(password);
 
-    const newUser: User = {
-      isAdmin: 0,
-      password: hashedPasswordData.HashedPassword,
-      username: username,
-    };
+    const newUser: User = new User();
+    newUser.isAdmin = 0;
+    newUser.username = username;
+    newUser.password = hashedPasswordData.HashedPassword;
 
     await this.saveUserData(newUser);
 

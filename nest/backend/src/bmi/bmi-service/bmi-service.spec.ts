@@ -48,6 +48,7 @@ describe('BmiService (unit tests)', () => {
         password: '123456Hj',
         bmiEntries: [],
         journalEntries: [],
+        workoutPlans: [],
       };
       const weight: number = 66.7;
       const height: number = 180;
@@ -129,6 +130,7 @@ describe('BmiService (unit tests)', () => {
         password: '123456Hj',
         bmiEntries: [],
         journalEntries: [],
+        workoutPlans: [],
       };
       const weight: number = 66.7;
       const height: number = 180;
@@ -159,6 +161,7 @@ describe('BmiService (unit tests)', () => {
         password: '123456Hj',
         bmiEntries: [],
         journalEntries: [],
+        workoutPlans: [],
       };
       const weight: number = 66.7;
       const height: number = 1.8;
@@ -184,6 +187,7 @@ describe('BmiService (unit tests)', () => {
         password: '123456Hj',
         bmiEntries: [],
         journalEntries: [],
+        workoutPlans: [],
       };
       const weight: number = 66.7;
       const height: number = 1.8;
@@ -213,6 +217,7 @@ describe('BmiService (unit tests)', () => {
         password: '123456Hj',
         bmiEntries: [],
         journalEntries: [],
+        workoutPlans: [],
       };
       const weight: number = 66.7;
       const height: number = 1.8;
@@ -242,6 +247,7 @@ describe('BmiService (unit tests)', () => {
         password: '123456Hj',
         bmiEntries: [],
         journalEntries: [],
+        workoutPlans: [],
       };
       const weight: number = 66.7;
       const height: number = 1.8;
@@ -279,6 +285,7 @@ describe('BmiService (unit tests)', () => {
         bmiEntries: [],
         password: 'password',
         journalEntries: [],
+        workoutPlans: [],
       };
       mockUsersService.getUser.mockResolvedValue(user);
       await expect(
@@ -293,6 +300,7 @@ describe('BmiService (unit tests)', () => {
         bmiEntries: [],
         password: 'password',
         journalEntries: [],
+        workoutPlans: [],
       };
       const weight: number = 66.7;
       const height: number = 1.8;

@@ -33,6 +33,7 @@ describe('JournalService (integration tests)', () => {
     journalEntries: [],
     password: password,
     username: username,
+    workoutPlans: [],
   };
 
   const journalEntry: JournalEntry = {
@@ -56,6 +57,7 @@ describe('JournalService (integration tests)', () => {
     journalEntries: [journalEntry],
     password: password,
     username: username,
+    workoutPlans: [],
   };
 
   const userWithJournalEntryPreviousDay: User = {
@@ -64,6 +66,7 @@ describe('JournalService (integration tests)', () => {
     journalEntries: [journalEntryPreviousDay],
     password: password,
     username: username,
+    workoutPlans: [],
   };
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -198,6 +201,7 @@ describe('JournalService (integration tests)', () => {
         journalEntries: [],
         password: password,
         username: username,
+        workoutPlans: [],
       };
       const entry = new JournalEntry();
       entry.dateAdded = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000);
@@ -227,6 +231,7 @@ describe('JournalService (integration tests)', () => {
         journalEntries: [],
         password: password,
         username: username,
+        workoutPlans: [],
       };
       const entry = new JournalEntry();
       entry.dateAdded = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000);

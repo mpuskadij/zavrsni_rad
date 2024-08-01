@@ -17,11 +17,13 @@ import { Bmientry } from '../../entities/bmientry/bmientry';
 import { JournalEntry } from '../../entities/journal-entry/journal-entry';
 import { WorkoutPlan } from '../../entities/workout-plan/workout-plan';
 import { Exercise } from '../../entities/exercise/exercise';
+import { WorkoutPlanService } from '../../workout-plan/workout-plan-service/workout-plan-service';
 
 describe('UsersService (integration tests)', () => {
   let provider: UsersService;
   let repository: Repository<User>;
   let journalRepo: Repository<JournalEntry>;
+  let workoutPlanService: WorkoutPlanService;
 
   const username = 'marin';
   const password = 'ajskfnU7';
@@ -55,6 +57,7 @@ describe('UsersService (integration tests)', () => {
         SaltGenerator,
         HashedPasswordData,
         AuthenticationService,
+        WorkoutPlanService,
       ],
     }).compile();
 
@@ -63,6 +66,7 @@ describe('UsersService (integration tests)', () => {
     journalRepo = module.get<Repository<JournalEntry>>(
       getRepositoryToken(JournalEntry),
     );
+    workoutPlanService = module.get<WorkoutPlanService>(WorkoutPlanService);
   });
 
   describe('checkIfUsernameIsAlreadyInDatabase', () => {
@@ -75,6 +79,7 @@ describe('UsersService (integration tests)', () => {
           password: password,
           bmiEntries: [],
           journalEntries: [],
+          workoutPlans: [],
         };
         await repository.save(user);
       }
@@ -140,6 +145,7 @@ describe('UsersService (integration tests)', () => {
           isAdmin: 0,
           bmiEntries: [],
           journalEntries: [],
+          workoutPlans: [],
         };
 
         await repository.save(user);
@@ -184,6 +190,7 @@ describe('UsersService (integration tests)', () => {
         isAdmin: 0,
         bmiEntries: [],
         journalEntries: [],
+        workoutPlans: [],
       };
       await repository.save(user);
 
@@ -209,6 +216,7 @@ describe('UsersService (integration tests)', () => {
         isAdmin: 0,
         bmiEntries: [],
         journalEntries: [],
+        workoutPlans: [],
       };
       await repository.save(user);
 
@@ -234,6 +242,7 @@ describe('UsersService (integration tests)', () => {
           journalEntries: [],
           password: password,
           username: username,
+          workoutPlans: [],
         };
         await repository.save(user);
       }
@@ -259,6 +268,7 @@ describe('UsersService (integration tests)', () => {
         password: password,
         isAdmin: 0,
         bmiEntries: [],
+        workoutPlans: [],
         journalEntries: [],
       };
       const result = await provider.saveUserData(user);
@@ -323,6 +333,45 @@ describe('UsersService (integration tests)', () => {
       });
       await provider.assignJournalEntry(user, journalEntryToday);
       expect(user.journalEntries).toHaveLength(2);
+    });
+  });
+
+  describe('Creating workout plans', () => {
+    it('should assign workout plan to user with no previous workout plans', async () => {
+      const usernameInDatabase = await repository.findOne({
+        where: { username: username },
+        relations: ['bmiEntries', 'journalEntries', 'workoutPlans'],
+      });
+      if (usernameInDatabase != null) {
+        await repository.remove(usernameInDatabase);
+      }
+
+      await provider.addUser(username, password);
+      const workoutPlan =
+        await workoutPlanService.createWorkoutPlan('Get moving!');
+      const user = await provider.getUser(username);
+      await provider.assignWorkoutPlan(user, workoutPlan);
+      expect(user.workoutPlans).toHaveLength(1);
+    });
+
+    it('should assign workout plan to user with nalready existing workout plans', async () => {
+      const usernameInDatabase = await repository.findOne({
+        where: { username: username },
+        relations: ['bmiEntries', 'journalEntries', 'workoutPlans'],
+      });
+      if (usernameInDatabase != null) {
+        await repository.remove(usernameInDatabase);
+      }
+
+      await provider.addUser(username, password);
+      const workoutPlan =
+        await workoutPlanService.createWorkoutPlan('Get moving!');
+      const user = await provider.getUser(username);
+      await provider.assignWorkoutPlan(user, workoutPlan);
+      const secondWorkoutPlan =
+        await workoutPlanService.createWorkoutPlan('Daily');
+      await provider.assignWorkoutPlan(user, secondWorkoutPlan);
+      expect(user.workoutPlans).toHaveLength(2);
     });
   });
 });

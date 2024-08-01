@@ -23,6 +23,7 @@ describe('JournalService (unit tests)', () => {
     isAdmin: 0,
     journalEntries: [],
     password: password,
+    workoutPlans: [],
     username: username,
   };
 
@@ -49,6 +50,7 @@ describe('JournalService (unit tests)', () => {
     journalEntries: [journalEntry],
     password: password,
     username: username,
+    workoutPlans: [],
   };
 
   const userWithJournalEntryPreviousDay: User = {
@@ -56,6 +58,7 @@ describe('JournalService (unit tests)', () => {
     isAdmin: 0,
     journalEntries: [journalEntryPreviousDay],
     password: password,
+    workoutPlans: [],
     username: username,
   };
 

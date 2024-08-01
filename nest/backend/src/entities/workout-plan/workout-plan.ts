@@ -25,7 +25,10 @@ export class WorkoutPlan {
   @CreateDateColumn()
   dateAdded: Date;
 
-  @ManyToOne(() => User, (user) => user.workoutPlans, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.workoutPlans, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ referencedColumnName: 'username', name: 'username' })
   user: User;
 

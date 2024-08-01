@@ -95,6 +95,7 @@ describe('BmiService (integration tests)', () => {
           bmiEntries: [],
           isAdmin: 0,
           journalEntries: [],
+          workoutPlans: [],
         };
         await userRepo.save(user);
       }
@@ -136,6 +137,7 @@ describe('BmiService (integration tests)', () => {
         bmiEntries: [],
         journalEntries: [],
         isAdmin: 0,
+        workoutPlans: [],
       };
       const sixDaysAgo = Date.now() - 6 * 24 * 60 * 60 * 1000;
 
@@ -170,6 +172,7 @@ describe('BmiService (integration tests)', () => {
         bmiEntries: [],
         isAdmin: 0,
         journalEntries: [],
+        workoutPlans: [],
       };
       const sevenDaysAgo = new Date().getTime() - 7 * 24 * 60 * 60 * 1000;
 
@@ -202,6 +205,7 @@ describe('BmiService (integration tests)', () => {
         bmiEntries: [],
         isAdmin: 0,
         journalEntries: [],
+        workoutPlans: [],
       };
       const eightDaysAgo = new Date().getTime() - 8 * 24 * 60 * 60 * 1000;
 
@@ -234,6 +238,7 @@ describe('BmiService (integration tests)', () => {
         bmiEntries: [],
         isAdmin: 0,
         journalEntries: [],
+        workoutPlans: [],
       };
 
       await userRepo.insert(user);
@@ -272,6 +277,7 @@ describe('BmiService (integration tests)', () => {
         bmiEntries: [],
         journalEntries: [],
         isAdmin: 0,
+        workoutPlans: [],
       };
       await userRepo.save(user);
       await expect(
@@ -293,6 +299,7 @@ describe('BmiService (integration tests)', () => {
         bmiEntries: [],
         journalEntries: [],
         isAdmin: 0,
+        workoutPlans: [],
       };
       await userRepo.insert(user);
       const eightDaysAgo = new Date().getTime() - 8 * 24 * 60 * 60 * 1000;
