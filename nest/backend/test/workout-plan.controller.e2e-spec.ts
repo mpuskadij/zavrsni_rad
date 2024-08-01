@@ -35,12 +35,13 @@ import { WorkoutPlanModule } from '../src/workout-plan/workout-plan.module';
 import { WorkoutPlanService } from '../src/workout-plan/workout-plan-service/workout-plan-service';
 import { title } from 'process';
 
-describe('BmiController (e2e)', () => {
+describe('WorkoutPlanController (e2e)', () => {
   let app: INestApplication;
   let userRepo: Repository<User>;
   const username = 'marin';
   const password = 'ajskfnU7';
   const payload: JwtPayload = { username: username, isAdmin: 0 };
+  const registrationPath = '/api/users/register';
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -107,7 +108,6 @@ describe('BmiController (e2e)', () => {
 
   describe('POST /api/workout-plans', () => {
     const path = '/api/workout-plans';
-    const registrationPath = '/api/users/register';
 
     it('should return 400 BAD REQUEST if body not sent', async () => {
       const response = await request(app.getHttpServer()).post(path);
@@ -143,6 +143,47 @@ describe('BmiController (e2e)', () => {
         .set('jwtPayload', JSON.stringify(payload))
         .send({ title: 'My first workout!' });
       expect(response.status).toBe(HttpStatus.CREATED);
+    });
+  });
+
+  describe('GET /api/workout-plans', () => {
+    const path = '/api/workout-plans';
+
+    it('should return 500 INTERNAL SERVER ERROR if user not in database', async () => {
+      const response = await request(app.getHttpServer())
+        .get(path)
+        .set('jwtPayload', JSON.stringify(payload));
+      expect(response.status).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
+    });
+
+    it('should return 403 FORBIDDEN is user has no workout plans', async () => {
+      const registrationResponse = await request(app.getHttpServer())
+        .post(registrationPath)
+        .send({ username: username, password: password });
+      expect(registrationResponse.status).toBe(HttpStatus.CREATED);
+
+      const response = await request(app.getHttpServer())
+        .get(path)
+        .set('jwtPayload', JSON.stringify(payload));
+      expect(response.status).toBe(HttpStatus.FORBIDDEN);
+    });
+
+    it('should return 200 OK is user has workout plans', async () => {
+      const registrationResponse = await request(app.getHttpServer())
+        .post(registrationPath)
+        .send({ username: username, password: password });
+      expect(registrationResponse.status).toBe(HttpStatus.CREATED);
+
+      const createWorkoutPlanResponse = await request(app.getHttpServer())
+        .post(path)
+        .set('jwtPayload', JSON.stringify(payload))
+        .send({ title: "Get movin'!" });
+      expect(createWorkoutPlanResponse.status).toBe(HttpStatus.CREATED);
+
+      const response = await request(app.getHttpServer())
+        .get(path)
+        .set('jwtPayload', JSON.stringify(payload));
+      expect(response.status).toBe(HttpStatus.OK);
     });
   });
 

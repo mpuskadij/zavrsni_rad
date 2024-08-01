@@ -25,8 +25,7 @@ export class User {
   journalEntries: JournalEntry[];
 
   @OneToMany(() => WorkoutPlan, (workoutPlan) => workoutPlan.user, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
+    cascade: ['insert', 'remove', 'update'],
   })
   workoutPlans: WorkoutPlan[];
 }

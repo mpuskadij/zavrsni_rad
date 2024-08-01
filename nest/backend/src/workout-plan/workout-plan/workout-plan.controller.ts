@@ -34,7 +34,6 @@ export class WorkoutPlanController {
     if (!user) {
       throw new InternalServerErrorException('Error finding user!');
     }
-
     const workoutPlans: WorkoutPlan[] =
       await this.usersService.getWorkoutsFromUser(user);
 
