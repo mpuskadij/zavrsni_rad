@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -9,10 +10,26 @@ import { Repository } from 'typeorm';
 import { CryptoService } from '../../crpyto/crypto-service/crypto-service';
 import { HashedPasswordData } from '../../crpyto/hashed-password-data/hashed-password-data';
 import { AuthenticationService } from '../../authentication/authentication-service/authentication-service';
-import { JournalEntry } from 'src/entities/journal-entry/journal-entry';
+import { JournalEntry } from '../../entities/journal-entry/journal-entry';
+import { WorkoutPlan } from '../../entities/workout-plan/workout-plan';
 
 @Injectable()
 export class UsersService {
+  async assignWorkoutPlan(user: User, workoutPlan: WorkoutPlan): Promise<void> {
+    const invalidParameters = !user || !workoutPlan;
+    if (invalidParameters) {
+      throw new InternalServerErrorException('Error creating workout plan!');
+    }
+    const missingTitle = !workoutPlan.title;
+    if (missingTitle) {
+      throw new BadRequestException('Workout plan must have a title!');
+    }
+
+    user.workoutPlans.push(workoutPlan);
+    await this.saveUserData(user);
+
+    return;
+  }
   async unassignJournalEntry(
     user: User,
     journalEntryToRemove: JournalEntry,
@@ -99,8 +116,11 @@ export class UsersService {
     );
   }
 
-  async saveUserData(user: User): Promise<boolean> {
-    return (await this.userRepository.save(user)) != null;
+  async saveUserData(user: User): Promise<User> {
+    if (!user) {
+      throw new InternalServerErrorException('Error saving user data!');
+    }
+    return await this.userRepository.save(user);
   }
 
   async assignJournalEntry(

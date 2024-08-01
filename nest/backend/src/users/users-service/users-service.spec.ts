@@ -15,7 +15,11 @@ import { AuthenticationService } from '../../authentication/authentication-servi
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JournalEntry } from '../../entities/journal-entry/journal-entry';
-import { InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
+import { WorkoutPlan } from '../../entities/workout-plan/workout-plan';
 
 describe('UsersService (unit tests)', () => {
   let provider: UsersService;
@@ -263,20 +267,18 @@ describe('UsersService (unit tests)', () => {
       bmiEntries: [],
       journalEntries: [],
     };
-    it('should use userRepository to save user and return true if save is successful', async () => {
+    it('should use userRepository to save user and return updated user if save is successful', async () => {
       jest.spyOn(repository, 'save').mockResolvedValue(user);
 
       const result = await provider.saveUserData(user);
 
-      expect(result).toBe(true);
+      expect(result).toBe(user);
     });
 
-    it('should return false if save returns null', async () => {
-      jest.spyOn(repository, 'save').mockResolvedValue(null);
-
-      const result = await provider.saveUserData(user);
-
-      expect(result).toBe(false);
+    it('should throw Exception if user is null', async () => {
+      await expect(provider.saveUserData(null)).rejects.toThrow(
+        InternalServerErrorException,
+      );
     });
   });
 
@@ -309,7 +311,7 @@ describe('UsersService (unit tests)', () => {
     });
 
     it('should assign journal entry to user when no entries', async () => {
-      jest.spyOn(provider, 'saveUserData').mockResolvedValue(true);
+      jest.spyOn(provider, 'saveUserData').mockResolvedValue(user);
 
       await provider.assignJournalEntry(user, journalEntry);
 
@@ -369,13 +371,58 @@ describe('UsersService (unit tests)', () => {
     it('should remove journal entry from users array of journal entries if entry found', async () => {
       const mockSave = jest
         .spyOn(provider, 'saveUserData')
-        .mockResolvedValue(true);
+        .mockResolvedValue(userWithEntry);
 
       await provider.unassignJournalEntry(userWithEntry, journalEntry);
 
       expect(userWithEntry.journalEntries).toHaveLength(0);
 
       expect(mockSave).toHaveBeenCalled();
+    });
+  });
+
+  describe('assignWorkoutPlan', () => {
+    const title = 'Get moving!';
+    const workoutPlanWithMissingTitle: WorkoutPlan = new WorkoutPlan();
+    const workoutPlanWithTitle: WorkoutPlan = new WorkoutPlan();
+    workoutPlanWithTitle.title = title;
+    const user: User = new User();
+    user.isAdmin = 0;
+    user.password = password;
+    user.username = username;
+    user.workoutPlans = [];
+    it('should throw InternalServerException if workout plan is null or undefined', async () => {
+      await expect(provider.assignWorkoutPlan(null, null)).rejects.toThrow(
+        InternalServerErrorException,
+      );
+    });
+
+    it('should throw InternalServerException if user is null or undefined', async () => {
+      await expect(
+        provider.assignWorkoutPlan(null, workoutPlanWithMissingTitle),
+      ).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should throw BadRequestException if title of the workout plan is empty,null or undefined', async () => {
+      await expect(
+        provider.assignWorkoutPlan(user, workoutPlanWithMissingTitle),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('should push the workout plan into users list of workout plans', async () => {
+      jest.spyOn(repository, 'save').mockResolvedValue(user);
+      jest.spyOn(provider, 'saveUserData').mockResolvedValue(user);
+      await provider.assignWorkoutPlan(user, workoutPlanWithTitle);
+
+      expect(user.workoutPlans).toHaveLength(1);
+    });
+
+    it('should save added workout after adding it to users list of workout plans', async () => {
+      jest.spyOn(repository, 'save').mockResolvedValue(user);
+      jest.spyOn(provider, 'saveUserData').mockResolvedValue(user);
+      await provider.assignWorkoutPlan(user, workoutPlanWithTitle);
+
+      expect(provider.saveUserData).toHaveBeenCalled();
     });
   });
 });

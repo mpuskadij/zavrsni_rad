@@ -45,8 +45,9 @@ export class BmiService {
       dateAdded: new Date(),
     });
     user.bmiEntries.push(bmiEntry);
-    const saveResult: boolean = await this.usersService.saveUserData(user);
-    if (saveResult == false) {
+    try {
+      const saveResult: User = await this.usersService.saveUserData(user);
+    } catch (error) {
       throw new InternalServerErrorException('Error adding entry to database!');
     }
     return bmi;

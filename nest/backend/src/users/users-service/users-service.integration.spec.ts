@@ -263,7 +263,7 @@ describe('UsersService (integration tests)', () => {
       };
       const result = await provider.saveUserData(user);
 
-      expect(result).toBe(true);
+      expect(result).toBe(user);
     });
   });
 
