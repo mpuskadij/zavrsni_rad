@@ -31,6 +31,9 @@ import { JournalEntry } from '../src/entities/journal-entry/journal-entry';
 import { WorkoutPlan } from '../src/entities/workout-plan/workout-plan';
 import { Exercise } from '../src/entities/exercise/exercise';
 import { WorkoutPlanController } from '../src/workout-plan/workout-plan/workout-plan.controller';
+import { WorkoutPlanModule } from '../src/workout-plan/workout-plan.module';
+import { WorkoutPlanService } from '../src/workout-plan/workout-plan-service/workout-plan-service';
+import { title } from 'process';
 
 describe('BmiController (e2e)', () => {
   let app: INestApplication;
@@ -47,6 +50,7 @@ describe('BmiController (e2e)', () => {
         DtosModule,
         UsersModule,
         CrpytoModule,
+        WorkoutPlanModule,
         ConfigModule.forRoot(),
         TypeOrmModule.forRoot({
           type: 'sqlite',
@@ -55,15 +59,23 @@ describe('BmiController (e2e)', () => {
           autoLoadEntities: true,
           entities: [User, Bmientry, JournalEntry, WorkoutPlan, Exercise],
         }),
+        TypeOrmModule.forFeature([
+          User,
+          Bmientry,
+          JournalEntry,
+          WorkoutPlan,
+          Exercise,
+        ]),
         AuthenticationModule,
         JwtModule.register({ secret: process.env.JWT_SECRET }),
       ],
-      controllers: [BmiController, UsersController, WorkoutPlanController],
+      controllers: [UsersController, WorkoutPlanController],
       providers: [
         Repository<User>,
         Repository<Bmientry>,
         Repository<JournalEntry>,
         UsersService,
+        WorkoutPlanService,
         CryptoService,
         SaltGenerator,
         HashGenerator,
@@ -95,16 +107,42 @@ describe('BmiController (e2e)', () => {
 
   describe('POST /api/workout-plans', () => {
     const path = '/api/workout-plans';
+    const registrationPath = '/api/users/register';
+
     it('should return 400 BAD REQUEST if body not sent', async () => {
       const response = await request(app.getHttpServer()).post(path);
       expect(response.status).toBe(HttpStatus.BAD_REQUEST);
     });
 
-    it('should return 401 UNATHORIZED if user not logged in', async () => {
+    it('should return 500 INTERNAL SERVER ERROR if username doesnt exist', async () => {
       const response = await request(app.getHttpServer())
         .post(path)
+        .send({ title: 'FIrst entry!' });
+      expect(response.status).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
+    });
+
+    it('should return 400 BAD REQUEST if emptry title sent', async () => {
+      const registrationResponse = await request(app.getHttpServer())
+        .post(registrationPath)
+        .send({ username: username, password: password });
+      expect(registrationResponse.status).toBe(HttpStatus.CREATED);
+      const response = await request(app.getHttpServer())
+        .post(path)
+        .set('jwtPayload', JSON.stringify(payload))
+        .send({ title: '' });
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+    });
+
+    it('should return 201 CREATED if title sent', async () => {
+      const registrationResponse = await request(app.getHttpServer())
+        .post(registrationPath)
+        .send({ username: username, password: password });
+      expect(registrationResponse.status).toBe(HttpStatus.CREATED);
+      const response = await request(app.getHttpServer())
+        .post(path)
+        .set('jwtPayload', JSON.stringify(payload))
         .send({ title: 'My first workout!' });
-      expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
+      expect(response.status).toBe(HttpStatus.CREATED);
     });
   });
 

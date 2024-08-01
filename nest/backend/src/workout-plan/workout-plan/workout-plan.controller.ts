@@ -1,6 +1,8 @@
 import {
+  Body,
   Controller,
   Get,
+  InternalServerErrorException,
   Post,
   Query,
   UseGuards,
@@ -23,14 +25,17 @@ export class WorkoutPlanController {
   @UseGuards(JwtGuard)
   async createWorkoutPlan(
     @Payload('username') username: string,
-    @Query(new ValidationPipe({ transform: true }))
+    @Body(new ValidationPipe({ transform: true }))
     createWorkoutPlanData: CreateWorkoutPlanDto,
   ): Promise<any> {
+    const user = await this.usersService.getUser(username);
+    if (!user) {
+      throw new InternalServerErrorException('User not found!');
+    }
     const workoutPlan: WorkoutPlan =
       await this.workoutPlanService.createWorkoutPlan(
         createWorkoutPlanData.title,
       );
-    const user = await this.usersService.getUser(username);
     await this.usersService.assignWorkoutPlan(user, workoutPlan);
     return;
   }

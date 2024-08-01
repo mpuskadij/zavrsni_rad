@@ -10,6 +10,7 @@ import { GuardsModule } from '../src/guards/guards.module';
 import { WgerExerciseDto } from '../src/dtos/wger-exercise-dto/wger-exercise-dto';
 import { DtosModule } from '../src/dtos/dtos.module';
 import { WgerService } from '../src/workout-plan/wger-service/wger-service';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 describe('Exercise controller (e2e)', () => {
   let app: INestApplication;
@@ -18,12 +19,7 @@ describe('Exercise controller (e2e)', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        WorkoutPlanModule,
-        AuthenticationModule,
-        GuardsModule,
-        DtosModule,
-      ],
+      imports: [AuthenticationModule, GuardsModule, DtosModule],
       controllers: [ExerciseController],
       providers: [WgerService],
     })
