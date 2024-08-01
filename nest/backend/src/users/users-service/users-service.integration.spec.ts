@@ -354,7 +354,7 @@ describe('UsersService (integration tests)', () => {
       expect(user.workoutPlans).toHaveLength(1);
     });
 
-    it('should assign workout plan to user with nalready existing workout plans', async () => {
+    it('should assign workout plan to user with already existing workout plans', async () => {
       const usernameInDatabase = await repository.findOne({
         where: { username: username },
         relations: ['bmiEntries', 'journalEntries', 'workoutPlans'],
@@ -371,6 +371,26 @@ describe('UsersService (integration tests)', () => {
       const secondWorkoutPlan =
         await workoutPlanService.createWorkoutPlan('Daily');
       await provider.assignWorkoutPlan(user, secondWorkoutPlan);
+      expect(user.workoutPlans).toHaveLength(2);
+    });
+
+    it('should assign workout plan with title that already exist', async () => {
+      const usernameInDatabase = await repository.findOne({
+        where: { username: username },
+        relations: ['bmiEntries', 'journalEntries', 'workoutPlans'],
+      });
+      if (usernameInDatabase != null) {
+        await repository.remove(usernameInDatabase);
+      }
+
+      await provider.addUser(username, password);
+      const workoutPlan =
+        await workoutPlanService.createWorkoutPlan('Get moving!');
+      const user = await provider.getUser(username);
+      await provider.assignWorkoutPlan(user, workoutPlan);
+      const secondWorkoutPlan =
+        await workoutPlanService.createWorkoutPlan('Daily');
+      await provider.assignWorkoutPlan(user, workoutPlan);
       expect(user.workoutPlans).toHaveLength(2);
     });
   });

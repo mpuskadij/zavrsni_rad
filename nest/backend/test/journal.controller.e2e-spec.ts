@@ -270,6 +270,7 @@ describe('Journal Controller (e2e)', () => {
       username: username,
       password: password,
       isAdmin: 0,
+      workoutPlans: [],
     };
     await userRepo.save(user);
     return await request(app.getHttpServer())
@@ -290,6 +291,7 @@ describe('Journal Controller (e2e)', () => {
       username: username,
       password: password,
       isAdmin: 0,
+      workoutPlans: [],
     };
     await userRepo.save(user);
     const journalEntry: JournalEntry = new JournalEntry();
