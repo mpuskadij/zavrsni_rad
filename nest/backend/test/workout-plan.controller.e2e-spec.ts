@@ -146,6 +146,17 @@ describe('BmiController (e2e)', () => {
     });
   });
 
+  describe('POST /api/workout-plans/:id', () => {
+    const path = '/api/workout-plans/';
+
+    it('should return 400 BAD REQUEST if id is not a number', async () => {
+      const response = await request(app.getHttpServer())
+        .post(path + 'a')
+        .set('jwtPayload', JSON.stringify(payload));
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+    });
+  });
+
   afterEach(async () => {
     await app.close();
   });

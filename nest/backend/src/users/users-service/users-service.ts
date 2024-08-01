@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -15,6 +16,16 @@ import { WorkoutPlan } from '../../entities/workout-plan/workout-plan';
 
 @Injectable()
 export class UsersService {
+  async getWorkoutsFromUser(user: User): Promise<WorkoutPlan[]> {
+    if (!user) {
+      throw new InternalServerErrorException('User not found!');
+    }
+    if (!user.workoutPlans?.length) {
+      throw new ForbiddenException("You don't have any workout plans yet!");
+    }
+
+    return user.workoutPlans;
+  }
   async assignWorkoutPlan(user: User, workoutPlan: WorkoutPlan): Promise<void> {
     const invalidParameters = !user || !workoutPlan;
     if (invalidParameters) {

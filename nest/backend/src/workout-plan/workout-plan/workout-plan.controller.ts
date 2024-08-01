@@ -17,6 +17,9 @@ import { CreateWorkoutPlanDto } from '../../dtos/create-workout-plan-dto/create-
 import { WorkoutPlan } from '../../entities/workout-plan/workout-plan';
 import { UsersService } from '../../users/users-service/users-service';
 import { WorkoutPlanService } from '../workout-plan-service/workout-plan-service';
+import { User } from 'src/entities/user/user';
+import { plainToInstance } from 'class-transformer';
+import { WorkoutPlanDto } from '../../dtos/workout-plan-dto/workout-plan-dto';
 
 @Controller('/api/workout-plans')
 export class WorkoutPlanController {
@@ -24,6 +27,20 @@ export class WorkoutPlanController {
     private workoutPlanService: WorkoutPlanService,
     private usersService: UsersService,
   ) {}
+  @Get()
+  @UseGuards(JwtGuard)
+  async findAllPlans(@Payload('username') username: string): Promise<any> {
+    const user: User = await this.usersService.getUser(username);
+    if (!user) {
+      throw new InternalServerErrorException('Error finding user!');
+    }
+
+    const workoutPlans: WorkoutPlan[] =
+      await this.usersService.getWorkoutsFromUser(user);
+
+    return plainToInstance(WorkoutPlanDto, workoutPlans);
+  }
+
   @Post()
   @UseGuards(JwtGuard)
   async createWorkoutPlan(

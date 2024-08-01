@@ -336,7 +336,7 @@ describe('UsersService (integration tests)', () => {
     });
   });
 
-  describe('Creating workout plans', () => {
+  describe('UsersService - WorkoutPlanService', () => {
     it('should assign workout plan to user with no previous workout plans', async () => {
       const usernameInDatabase = await repository.findOne({
         where: { username: username },

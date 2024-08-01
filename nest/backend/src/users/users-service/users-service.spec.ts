@@ -17,6 +17,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JournalEntry } from '../../entities/journal-entry/journal-entry';
 import {
   BadRequestException,
+  ForbiddenException,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { WorkoutPlan } from '../../entities/workout-plan/workout-plan';
@@ -430,6 +431,35 @@ describe('UsersService (unit tests)', () => {
       await provider.assignWorkoutPlan(user, workoutPlanWithTitle);
 
       expect(provider.saveUserData).toHaveBeenCalled();
+    });
+  });
+
+  describe('getWorkoutsFromUser', () => {
+    const userNoPlans = new User();
+    userNoPlans.workoutPlans = [];
+
+    const workoutPlan: WorkoutPlan = new WorkoutPlan();
+    workoutPlan.title = 'First plan!';
+    const userWithPlans = new User();
+    userWithPlans.workoutPlans = [workoutPlan];
+
+    it('should throw InternalServerException if user null or undefined', async () => {
+      await expect(provider.getWorkoutsFromUser(null)).rejects.toThrow(
+        InternalServerErrorException,
+      );
+    });
+
+    it('should throw ForbiddenException if user has no workout plans', async () => {
+      await expect(provider.getWorkoutsFromUser(userNoPlans)).rejects.toThrow(
+        ForbiddenException,
+      );
+    });
+
+    it('should throw return workout plans if there is at least one workout plan', async () => {
+      const result: WorkoutPlan[] =
+        await provider.getWorkoutsFromUser(userWithPlans);
+
+      expect(result).toHaveLength(1);
     });
   });
 });
