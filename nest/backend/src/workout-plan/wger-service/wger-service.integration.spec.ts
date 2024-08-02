@@ -189,4 +189,42 @@ describe('WgerService (integration tests)', () => {
       expect(result).toHaveLength(1);
     });
   });
+
+  describe('getEquipmentNamesById (with actual api call)', () => {
+    it('should return correct name of equipment if one correct id sent', async () => {
+      const benchId = (await provider.getEquipment('Bench')).at(0).id;
+
+      const result = await provider.getEquipmentNamesById([benchId]);
+
+      expect(result).toEqual('Bench');
+    });
+
+    it('should return correct name of equipment if two correct ids sent', async () => {
+      const benchId = (await provider.getEquipment('Bench')).at(0).id;
+      const barbellId = (await provider.getEquipment('Barbell')).at(0).id;
+
+      const result = await provider.getEquipmentNamesById([benchId, barbellId]);
+
+      expect(result).toEqual('Bench,Barbell');
+    });
+
+    it('should return empty string if one incorrect id sent', async () => {
+      const result = await provider.getEquipmentNamesById([300]);
+
+      expect(result).toEqual('');
+    });
+
+    it('should return one equipment name if one id is correct, and one isnt', async () => {
+      const result = await provider.getEquipmentNamesById([300, 301]);
+
+      expect(result).toEqual('');
+    });
+
+    it('should return one equipment name if one id is correct, and one isnt', async () => {
+      const benchId = (await provider.getEquipment('Bench')).at(0).id;
+      const result = await provider.getEquipmentNamesById([300, benchId]);
+
+      expect(result).toEqual('Bench');
+    });
+  });
 });
