@@ -72,6 +72,13 @@ export class WorkoutPlanController {
     id: number,
     @Payload('username') username: string,
   ): Promise<any> {
+    const workoutPlan: WorkoutPlan =
+      await this.workoutPlanService.getWorkoutPlanByID(id);
+    await this.workoutPlanService.checkIfWorkoutPlanBelongsToUser(
+      username,
+      workoutPlan,
+    );
+
     return;
   }
 }

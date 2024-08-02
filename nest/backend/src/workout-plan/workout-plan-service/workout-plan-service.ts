@@ -9,6 +9,23 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class WorkoutPlanService {
+  async checkIfWorkoutPlanBelongsToUser(
+    username: string,
+    workoutPlan: WorkoutPlan,
+  ): Promise<void> {
+    if (!username) {
+      throw new BadRequestException('Server did not receive username!');
+    }
+    if (!workoutPlan) {
+      throw new InternalServerErrorException('Error getting workout plan!');
+    }
+
+    if (workoutPlan.username != username) {
+      throw new BadRequestException(
+        "You don't have a workout plan with that ID!",
+      );
+    }
+  }
   constructor(
     @InjectRepository(WorkoutPlan)
     private workoutPlanRepostitory: Repository<WorkoutPlan>,

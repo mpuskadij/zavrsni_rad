@@ -70,4 +70,36 @@ describe('WorkoutPlanService (unit tests)', () => {
       expect(result.id).toEqual(id);
     });
   });
+
+  describe('checkIfWorkoutPlanBelongsToUser', () => {
+    it('should return BadRequestException if username null or empty', async () => {
+      await expect(
+        provider.checkIfWorkoutPlanBelongsToUser('', new WorkoutPlan()),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('should return InternalServerException if workout plan null or empty', async () => {
+      await expect(
+        provider.checkIfWorkoutPlanBelongsToUser('marin', null),
+      ).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should throw BadRequestException if workout doesnt belong to the user', async () => {
+      const workoutPlan: WorkoutPlan = new WorkoutPlan();
+      workoutPlan.title = 'Get going!';
+      workoutPlan.username = 'niram';
+      await expect(
+        provider.checkIfWorkoutPlanBelongsToUser('marin', workoutPlan),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('should pass if workout plans belongs to the user', async () => {
+      const workoutPlan: WorkoutPlan = new WorkoutPlan();
+      workoutPlan.title = 'Get going!';
+      workoutPlan.username = 'marin';
+      await expect(
+        provider.checkIfWorkoutPlanBelongsToUser('marin', workoutPlan),
+      ).resolves;
+    });
+  });
 });
