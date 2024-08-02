@@ -34,6 +34,8 @@ import { WorkoutPlanController } from '../src/workout-plan/workout-plan/workout-
 import { WorkoutPlanModule } from '../src/workout-plan/workout-plan.module';
 import { WorkoutPlanService } from '../src/workout-plan/workout-plan-service/workout-plan-service';
 import { title } from 'process';
+import { WgerService } from '../src/workout-plan/wger-service/wger-service';
+import { ExerciseService } from '../src/workout-plan/exercise-service/exercise-service';
 
 describe('WorkoutPlanController (e2e)', () => {
   let app: INestApplication;
@@ -83,6 +85,8 @@ describe('WorkoutPlanController (e2e)', () => {
         HashedPasswordData,
         AuthenticationService,
         JwtGuard,
+        WgerService,
+        ExerciseService,
       ],
     })
       .overrideGuard(GoogleRecaptchaGuard)

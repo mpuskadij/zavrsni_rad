@@ -7,10 +7,11 @@ import {
 import { WorkoutPlan } from '../../entities/workout-plan/workout-plan';
 import { EntitiesModule } from '../../entities/entities.module';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { Exercise } from '../../entities/exercise/exercise';
 
 describe('WorkoutPlanService (unit tests)', () => {
   let provider: WorkoutPlanService;
-  const mockWorkoutPlanRepository = { findOne: jest.fn() };
+  const mockWorkoutPlanRepository = { findOne: jest.fn(), save: jest.fn() };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -100,6 +101,44 @@ describe('WorkoutPlanService (unit tests)', () => {
       await expect(
         provider.checkIfWorkoutPlanBelongsToUser('marin', workoutPlan),
       ).resolves;
+    });
+  });
+
+  describe('addExercise', () => {
+    it('should throw InternalServerException if workout plan is falsy', async () => {
+      const result = () => provider.addExercise(null, new Exercise());
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should throw InternalServerException if exercise is falsy', async () => {
+      const result = () => provider.addExercise(new WorkoutPlan(), null);
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should add exercise to workout plan if plan has 0 existing exercises', async () => {
+      const workoutPlan = new WorkoutPlan();
+      workoutPlan.exercises = [];
+      const exercise = new Exercise();
+      const updatedWorkoutPlan = new WorkoutPlan();
+      updatedWorkoutPlan.exercises = [exercise];
+      mockWorkoutPlanRepository.save.mockResolvedValue(updatedWorkoutPlan);
+      await provider.addExercise(workoutPlan, exercise);
+      expect(workoutPlan.exercises).toHaveLength(1);
+    });
+
+    it('should add exercise to workout plan if plan has 1 existing exercises', async () => {
+      const workoutPlan = new WorkoutPlan();
+      workoutPlan.exercises = [];
+      const exercise = new Exercise();
+      const exercise2 = new Exercise();
+      const updatedWorkoutPlan = new WorkoutPlan();
+      updatedWorkoutPlan.exercises = [exercise, exercise2];
+      mockWorkoutPlanRepository.save
+        .mockResolvedValueOnce(workoutPlan)
+        .mockResolvedValueOnce(updatedWorkoutPlan);
+      await provider.addExercise(workoutPlan, exercise);
+      await provider.addExercise(workoutPlan, exercise2);
+      expect(workoutPlan.exercises).toHaveLength(2);
     });
   });
 });

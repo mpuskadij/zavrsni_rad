@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { WgerExerciseResultDto } from '../../dtos/wger-exercise-result-dto/wger-exercise-result-dto';
@@ -14,6 +15,49 @@ import { WgerEquipmentResponseDto } from '../../dtos/wger-equipment-response-dto
 
 @Injectable()
 export class WgerService {
+  async getEquipmentNamesById(equipment: number[]): Promise<string> {
+    let equipmentNames: string = '';
+    if (!equipment?.length) {
+      return '';
+    }
+
+    const equipmentFromWger: WgerEquipmentDto[] = await this.getEquipment();
+    equipment.forEach((eq) => {
+      const foundEquipment = equipmentFromWger.find(
+        (element) => eq == element.id,
+      );
+      if (foundEquipment?.name) {
+        !equipmentNames
+          ? (equipmentNames += foundEquipment.name)
+          : (equipmentNames += ',' + foundEquipment.name);
+      }
+    });
+
+    return equipmentNames;
+  }
+  async getCategoryNameById(categoryID: number): Promise<string> {
+    if (!categoryID) {
+      throw new InternalServerErrorException(
+        'Server had trouble getting category name!',
+      );
+    }
+
+    const allCategories = await this.getCategories();
+
+    const foundCategory = allCategories.find(
+      (category) => category.id == categoryID,
+    );
+
+    if (!foundCategory) {
+      throw new InternalServerErrorException(
+        'Server had trouble getting category name!',
+      );
+    }
+
+    const categoryName: string = foundCategory.name;
+
+    return categoryName;
+  }
   async getEquipment(
     equipmentName: string = null,
   ): Promise<WgerEquipmentDto[]> {

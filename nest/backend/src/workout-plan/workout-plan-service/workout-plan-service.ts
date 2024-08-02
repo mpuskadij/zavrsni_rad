@@ -6,9 +6,30 @@ import {
 import { WorkoutPlan } from '../../entities/workout-plan/workout-plan';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Exercise } from 'src/entities/exercise/exercise';
 
 @Injectable()
 export class WorkoutPlanService {
+  async addExercise(
+    workoutPlan: WorkoutPlan,
+    exercise: Exercise,
+  ): Promise<void> {
+    if (!workoutPlan || !exercise) {
+      throw new InternalServerErrorException(
+        'Server had trouble adding exercise to your workout plan!',
+      );
+    }
+    workoutPlan.exercises.push(exercise);
+    await this.saveWorkoutPlan(workoutPlan);
+    return;
+  }
+
+  private async saveWorkoutPlan(
+    workoutPlan: WorkoutPlan,
+  ): Promise<WorkoutPlan> {
+    return await this.workoutPlanRepostitory.save(workoutPlan);
+  }
+
   async checkIfWorkoutPlanBelongsToUser(
     username: string,
     workoutPlan: WorkoutPlan,

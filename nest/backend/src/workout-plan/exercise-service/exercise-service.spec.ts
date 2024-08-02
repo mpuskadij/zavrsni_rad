@@ -6,10 +6,11 @@ import {
 } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Exercise } from '../../entities/exercise/exercise';
+import e from 'express';
 
 describe('ExerciseService (unit tests)', () => {
   let provider: ExerciseService;
-  let mockExerciseRepository = { findOne: jest.fn() };
+  let mockExerciseRepository = { findOne: jest.fn(), save: jest.fn() };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -45,6 +46,45 @@ describe('ExerciseService (unit tests)', () => {
       const result = await provider.getExceriseByName('Bench Press');
       expect(result).not.toBeNull();
       expect(result.name).toEqual(exercise.name);
+    });
+  });
+
+  describe('createExercise', () => {
+    const name = 'Bench Press';
+    const description = '';
+    const category = 'Bench';
+    const equipment = '';
+
+    it('should throw BadRequestException if name for the exercise is empty', async () => {
+      const result = () => provider.createExercise('', '', '', '');
+      expect(result).rejects.toThrow(BadRequestException);
+    });
+
+    it('should throw InternalServerErrorException if category for the exercise is empty', async () => {
+      const result = () => provider.createExercise(name, '', '', '');
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should return newly created Exercise', async () => {
+      const exercise: Exercise = {
+        id: 1,
+        name: name,
+        description: description,
+        equipment: equipment,
+        category: category,
+      };
+      mockExerciseRepository.save.mockResolvedValue(exercise);
+      const result = await provider.createExercise(
+        name,
+        description,
+        category,
+        equipment,
+      );
+      expect(result).toBeInstanceOf(Exercise);
+      expect(result.name).toEqual(name);
+      expect(result.category).toEqual(category);
+      expect(result.description).toEqual(description);
+      expect(result.equipment).toEqual(equipment);
     });
   });
 });

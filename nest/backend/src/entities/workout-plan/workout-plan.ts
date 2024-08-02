@@ -32,7 +32,7 @@ export class WorkoutPlan {
   @JoinColumn({ referencedColumnName: 'username', name: 'username' })
   user: User;
 
-  @ManyToMany(() => Exercise)
+  @ManyToMany(() => Exercise, { cascade: ['insert', 'remove', 'update'] })
   @JoinTable()
   exercises: Exercise[];
 }

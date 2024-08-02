@@ -24,6 +24,7 @@ import { AddExerciseToWorkoutPlanDto } from '../../dtos/add-exercise-to-workout-
 import { WgerService } from '../wger-service/wger-service';
 import { WgerExerciseDto } from '../../dtos/wger-exercise-dto/wger-exercise-dto';
 import { WgerCategoryDto } from 'src/dtos/wger-category-dto/wger-category-dto';
+import { ExerciseService } from '../exercise-service/exercise-service';
 
 @Controller('/api/workout-plans')
 export class WorkoutPlanController {
@@ -31,6 +32,7 @@ export class WorkoutPlanController {
     private workoutPlanService: WorkoutPlanService,
     private usersService: UsersService,
     private wgerService: WgerService,
+    private exerciseService: ExerciseService,
   ) {}
   @Get()
   @UseGuards(JwtGuard)
@@ -85,10 +87,29 @@ export class WorkoutPlanController {
       username,
       workoutPlan,
     );
-    /*
-    const exerciseFromWger : WgerExerciseDto = (await this.wgerService.getExercises(1,addExerciseDto.name)).at(0);
-    const exercise 
-    */
+    let exercise = await this.exerciseService.getExceriseByName(
+      addExerciseDto.name,
+    );
+    if (!exercise) {
+      const exerciseFromWger: WgerExerciseDto = (
+        await this.wgerService.getExercises(1, addExerciseDto.name)
+      ).at(0);
+      const name: string = exerciseFromWger.name;
+      const description: string = exerciseFromWger.description;
+      const category: string = await this.wgerService.getCategoryNameById(
+        exerciseFromWger.category,
+      );
+      const equipment: string = await this.wgerService.getEquipmentNamesById(
+        exerciseFromWger.equipment,
+      );
+      exercise = await this.exerciseService.createExercise(
+        name,
+        description,
+        category,
+        equipment,
+      );
+    }
+    await this.workoutPlanService.addExercise(workoutPlan, exercise);
 
     return;
   }

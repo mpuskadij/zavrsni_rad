@@ -9,6 +9,29 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class ExerciseService {
+  async createExercise(
+    name: string,
+    description: string,
+    category: string,
+    equipment: string,
+  ): Promise<Exercise> {
+    if (!name) {
+      throw new BadRequestException('Invalid exercise name!');
+    }
+    if (!category) {
+      throw new InternalServerErrorException(
+        'Server could not find category of the exercise!',
+      );
+    }
+
+    const exercise = new Exercise();
+    exercise.category = category;
+    exercise.description = description;
+    exercise.equipment = equipment;
+    exercise.name = name;
+
+    return exercise;
+  }
   constructor(
     @InjectRepository(Exercise)
     private exerciseRepository: Repository<Exercise>,

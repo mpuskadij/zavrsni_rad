@@ -6,6 +6,7 @@ import { WgerExerciseDto } from '../../dtos/wger-exercise-dto/wger-exercise-dto'
 import { WgerCategoryResponseDto } from 'src/dtos/wger-category-response-dto/wger-category-response-dto';
 import {
   BadRequestException,
+  InternalServerErrorException,
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { WgerCategoryDto } from 'src/dtos/wger-category-dto/wger-category-dto';
@@ -157,6 +158,88 @@ describe('WgerService (unit tests)', () => {
       await expect(provider.getEquipment('k')).rejects.toThrow(
         BadRequestException,
       );
+    });
+  });
+
+  describe('getCategoryNameByID', () => {
+    it('throw InternalServerException if id not a number', async () => {
+      const result = () => provider.getCategoryNameById(null);
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('return category name if ID found', async () => {
+      const allCategories: WgerCategoryDto[] = [];
+      allCategories.push({ id: 1, name: 'Bench' });
+      jest.spyOn(provider, 'getCategories').mockResolvedValue(allCategories);
+      const result = await provider.getCategoryNameById(1);
+
+      expect(result).toEqual('Bench');
+    });
+
+    it('throw InternalServerException if category not found', async () => {
+      const allCategories: WgerCategoryDto[] = [];
+      allCategories.push({ id: 1, name: 'Bench' });
+      jest.spyOn(provider, 'getCategories').mockResolvedValue(allCategories);
+      const result = () => provider.getCategoryNameById(2);
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+  });
+
+  describe('getEquipmentNamesById', () => {
+    it('should return empty string if array is empty', async () => {
+      const result = await provider.getEquipmentNamesById([]);
+
+      expect(result).toEqual('');
+    });
+
+    it('should return empty string if id not found', async () => {
+      jest.spyOn(provider, 'getEquipment').mockResolvedValue([]);
+      const result = await provider.getEquipmentNamesById([1]);
+
+      expect(result).toEqual('');
+    });
+
+    it('should get Equipment name if array has lenght of 1', async () => {
+      const equipment: WgerEquipmentDto = { id: 1, name: 'Bench' };
+      jest.spyOn(provider, 'getEquipment').mockResolvedValue([equipment]);
+      const result = await provider.getEquipmentNamesById([1]);
+
+      expect(result).toEqual('Bench');
+    });
+
+    it('should get Equipment name if array has lenght of 1', async () => {
+      const equipment: WgerEquipmentDto = { id: 1, name: 'Bench' };
+      const equipment2: WgerEquipmentDto = { id: 2, name: 'Exercise mat' };
+      jest
+        .spyOn(provider, 'getEquipment')
+        .mockResolvedValue([equipment, equipment2]);
+      const result = await provider.getEquipmentNamesById([1, 2]);
+
+      expect(result).toEqual('Bench,Exercise mat');
+    });
+
+    it('should not return equipment name if equipment name is empty!', async () => {
+      const equipment: WgerEquipmentDto = { id: 1, name: 'Bench' };
+      const equipment2: WgerEquipmentDto = { id: 2, name: '' };
+      jest
+        .spyOn(provider, 'getEquipment')
+        .mockResolvedValue([equipment, equipment2]);
+      const result = await provider.getEquipmentNamesById([1, 2]);
+
+      expect(result).toEqual('Bench');
+    });
+
+    it('should not return equipment name if equipment name is empty!', async () => {
+      const equipment: WgerEquipmentDto = { id: 1, name: '' };
+      const equipment2: WgerEquipmentDto = { id: 2, name: 'Exercise mat' };
+      jest
+        .spyOn(provider, 'getEquipment')
+        .mockResolvedValue([equipment, equipment2]);
+      const result = await provider.getEquipmentNamesById([1, 2]);
+
+      expect(result).toEqual('Exercise mat');
     });
   });
 });
