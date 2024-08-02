@@ -12,6 +12,8 @@ import { UsersService } from '../users/users-service/users-service';
 import { CrpytoModule } from '../crpyto/crpyto.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { WorkoutPlan } from '../entities/workout-plan/workout-plan';
+import { ExerciseService } from './exercise-service/exercise-service';
+import { Exercise } from './../entities/exercise/exercise';
 
 @Module({
   imports: [
@@ -21,9 +23,9 @@ import { WorkoutPlan } from '../entities/workout-plan/workout-plan';
     DecoratorsModule,
     UsersModule,
     CrpytoModule,
-    TypeOrmModule.forFeature([WorkoutPlan]),
+    TypeOrmModule.forFeature([WorkoutPlan, Exercise]),
   ],
   controllers: [ExerciseController, WorkoutPlanController],
-  providers: [WgerService, WorkoutPlanService, UsersService],
+  providers: [WgerService, WorkoutPlanService, UsersService, ExerciseService],
 })
 export class WorkoutPlanModule {}

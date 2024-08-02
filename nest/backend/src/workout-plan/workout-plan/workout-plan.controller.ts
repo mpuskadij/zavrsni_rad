@@ -20,12 +20,17 @@ import { WorkoutPlanService } from '../workout-plan-service/workout-plan-service
 import { User } from 'src/entities/user/user';
 import { plainToInstance } from 'class-transformer';
 import { WorkoutPlanDto } from '../../dtos/workout-plan-dto/workout-plan-dto';
+import { AddExerciseToWorkoutPlanDto } from '../../dtos/add-exercise-to-workout-plan-dto/add-exercise-to-workout-plan-dto';
+import { WgerService } from '../wger-service/wger-service';
+import { WgerExerciseDto } from '../../dtos/wger-exercise-dto/wger-exercise-dto';
+import { WgerCategoryDto } from 'src/dtos/wger-category-dto/wger-category-dto';
 
 @Controller('/api/workout-plans')
 export class WorkoutPlanController {
   constructor(
     private workoutPlanService: WorkoutPlanService,
     private usersService: UsersService,
+    private wgerService: WgerService,
   ) {}
   @Get()
   @UseGuards(JwtGuard)
@@ -71,6 +76,8 @@ export class WorkoutPlanController {
     )
     id: number,
     @Payload('username') username: string,
+    @Body(new ValidationPipe({ transform: true }))
+    addExerciseDto: AddExerciseToWorkoutPlanDto,
   ): Promise<any> {
     const workoutPlan: WorkoutPlan =
       await this.workoutPlanService.getWorkoutPlanByID(id);
@@ -78,6 +85,10 @@ export class WorkoutPlanController {
       username,
       workoutPlan,
     );
+    /*
+    const exerciseFromWger : WgerExerciseDto = (await this.wgerService.getExercises(1,addExerciseDto.name)).at(0);
+    const exercise 
+    */
 
     return;
   }
