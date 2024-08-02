@@ -3,7 +3,10 @@ import { WgerService } from './wger-service';
 import { WgerExerciseResultDto } from '../../dtos/wger-exercise-result-dto/wger-exercise-result-dto';
 import { DtosModule } from '../../dtos/dtos.module';
 import { WgerExerciseDto } from '../../dtos/wger-exercise-dto/wger-exercise-dto';
-import { BadRequestException } from '@nestjs/common';
+import {
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 
 describe('WgerService (integration tests)', () => {
   let provider: WgerService;
@@ -225,6 +228,21 @@ describe('WgerService (integration tests)', () => {
       const result = await provider.getEquipmentNamesById([300, benchId]);
 
       expect(result).toEqual('Bench');
+    });
+  });
+
+  describe('getCategoryNameById', () => {
+    it('should throw InternalServerError if invalid category sent', async () => {
+      const result = () => provider.getCategoryNameById(300);
+
+      await expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should return correct category name if correct id sent', async () => {
+      const chestId = (await provider.getCategories('Chest')).at(0).id;
+      const result = await provider.getCategoryNameById(chestId);
+
+      expect(result).toEqual('Chest');
     });
   });
 });
