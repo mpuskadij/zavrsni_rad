@@ -36,7 +36,7 @@ export class ExerciseService {
     @InjectRepository(Exercise)
     private exerciseRepository: Repository<Exercise>,
   ) {}
-  async getExceriseByName(exerciseName: string): Promise<Exercise> {
+  async getExcerciseByName(exerciseName: string): Promise<Exercise> {
     if (!exerciseName) {
       throw new BadRequestException('Method not implemented.');
     }

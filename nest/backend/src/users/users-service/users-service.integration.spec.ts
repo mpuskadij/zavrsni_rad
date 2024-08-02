@@ -393,5 +393,54 @@ describe('UsersService (integration tests)', () => {
       await provider.assignWorkoutPlan(user, workoutPlan);
       expect(user.workoutPlans).toHaveLength(2);
     });
+
+    it('should assign workout plan and be able to retrieve it', async () => {
+      const usernameInDatabase = await repository.findOne({
+        where: { username: username },
+        relations: ['bmiEntries', 'journalEntries', 'workoutPlans'],
+      });
+      if (usernameInDatabase != null) {
+        await repository.remove(usernameInDatabase);
+      }
+
+      await provider.addUser(username, password);
+      const workoutPlan =
+        await workoutPlanService.createWorkoutPlan('Get moving!');
+      const user = await provider.getUser(username);
+      await provider.assignWorkoutPlan(user, workoutPlan);
+      expect(user.workoutPlans).toHaveLength(1);
+      const result = await workoutPlanService.getWorkoutPlanByID(
+        user.workoutPlans[0].id,
+      );
+      expect(result.id).toEqual(user.workoutPlans[0].id);
+      expect(result.username).toEqual(username);
+      expect(result.title).toEqual('Get moving!');
+    });
+
+    it('should assign workout plan, retrieve it and validate is username matches', async () => {
+      const usernameInDatabase = await repository.findOne({
+        where: { username: username },
+        relations: ['bmiEntries', 'journalEntries', 'workoutPlans'],
+      });
+      if (usernameInDatabase != null) {
+        await repository.remove(usernameInDatabase);
+      }
+
+      await provider.addUser(username, password);
+      const workoutPlan =
+        await workoutPlanService.createWorkoutPlan('Get moving!');
+      const user = await provider.getUser(username);
+      await provider.assignWorkoutPlan(user, workoutPlan);
+      expect(user.workoutPlans).toHaveLength(1);
+      const resultPlan = await workoutPlanService.getWorkoutPlanByID(
+        user.workoutPlans[0].id,
+      );
+      expect(
+        await workoutPlanService.checkIfWorkoutPlanBelongsToUser(
+          username,
+          resultPlan,
+        ),
+      ).resolves;
+    });
   });
 });

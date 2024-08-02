@@ -28,14 +28,14 @@ describe('ExerciseService (unit tests)', () => {
 
   describe('getExceriseByName', () => {
     it('should throw BadRequestException if name not passed', async () => {
-      await expect(provider.getExceriseByName('')).rejects.toThrow(
+      await expect(provider.getExcerciseByName('')).rejects.toThrow(
         BadRequestException,
       );
     });
 
     it('should return null if exercise not found', async () => {
       mockExerciseRepository.findOne.mockResolvedValue(null);
-      const result = await provider.getExceriseByName('Bench Press');
+      const result = await provider.getExcerciseByName('Bench Press');
       expect(result).toBeNull();
     });
 
@@ -43,7 +43,7 @@ describe('ExerciseService (unit tests)', () => {
       const exercise = new Exercise();
       exercise.name = 'Bench Press';
       mockExerciseRepository.findOne.mockResolvedValue(exercise);
-      const result = await provider.getExceriseByName('Bench Press');
+      const result = await provider.getExcerciseByName('Bench Press');
       expect(result).not.toBeNull();
       expect(result.name).toEqual(exercise.name);
     });

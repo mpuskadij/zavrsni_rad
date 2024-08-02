@@ -87,7 +87,7 @@ export class WorkoutPlanController {
       username,
       workoutPlan,
     );
-    let exercise = await this.exerciseService.getExceriseByName(
+    let exercise = await this.exerciseService.getExcerciseByName(
       addExerciseDto.name,
     );
     if (!exercise) {
