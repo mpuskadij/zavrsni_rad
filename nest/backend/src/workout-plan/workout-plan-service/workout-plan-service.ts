@@ -90,6 +90,7 @@ export class WorkoutPlanService {
     }
     const workoutPlan: WorkoutPlan = new WorkoutPlan();
     workoutPlan.title = title;
+    workoutPlan.exercises = [];
 
     return workoutPlan;
   }
