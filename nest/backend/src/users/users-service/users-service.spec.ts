@@ -462,4 +462,51 @@ describe('UsersService (unit tests)', () => {
       expect(result).toHaveLength(1);
     });
   });
+
+  describe('unassignWorkoutPlan', () => {
+    it('should throw InternalServerError if user is not defined', async () => {
+      const result = () =>
+        provider.unassignWorkoutPlan(null, new WorkoutPlan());
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should throw InternalServerError if workout plan is not defined', async () => {
+      const result = () => provider.unassignWorkoutPlan(new User(), null);
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should throw InternalServerError if users array of workout plans is empty', async () => {
+      const user = new User();
+      user.workoutPlans = [];
+      const result = () =>
+        provider.unassignWorkoutPlan(user, new WorkoutPlan());
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should throw InternalServerError if workout plan not in users array of workout plans', async () => {
+      const user = new User();
+      const workoutPlan = new WorkoutPlan();
+      workoutPlan.id = 1;
+      workoutPlan.username = username;
+      user.workoutPlans = [workoutPlan];
+      const result = () =>
+        provider.unassignWorkoutPlan(user, new WorkoutPlan());
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should resolve and delete workout plan from users array of workout plans', async () => {
+      const user = new User();
+      const workoutPlan = new WorkoutPlan();
+      workoutPlan.id = 1;
+      workoutPlan.username = username;
+      user.workoutPlans = [workoutPlan];
+      jest.spyOn(provider, 'saveUserData').mockResolvedValue(user);
+      await provider.unassignWorkoutPlan(user, workoutPlan);
+      expect(user.workoutPlans).toHaveLength(0);
+    });
+  });
 });

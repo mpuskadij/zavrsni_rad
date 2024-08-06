@@ -16,6 +16,27 @@ import { WorkoutPlan } from '../../entities/workout-plan/workout-plan';
 
 @Injectable()
 export class UsersService {
+  async unassignWorkoutPlan(
+    user: User,
+    workoutPlan: WorkoutPlan,
+  ): Promise<void> {
+    if (!user?.workoutPlans?.length || !workoutPlan) {
+      throw new InternalServerErrorException(
+        'Server had trouble deleting your workout plan!',
+      );
+    }
+
+    const indexOfWorkoutPlanToDelete = user.workoutPlans.indexOf(workoutPlan);
+    if (indexOfWorkoutPlanToDelete === -1) {
+      throw new InternalServerErrorException(
+        'Workout plan to delete not found!',
+      );
+    }
+
+    user.workoutPlans.splice(indexOfWorkoutPlanToDelete);
+    await this.saveUserData(user);
+    return;
+  }
   async getWorkoutsFromUser(user: User): Promise<WorkoutPlan[]> {
     if (!user) {
       throw new InternalServerErrorException('User not found!');

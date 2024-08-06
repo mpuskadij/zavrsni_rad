@@ -2,7 +2,9 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
   HttpStatus,
   InternalServerErrorException,
   Param,
@@ -158,6 +160,37 @@ export class WorkoutPlanController {
     }
     await this.workoutPlanService.addExercise(workoutPlan, exercise);
 
+    return;
+  }
+
+  @Delete('/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(JwtGuard)
+  async deleteWorkoutPlan(
+    @Param(
+      'id',
+      new ParseIntPipe({
+        optional: false,
+        errorHttpStatusCode: HttpStatus.BAD_REQUEST,
+      }),
+    )
+    id: number,
+    @Payload('username') username: string,
+  ): Promise<any> {
+    const user: User = await this.usersService.getUser(username);
+    if (!user) {
+      throw new InternalServerErrorException(
+        'Server had trouble finding you in database!',
+      );
+    }
+    const workoutPlan: WorkoutPlan =
+      await this.workoutPlanService.getWorkoutPlanByID(id);
+    await this.workoutPlanService.checkIfWorkoutPlanBelongsToUser(
+      user.username,
+      workoutPlan,
+    );
+    await this.workoutPlanService.deleteWorkoutPlan(workoutPlan);
+    await this.usersService.unassignWorkoutPlan(user, workoutPlan);
     return;
   }
 }

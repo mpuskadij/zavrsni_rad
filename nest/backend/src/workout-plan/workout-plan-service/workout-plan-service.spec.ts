@@ -11,7 +11,11 @@ import { Exercise } from '../../entities/exercise/exercise';
 
 describe('WorkoutPlanService (unit tests)', () => {
   let provider: WorkoutPlanService;
-  const mockWorkoutPlanRepository = { findOne: jest.fn(), save: jest.fn() };
+  const mockWorkoutPlanRepository = {
+    findOne: jest.fn(),
+    save: jest.fn(),
+    remove: jest.fn(),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -178,6 +182,22 @@ describe('WorkoutPlanService (unit tests)', () => {
         'Deadlift',
       );
       expect(result).toBe(false);
+    });
+  });
+
+  describe('deleteWorkoutPlan', () => {
+    it('should throw InternalServerException is workout plan is null or undefined', async () => {
+      const result = () => provider.deleteWorkoutPlan(null);
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('delete workout plan when truthy workout plan received', async () => {
+      const workoutPlan = new WorkoutPlan();
+      mockWorkoutPlanRepository.remove.mockResolvedValue(workoutPlan);
+      const result = () => provider.deleteWorkoutPlan(workoutPlan);
+
+      expect(result).resolves;
     });
   });
 });

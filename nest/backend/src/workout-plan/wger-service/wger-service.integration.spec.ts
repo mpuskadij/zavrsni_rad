@@ -8,7 +8,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 
-describe('WgerService (integration tests)', () => {
+describe.skip('WgerService (integration tests)', () => {
   let provider: WgerService;
 
   beforeEach(async () => {

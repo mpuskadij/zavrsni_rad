@@ -10,6 +10,15 @@ import { Exercise } from 'src/entities/exercise/exercise';
 
 @Injectable()
 export class WorkoutPlanService {
+  async deleteWorkoutPlan(workoutPlan: WorkoutPlan): Promise<void> {
+    if (!workoutPlan) {
+      throw new InternalServerErrorException(
+        'Server had trouble deleting your workout plan!',
+      );
+    }
+    await this.workoutPlanRepostitory.remove(workoutPlan);
+    return;
+  }
   async checkIfExerciseAlreadyInWorkoutPlan(
     workoutPlanToCheck: WorkoutPlan,
     exerciseName: string,
