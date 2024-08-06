@@ -40,7 +40,7 @@ describe('WorkoutPlanService (integration tests)', () => {
     provider = module.get<WorkoutPlanService>(WorkoutPlanService);
   });
 
-  describe('getWorkout ById', () => {
+  describe('getWorkoutById', () => {
     it('should throw InternalServerException if workout plan with specific id not found', async () => {
       await expect(provider.getWorkoutPlanByID(22.5)).rejects.toThrow(
         InternalServerErrorException,
