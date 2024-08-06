@@ -36,14 +36,25 @@ import { WorkoutPlanService } from '../src/workout-plan/workout-plan-service/wor
 import { title } from 'process';
 import { WgerService } from '../src/workout-plan/wger-service/wger-service';
 import { ExerciseService } from '../src/workout-plan/exercise-service/exercise-service';
+import { WorkoutPlanDto } from '../src/dtos/workout-plan-dto/workout-plan-dto';
+import { plainToInstance } from 'class-transformer';
+import * as cookieParser from 'cookie-parser';
 
 describe('WorkoutPlanController (e2e)', () => {
   let app: INestApplication;
   let userRepo: Repository<User>;
+  let exerciseRepo: Repository<Exercise>;
   const username = 'marin';
   const password = 'ajskfnU7';
+  const differentUsername = 'niram';
+  const differentPassword = 'ajskfnU8';
+  const differentPayload: JwtPayload = {
+    username: differentUsername,
+    isAdmin: 0,
+  };
   const payload: JwtPayload = { username: username, isAdmin: 0 };
   const registrationPath = '/api/users/register';
+  const validExerciseName = 'Bench Press';
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -77,6 +88,7 @@ describe('WorkoutPlanController (e2e)', () => {
         Repository<User>,
         Repository<Bmientry>,
         Repository<JournalEntry>,
+        Repository<Exercise>,
         UsersService,
         WorkoutPlanService,
         CryptoService,
@@ -99,6 +111,9 @@ describe('WorkoutPlanController (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     userRepo = moduleFixture.get<Repository<User>>(getRepositoryToken(User));
+    exerciseRepo = moduleFixture.get<Repository<Exercise>>(
+      getRepositoryToken(Exercise),
+    );
 
     if ((await userRepo.existsBy({ username })) == true) {
       const user = await userRepo.findOne({
@@ -107,6 +122,22 @@ describe('WorkoutPlanController (e2e)', () => {
       });
       await userRepo.remove(user);
     }
+
+    if ((await userRepo.existsBy({ username: differentUsername })) == true) {
+      const user = await userRepo.findOne({
+        where: { username: differentUsername },
+        relations: ['bmiEntries', 'journalEntries', 'workoutPlans'],
+      });
+      await userRepo.remove(user);
+    }
+
+    if ((await exerciseRepo.existsBy({ name: validExerciseName })) == true) {
+      const exercise = await exerciseRepo.findOne({
+        where: { name: validExerciseName },
+      });
+      await exerciseRepo.remove(exercise);
+    }
+    app.use(cookieParser());
     await app.init();
   });
 
@@ -188,6 +219,70 @@ describe('WorkoutPlanController (e2e)', () => {
         .get(path)
         .set('jwtPayload', JSON.stringify(payload));
       expect(response.status).toBe(HttpStatus.OK);
+      expect(response.body).toBeInstanceOf(Array<WorkoutPlanDto>);
+    });
+  });
+
+  describe('GET /api/workout-plans/:id', () => {
+    const path = '/api/workout-plans/';
+
+    it('should return 500 INTERNAL SERVER ERROR if user not found', async () => {
+      const response = await request(app.getHttpServer())
+        .get(path)
+        .set('jwtPayload', JSON.stringify(payload));
+      expect(response.status).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
+    });
+
+    it('should return 400 BAD REQUEST if id not found', async () => {
+      const registrationResponse = await request(app.getHttpServer())
+        .post(registrationPath)
+        .send({ username: username, password: password });
+      expect(registrationResponse.status).toBe(HttpStatus.CREATED);
+
+      const createWorkoutPlanResponse = await request(app.getHttpServer())
+        .post(path)
+        .set('jwtPayload', JSON.stringify(payload))
+        .send({ title: "Get movin'!" });
+      expect(createWorkoutPlanResponse.status).toBe(HttpStatus.CREATED);
+
+      const response = await request(app.getHttpServer())
+        .get(path + '-1')
+        .set('jwtPayload', JSON.stringify(payload));
+
+      expect(response.status).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
+    });
+
+    it('should return 200 OK if user has one workout plan', async () => {
+      const registrationResponse = await request(app.getHttpServer())
+        .post(registrationPath)
+        .send({ username: username, password: password });
+      expect(registrationResponse.status).toBe(HttpStatus.CREATED);
+
+      const createWorkoutPlanResponse = await request(app.getHttpServer())
+        .post(path)
+        .set('jwtPayload', JSON.stringify(payload))
+        .send({ title: "Get movin'!" });
+      expect(createWorkoutPlanResponse.status).toBe(HttpStatus.CREATED);
+
+      const getAllWorkoutPlansResponse = await request(app.getHttpServer())
+        .get(path)
+        .set('jwtPayload', JSON.stringify(payload));
+      expect(getAllWorkoutPlansResponse.status).toBe(HttpStatus.OK);
+
+      const workoutPlans = plainToInstance(
+        WorkoutPlanDto,
+        getAllWorkoutPlansResponse.body,
+      );
+
+      const response = await request(app.getHttpServer())
+        .get(path + workoutPlans[0].id)
+        .set('jwtPayload', JSON.stringify(payload));
+      expect(response.status).toBe(HttpStatus.OK);
+      expect(response.body).toHaveProperty('id');
+      expect(response.body).toHaveProperty('title');
+      expect(response.body).toHaveProperty('exercises');
+      expect(response.body).toHaveProperty('dateAdded');
+      expect(response.body).not.toHaveProperty(['user', 'username']);
     });
   });
 
@@ -199,6 +294,112 @@ describe('WorkoutPlanController (e2e)', () => {
         .post(path + 'a')
         .set('jwtPayload', JSON.stringify(payload));
       expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+    });
+
+    it('should return 500 INTERNAL SERVER ERROR if id of workout plan not found', async () => {
+      const registrationResponse = await request(app.getHttpServer())
+        .post(registrationPath)
+        .send({ username: username, password: password });
+      expect(registrationResponse.status).toBe(HttpStatus.CREATED);
+
+      const response = await request(app.getHttpServer())
+        .post(path + '-1')
+        .set('jwtPayload', JSON.stringify(payload))
+        .send({ name: 'Bench Press' });
+      expect(response.status).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
+    });
+
+    it('should return BAD REQUEST when exercise name found found from WGER', async () => {
+      const registrationResponse = await request(app.getHttpServer())
+        .post(registrationPath)
+        .send({ username: username, password: password });
+      expect(registrationResponse.status).toBe(HttpStatus.CREATED);
+
+      const createWorkoutPlanResponse = await request(app.getHttpServer())
+        .post(path)
+        .set('jwtPayload', JSON.stringify(payload))
+        .send({ title: "Get movin'!" });
+      expect(createWorkoutPlanResponse.status).toBe(HttpStatus.CREATED);
+
+      const getAllWorkoutPlansResponse = await request(app.getHttpServer())
+        .get(path)
+        .set('jwtPayload', JSON.stringify(payload));
+      expect(getAllWorkoutPlansResponse.status).toBe(HttpStatus.OK);
+
+      const workoutPlans = plainToInstance(
+        WorkoutPlanDto,
+        getAllWorkoutPlansResponse.body,
+      );
+
+      const response = await request(app.getHttpServer())
+        .post(path + workoutPlans[0].id)
+        .set('jwtPayload', JSON.stringify(payload))
+        .send({ name: 'asdasfada' });
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+    });
+
+    it('should return 201 CREATE response when exercise not in database, wger finds it and adds it to database', async () => {
+      const registrationResponse = await request(app.getHttpServer())
+        .post(registrationPath)
+        .send({ username: username, password: password });
+      expect(registrationResponse.status).toBe(HttpStatus.CREATED);
+
+      const createWorkoutPlanResponse = await request(app.getHttpServer())
+        .post(path)
+        .set('jwtPayload', JSON.stringify(payload))
+        .send({ title: "Get movin'!" });
+      expect(createWorkoutPlanResponse.status).toBe(HttpStatus.CREATED);
+
+      const getAllWorkoutPlansResponse = await request(app.getHttpServer())
+        .get(path)
+        .set('jwtPayload', JSON.stringify(payload));
+      expect(getAllWorkoutPlansResponse.status).toBe(HttpStatus.OK);
+
+      const workoutPlans = plainToInstance(
+        WorkoutPlanDto,
+        getAllWorkoutPlansResponse.body,
+      );
+
+      const response = await request(app.getHttpServer())
+        .post(path + workoutPlans[0].id)
+        .set('jwtPayload', JSON.stringify(payload))
+        .send({ name: validExerciseName });
+      expect(response.status).toBe(HttpStatus.CREATED);
+    });
+
+    it('should return 400 BAD REQUEST when exercise already in workout plan', async () => {
+      const registrationResponse = await request(app.getHttpServer())
+        .post(registrationPath)
+        .send({ username: username, password: password });
+      expect(registrationResponse.status).toBe(HttpStatus.CREATED);
+
+      const createWorkoutPlanResponse = await request(app.getHttpServer())
+        .post(path)
+        .set('jwtPayload', JSON.stringify(payload))
+        .send({ title: "Get movin'!" });
+      expect(createWorkoutPlanResponse.status).toBe(HttpStatus.CREATED);
+
+      const getAllWorkoutPlansResponse = await request(app.getHttpServer())
+        .get(path)
+        .set('jwtPayload', JSON.stringify(payload));
+      expect(getAllWorkoutPlansResponse.status).toBe(HttpStatus.OK);
+
+      const workoutPlans = plainToInstance(
+        WorkoutPlanDto,
+        getAllWorkoutPlansResponse.body,
+      );
+
+      const response = await request(app.getHttpServer())
+        .post(path + workoutPlans[0].id)
+        .set('jwtPayload', JSON.stringify(payload))
+        .send({ name: validExerciseName });
+      expect(response.status).toBe(HttpStatus.CREATED);
+
+      const addingSameExerciseResponse = await request(app.getHttpServer())
+        .post(path + workoutPlans[0].id)
+        .set('jwtPayload', JSON.stringify(payload))
+        .send({ name: validExerciseName });
+      expect(addingSameExerciseResponse.status).toBe(HttpStatus.BAD_REQUEST);
     });
   });
 

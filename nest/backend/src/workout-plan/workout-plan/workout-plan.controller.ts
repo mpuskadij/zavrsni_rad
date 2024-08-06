@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -66,6 +67,36 @@ export class WorkoutPlanController {
     return;
   }
 
+  @Get('/:id')
+  @UseGuards(JwtGuard)
+  async findPlanById(
+    @Param(
+      'id',
+      new ParseIntPipe({
+        optional: false,
+        errorHttpStatusCode: HttpStatus.BAD_REQUEST,
+      }),
+    )
+    id: number,
+    @Payload('username') username: string,
+  ): Promise<any> {
+    const user: User = await this.usersService.getUser(username);
+    if (!user) {
+      throw new InternalServerErrorException('Error finding user!');
+    }
+    await this.usersService.getWorkoutsFromUser(user);
+    const workoutPlan: WorkoutPlan =
+      await this.workoutPlanService.getWorkoutPlanByID(id);
+    await this.workoutPlanService.checkIfWorkoutPlanBelongsToUser(
+      user.username,
+      workoutPlan,
+    );
+
+    return plainToInstance(WorkoutPlanDto, workoutPlan, {
+      groups: ['exercises'],
+    });
+  }
+
   @Post('/:id')
   @UseGuards(JwtGuard)
   async addExerciseToPlan(
@@ -81,12 +112,28 @@ export class WorkoutPlanController {
     @Body(new ValidationPipe({ transform: true }))
     addExerciseDto: AddExerciseToWorkoutPlanDto,
   ): Promise<any> {
+    const user: User = await this.usersService.getUser(username);
+    if (!user) {
+      throw new InternalServerErrorException(
+        'Server had trouble finding you in database!',
+      );
+    }
     const workoutPlan: WorkoutPlan =
       await this.workoutPlanService.getWorkoutPlanByID(id);
     await this.workoutPlanService.checkIfWorkoutPlanBelongsToUser(
-      username,
+      user.username,
       workoutPlan,
     );
+    const exerciseAlreadyInWorkoutPlan: boolean =
+      await this.workoutPlanService.checkIfExerciseAlreadyInWorkoutPlan(
+        workoutPlan,
+        addExerciseDto.name,
+      );
+    if (exerciseAlreadyInWorkoutPlan) {
+      throw new BadRequestException(
+        'Cannot add exercise that is already in your workout plan!',
+      );
+    }
     let exercise = await this.exerciseService.getExcerciseByName(
       addExerciseDto.name,
     );
