@@ -10,6 +10,22 @@ import { Exercise } from 'src/entities/exercise/exercise';
 
 @Injectable()
 export class WorkoutPlanService {
+  async checkIfExerciseAlreadyInWorkoutPlan(
+    workoutPlanToCheck: WorkoutPlan,
+    exerciseName: string,
+  ): Promise<boolean> {
+    if (!workoutPlanToCheck?.exercises || !exerciseName) {
+      throw new InternalServerErrorException(
+        'Server had trouble if exercise is already in the workout plan!',
+      );
+    }
+    const hasNoExercises = !workoutPlanToCheck.exercises.length;
+    if (hasNoExercises) return false;
+    const foundExercise: boolean = workoutPlanToCheck.exercises.some(
+      (exercise) => exercise.name == exerciseName,
+    );
+    return foundExercise;
+  }
   async addExercise(
     workoutPlan: WorkoutPlan,
     exercise: Exercise,

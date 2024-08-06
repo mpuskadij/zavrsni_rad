@@ -141,4 +141,43 @@ describe('WorkoutPlanService (unit tests)', () => {
       expect(workoutPlan.exercises).toHaveLength(2);
     });
   });
+
+  describe('checkIfExerciseAlreadyInWorkoutPlan', () => {
+    const workoutPlan = new WorkoutPlan();
+    const exercise = new Exercise();
+    exercise.name = 'Bench Press';
+    workoutPlan.exercises = [exercise];
+
+    it('should throw InternalServerError if workout plan or exercise name falsy', async () => {
+      const result = () =>
+        provider.checkIfExerciseAlreadyInWorkoutPlan(null, '');
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should return true if exercise exists in the workout plan already', async () => {
+      const result = await provider.checkIfExerciseAlreadyInWorkoutPlan(
+        workoutPlan,
+        'Bench Press',
+      );
+      expect(result).toBe(true);
+    });
+
+    it('should return false if workout plan has no exercises', async () => {
+      const workoutPlanNoExercises = new WorkoutPlan();
+      workoutPlanNoExercises.exercises = [];
+      const result = await provider.checkIfExerciseAlreadyInWorkoutPlan(
+        workoutPlanNoExercises,
+        'Bench Press',
+      );
+      expect(result).toBe(false);
+    });
+
+    it('should return false if exercise name not found', async () => {
+      const result = await provider.checkIfExerciseAlreadyInWorkoutPlan(
+        workoutPlan,
+        'Deadlift',
+      );
+      expect(result).toBe(false);
+    });
+  });
 });
