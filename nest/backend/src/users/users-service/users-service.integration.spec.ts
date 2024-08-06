@@ -18,6 +18,7 @@ import { JournalEntry } from '../../entities/journal-entry/journal-entry';
 import { WorkoutPlan } from '../../entities/workout-plan/workout-plan';
 import { Exercise } from '../../entities/exercise/exercise';
 import { WorkoutPlanService } from '../../workout-plan/workout-plan-service/workout-plan-service';
+import { title } from 'process';
 
 describe('UsersService (integration tests)', () => {
   let provider: UsersService;
@@ -441,6 +442,24 @@ describe('UsersService (integration tests)', () => {
           resultPlan,
         ),
       ).resolves;
+    });
+
+    it('should be able to create a workout plan and delete it for a user', async () => {
+      const usernameInDatabase = await repository.findOne({
+        where: { username: username },
+        relations: ['bmiEntries', 'journalEntries', 'workoutPlans'],
+      });
+      if (usernameInDatabase != null) {
+        await repository.remove(usernameInDatabase);
+      }
+      await provider.addUser(username, password);
+      const user = await provider.getUser(username);
+      const workoutPlan = await workoutPlanService.createWorkoutPlan(title);
+      await provider.assignWorkoutPlan(user, workoutPlan);
+      expect(user.workoutPlans).toHaveLength(1);
+      await workoutPlanService.deleteWorkoutPlan(workoutPlan);
+      await provider.unassignWorkoutPlan(user, workoutPlan);
+      expect(user.workoutPlans).toHaveLength(0);
     });
   });
 });
