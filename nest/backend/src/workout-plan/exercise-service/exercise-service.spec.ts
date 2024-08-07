@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ExerciseService } from './exercise-service';
 import {
   BadRequestException,
+  ForbiddenException,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -85,6 +86,47 @@ describe('ExerciseService (unit tests)', () => {
       expect(result.category).toEqual(category);
       expect(result.description).toEqual(description);
       expect(result.equipment).toEqual(equipment);
+    });
+  });
+
+  describe('deleteExercise', () => {
+    it('should throw InternalServerError if exercise array is falsy', async () => {
+      const result = () => provider.findExerciseInWorkoutPlan(null, 'bac');
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should throw InternalServerError if name of the exercise to delete is falsy', async () => {
+      const result = () => provider.findExerciseInWorkoutPlan([], '');
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should throw ForbiddenException if exercise array is empty', async () => {
+      const result = () => provider.findExerciseInWorkoutPlan([], 'abc');
+
+      expect(result).rejects.toThrow(ForbiddenException);
+    });
+
+    it('should throw InternalServerError if exersie name not found', async () => {
+      const exercise = new Exercise();
+      exercise.name = 'Bench Press';
+      const exercises = [exercise];
+      const result = () => provider.findExerciseInWorkoutPlan(exercises, 'abc');
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('return the exercise that matches the name', async () => {
+      const exercise = new Exercise();
+      exercise.name = 'Bench Press';
+      const exercises = [exercise];
+      const result = await provider.findExerciseInWorkoutPlan(
+        exercises,
+        exercise.name,
+      );
+
+      expect(result.name).toStrictEqual(exercise.name);
     });
   });
 });

@@ -16,6 +16,31 @@ import { WorkoutPlan } from '../../entities/workout-plan/workout-plan';
 
 @Injectable()
 export class UsersService {
+  async getWorkoutById(
+    workoutPlans: WorkoutPlan[],
+    idOfWorkoutPlanToFind: number,
+  ): Promise<WorkoutPlan> {
+    if (!workoutPlans || !idOfWorkoutPlanToFind) {
+      throw new InternalServerErrorException(
+        'Server had trouble finding the workout plan!',
+      );
+    }
+
+    if (!workoutPlans.length) {
+      throw new ForbiddenException("You don't have any workout plans yet!");
+    }
+
+    const workoutPlan = workoutPlans.find(
+      (plan) => plan.id == idOfWorkoutPlanToFind,
+    );
+    if (!workoutPlan) {
+      throw new InternalServerErrorException(
+        'Server had trouble finding the workout plan!',
+      );
+    }
+
+    return workoutPlan;
+  }
   async unassignWorkoutPlan(
     user: User,
     workoutPlan: WorkoutPlan,

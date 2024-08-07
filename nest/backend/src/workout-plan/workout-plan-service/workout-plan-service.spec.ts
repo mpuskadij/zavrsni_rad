@@ -225,4 +225,72 @@ describe('WorkoutPlanService (unit tests)', () => {
       expect(result).toStrictEqual(workoutPlan);
     });
   });
+
+  describe('getExercises', () => {
+    it('should throw InternalServerError if workout plan is falsy', async () => {
+      const result = () => provider.getExercises(null);
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should throw ForbiddenException ifuser has no exercises', async () => {
+      const workoutPlan = new WorkoutPlan();
+      workoutPlan.exercises = [];
+      const result = () => provider.getExercises(workoutPlan);
+
+      expect(result).rejects.toThrow(ForbiddenException);
+    });
+
+    it('should return all exercises if user has exercises', async () => {
+      const workoutPlan = new WorkoutPlan();
+      const exercise = new Exercise();
+      exercise.id = 1;
+      workoutPlan.exercises = [exercise];
+      const result = await provider.getExercises(workoutPlan);
+
+      expect(result).toStrictEqual(workoutPlan.exercises);
+    });
+  });
+
+  describe('unassignExercise', () => {
+    it('should throw InternalServerError if workout plan is falsy', async () => {
+      const result = () => provider.unassignExercise(null, new Exercise());
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should throw InternalServerError if exercise to delete is falsy', async () => {
+      const result = () => provider.unassignExercise(new WorkoutPlan(), null);
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should throw InternalServerError if workout plan has no exercises', async () => {
+      const result = () =>
+        provider.unassignExercise(new WorkoutPlan(), new Exercise());
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should throw InternalServerError if index of exercise to delete not found', async () => {
+      const exercise = new Exercise();
+      exercise.name = 'Bench Press';
+      const workoutPlan = new WorkoutPlan();
+      workoutPlan.exercises = [exercise];
+      const result = () =>
+        provider.unassignExercise(workoutPlan, new Exercise());
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should remove exercise if found', async () => {
+      const exercise = new Exercise();
+      exercise.name = 'Bench Press';
+      const workoutPlan = new WorkoutPlan();
+      workoutPlan.exercises = [exercise];
+      await provider.unassignExercise(workoutPlan, exercise);
+
+      expect(workoutPlan.exercises).toHaveLength(0);
+    });
+  });
 });
