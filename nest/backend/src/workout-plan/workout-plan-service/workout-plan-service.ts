@@ -48,7 +48,7 @@ export class WorkoutPlanService {
       );
     }
 
-    if (!workoutPlan.exercises.length) {
+    if (!workoutPlan.exercises?.length) {
       throw new ForbiddenException("You don't have any exercises yet!");
     }
 
