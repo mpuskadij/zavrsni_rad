@@ -509,4 +509,40 @@ describe('UsersService (unit tests)', () => {
       expect(user.workoutPlans).toHaveLength(0);
     });
   });
+
+  describe('getWorkoutById', () => {
+    it('should throw InternalServerError if user is falsy', async () => {
+      const result = () => provider.getWorkoutById(null, null);
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should throw InternalServerError if id is falsy', async () => {
+      const result = () => provider.getWorkoutById([], null);
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should throw ForbiddenException if user has no workouts!', async () => {
+      const result = () => provider.getWorkoutById([], 1);
+
+      expect(result).rejects.toThrow(ForbiddenException);
+    });
+
+    it('should throw InternalServerError if workout plan not found', async () => {
+      const workoutPlan = new WorkoutPlan();
+      workoutPlan.id = 1;
+      const result = () => provider.getWorkoutById([workoutPlan], 2);
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should return the workout with given id', async () => {
+      const workoutPlan = new WorkoutPlan();
+      workoutPlan.id = 1;
+      const result = await provider.getWorkoutById([workoutPlan], 1);
+
+      expect(result).toStrictEqual(workoutPlan);
+    });
+  });
 });

@@ -11,6 +11,49 @@ import { Exercise } from 'src/entities/exercise/exercise';
 
 @Injectable()
 export class WorkoutPlanService {
+  async unassignExercise(
+    workoutPlan: WorkoutPlan,
+    exerciseToDelete: Exercise,
+  ): Promise<void> {
+    if (!workoutPlan || !exerciseToDelete) {
+      throw new InternalServerErrorException(
+        'Server had trouble finding your workout plan!',
+      );
+    }
+
+    if (!workoutPlan.exercises?.length) {
+      throw new InternalServerErrorException(
+        'Server could not find exercises that belong to your workout plan!',
+      );
+    }
+
+    const indexOfExerciseToDelete =
+      workoutPlan.exercises.indexOf(exerciseToDelete);
+
+    if (indexOfExerciseToDelete == -1) {
+      throw new InternalServerErrorException(
+        'Server could not find the exercise to delete in your workout plan!',
+      );
+    }
+
+    workoutPlan.exercises.splice(indexOfExerciseToDelete);
+
+    await this.saveWorkoutPlan(workoutPlan);
+  }
+
+  async getExercises(workoutPlan: WorkoutPlan): Promise<Exercise[]> {
+    if (!workoutPlan) {
+      throw new InternalServerErrorException(
+        'Server had trouble finding the workout plan!',
+      );
+    }
+
+    if (!workoutPlan.exercises.length) {
+      throw new ForbiddenException("You don't have any exercises yet!");
+    }
+
+    return workoutPlan.exercises;
+  }
   async deleteWorkoutPlan(
     workoutPlans: WorkoutPlan[],
     idOfWorkoutPlanToDelete: number,

@@ -403,12 +403,13 @@ describe('WorkoutPlanController (e2e)', () => {
     });
   });
 
-  describe('DELETE /api/workout-plans/:id with no body', () => {
+  describe('DELETE /api/workout-plans', () => {
     const path = '/api/workout-plans/';
 
     it('should return 500 INTERNAL SERVER ERROR is user doesnt exist', async () => {
       const response = await request(app.getHttpServer())
-        .delete(path + '-1')
+        .delete(path)
+        .send({ id: -1 })
         .set('jwtPayload', JSON.stringify(payload));
       expect(response.status).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
     });
@@ -420,7 +421,8 @@ describe('WorkoutPlanController (e2e)', () => {
       expect(registrationResponse.status).toBe(HttpStatus.CREATED);
 
       const response = await request(app.getHttpServer())
-        .delete(path + '-1')
+        .delete(path)
+        .send({ id: -1 })
         .set('jwtPayload', JSON.stringify(payload));
       expect(response.status).toBe(HttpStatus.FORBIDDEN);
     });
@@ -438,7 +440,8 @@ describe('WorkoutPlanController (e2e)', () => {
       expect(createWorkoutPlanResponse.status).toBe(HttpStatus.CREATED);
 
       const response = await request(app.getHttpServer())
-        .delete(path + '-1')
+        .delete(path)
+        .send({ id: -1 })
         .set('jwtPayload', JSON.stringify(payload));
       expect(response.status).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
     });
@@ -466,7 +469,8 @@ describe('WorkoutPlanController (e2e)', () => {
       );
 
       const response = await request(app.getHttpServer())
-        .delete(path + workoutPlans[0].id)
+        .delete(path)
+        .send({ id: workoutPlans[0].id })
         .set('jwtPayload', JSON.stringify(payload));
       expect(response.status).toBe(HttpStatus.NO_CONTENT);
     });

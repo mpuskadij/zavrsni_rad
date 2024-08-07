@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
@@ -9,6 +10,29 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class ExerciseService {
+  async findExerciseInWorkoutPlan(
+    exercises: Exercise[],
+    nameOfExerciseToDelete: string,
+  ): Promise<Exercise> {
+    if (!exercises || !nameOfExerciseToDelete) {
+      throw new InternalServerErrorException(
+        'Server had trouble finding exercises of the workout plan!',
+      );
+    }
+    if (!exercises.length) {
+      throw new ForbiddenException("You don't have any exercises yet!");
+    }
+
+    const foundExercise = exercises.find(
+      (execise) => execise.name == nameOfExerciseToDelete,
+    );
+    if (!foundExercise) {
+      throw new InternalServerErrorException(
+        'Server had trouble finding exercise you want to delete!',
+      );
+    }
+    return foundExercise;
+  }
   async createExercise(
     name: string,
     description: string,
