@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
@@ -10,14 +11,29 @@ import { Exercise } from 'src/entities/exercise/exercise';
 
 @Injectable()
 export class WorkoutPlanService {
-  async deleteWorkoutPlan(workoutPlan: WorkoutPlan): Promise<void> {
-    if (!workoutPlan) {
+  async deleteWorkoutPlan(
+    workoutPlans: WorkoutPlan[],
+    idOfWorkoutPlanToDelete: number,
+  ): Promise<WorkoutPlan> {
+    if (!idOfWorkoutPlanToDelete || !workoutPlans) {
       throw new InternalServerErrorException(
         'Server had trouble deleting your workout plan!',
       );
     }
-    await this.workoutPlanRepostitory.remove(workoutPlan);
-    return;
+    if (!workoutPlans.length) {
+      throw new ForbiddenException(
+        "You don't have any workout plans to delete!",
+      );
+    }
+    const foundPlan = workoutPlans.find(
+      (workoutPlan) => workoutPlan.id == idOfWorkoutPlanToDelete,
+    );
+    if (!foundPlan) {
+      throw new InternalServerErrorException(
+        'Server had trouble deleting the workout plan!',
+      );
+    }
+    return await this.workoutPlanRepostitory.remove(foundPlan);
   }
   async checkIfExerciseAlreadyInWorkoutPlan(
     workoutPlanToCheck: WorkoutPlan,

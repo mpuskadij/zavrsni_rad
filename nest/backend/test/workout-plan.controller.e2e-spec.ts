@@ -403,6 +403,75 @@ describe('WorkoutPlanController (e2e)', () => {
     });
   });
 
+  describe('DELETE /api/workout-plans/:id with no body', () => {
+    const path = '/api/workout-plans/';
+
+    it('should return 500 INTERNAL SERVER ERROR is user doesnt exist', async () => {
+      const response = await request(app.getHttpServer())
+        .delete(path + '-1')
+        .set('jwtPayload', JSON.stringify(payload));
+      expect(response.status).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
+    });
+
+    it('should return 403 FORBIDDEN is user has 0 workout plans', async () => {
+      const registrationResponse = await request(app.getHttpServer())
+        .post(registrationPath)
+        .send({ username: username, password: password });
+      expect(registrationResponse.status).toBe(HttpStatus.CREATED);
+
+      const response = await request(app.getHttpServer())
+        .delete(path + '-1')
+        .set('jwtPayload', JSON.stringify(payload));
+      expect(response.status).toBe(HttpStatus.FORBIDDEN);
+    });
+
+    it('should return 500 INTERNAL SERVER ERROR is workout plan with given id not found', async () => {
+      const registrationResponse = await request(app.getHttpServer())
+        .post(registrationPath)
+        .send({ username: username, password: password });
+      expect(registrationResponse.status).toBe(HttpStatus.CREATED);
+
+      const createWorkoutPlanResponse = await request(app.getHttpServer())
+        .post(path)
+        .set('jwtPayload', JSON.stringify(payload))
+        .send({ title: "Get movin'!" });
+      expect(createWorkoutPlanResponse.status).toBe(HttpStatus.CREATED);
+
+      const response = await request(app.getHttpServer())
+        .delete(path + '-1')
+        .set('jwtPayload', JSON.stringify(payload));
+      expect(response.status).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
+    });
+
+    it('should return 204 NO CONTENT when workout successfully deleted', async () => {
+      const registrationResponse = await request(app.getHttpServer())
+        .post(registrationPath)
+        .send({ username: username, password: password });
+      expect(registrationResponse.status).toBe(HttpStatus.CREATED);
+
+      const createWorkoutPlanResponse = await request(app.getHttpServer())
+        .post(path)
+        .set('jwtPayload', JSON.stringify(payload))
+        .send({ title: "Get movin'!" });
+      expect(createWorkoutPlanResponse.status).toBe(HttpStatus.CREATED);
+
+      const getAllWorkoutPlansResponse = await request(app.getHttpServer())
+        .get(path)
+        .set('jwtPayload', JSON.stringify(payload));
+      expect(getAllWorkoutPlansResponse.status).toBe(HttpStatus.OK);
+
+      const workoutPlans = plainToInstance(
+        WorkoutPlanDto,
+        getAllWorkoutPlansResponse.body,
+      );
+
+      const response = await request(app.getHttpServer())
+        .delete(path + workoutPlans[0].id)
+        .set('jwtPayload', JSON.stringify(payload));
+      expect(response.status).toBe(HttpStatus.NO_CONTENT);
+    });
+  });
+
   afterEach(async () => {
     await app.close();
   });

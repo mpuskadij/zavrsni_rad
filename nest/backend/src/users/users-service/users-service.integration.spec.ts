@@ -457,7 +457,10 @@ describe('UsersService (integration tests)', () => {
       const workoutPlan = await workoutPlanService.createWorkoutPlan(title);
       await provider.assignWorkoutPlan(user, workoutPlan);
       expect(user.workoutPlans).toHaveLength(1);
-      await workoutPlanService.deleteWorkoutPlan(workoutPlan);
+      await workoutPlanService.deleteWorkoutPlan(
+        user.workoutPlans,
+        workoutPlan.id,
+      );
       await provider.unassignWorkoutPlan(user, workoutPlan);
       expect(user.workoutPlans).toHaveLength(0);
     });

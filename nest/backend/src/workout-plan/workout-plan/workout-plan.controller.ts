@@ -183,14 +183,11 @@ export class WorkoutPlanController {
         'Server had trouble finding you in database!',
       );
     }
-    const workoutPlan: WorkoutPlan =
-      await this.workoutPlanService.getWorkoutPlanByID(id);
-    await this.workoutPlanService.checkIfWorkoutPlanBelongsToUser(
-      user.username,
-      workoutPlan,
+    const deletedWorkoutPlan = await this.workoutPlanService.deleteWorkoutPlan(
+      user.workoutPlans,
+      id,
     );
-    await this.workoutPlanService.deleteWorkoutPlan(workoutPlan);
-    await this.usersService.unassignWorkoutPlan(user, workoutPlan);
+    await this.usersService.unassignWorkoutPlan(user, deletedWorkoutPlan);
     return;
   }
 }

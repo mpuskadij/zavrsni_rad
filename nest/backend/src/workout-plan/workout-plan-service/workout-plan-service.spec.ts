@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { WorkoutPlanService } from './workout-plan-service';
 import {
   BadRequestException,
+  ForbiddenException,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { WorkoutPlan } from '../../entities/workout-plan/workout-plan';
@@ -186,18 +187,42 @@ describe('WorkoutPlanService (unit tests)', () => {
   });
 
   describe('deleteWorkoutPlan', () => {
-    it('should throw InternalServerException is workout plan is null or undefined', async () => {
-      const result = () => provider.deleteWorkoutPlan(null);
+    it('should throw InternalServerException if array of workout plans is null or undefined', async () => {
+      const result = () => provider.deleteWorkoutPlan(null, 2);
 
       expect(result).rejects.toThrow(InternalServerErrorException);
     });
 
-    it('delete workout plan when truthy workout plan received', async () => {
-      const workoutPlan = new WorkoutPlan();
-      mockWorkoutPlanRepository.remove.mockResolvedValue(workoutPlan);
-      const result = () => provider.deleteWorkoutPlan(workoutPlan);
+    it('should throw InternalServerException if number not a number', async () => {
+      const result = () => provider.deleteWorkoutPlan([], null);
 
-      expect(result).resolves;
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should throw ForbiddenException if user has no workout plans', async () => {
+      const result = () => provider.deleteWorkoutPlan([], 1);
+
+      expect(result).rejects.toThrow(ForbiddenException);
+    });
+
+    it('should throw InternalServerError if workout plan with given id not found', async () => {
+      const workoutPlan = new WorkoutPlan();
+      workoutPlan.id = 1;
+      const result = () => provider.deleteWorkoutPlan([workoutPlan], 2);
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should delete the workout plan when truthy workout plan received', async () => {
+      const workoutPlan = new WorkoutPlan();
+      workoutPlan.id = 1;
+      mockWorkoutPlanRepository.remove.mockResolvedValue(workoutPlan);
+      const result = await provider.deleteWorkoutPlan(
+        [workoutPlan],
+        workoutPlan.id,
+      );
+
+      expect(result).toStrictEqual(workoutPlan);
     });
   });
 });
