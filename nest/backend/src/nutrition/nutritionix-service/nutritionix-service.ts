@@ -13,20 +13,20 @@ import { plainToInstance } from 'class-transformer';
 export class NutritionixService {
   private nutritionixBaseUrl: string = 'https://trackapi.nutritionix.com/v2/';
   private searchEndpoint: string = this.nutritionixBaseUrl + 'search/instant/';
-  private headersRequeiredForNutritionix: HeadersInit;
+  private headersRequiredForNutritionix: HeadersInit;
 
   constructor(private configService: ConfigService) {
-    this.headersRequeiredForNutritionix = new Headers();
-    this.headersRequeiredForNutritionix.set('Content-Type', 'application/json');
-    this.headersRequeiredForNutritionix.set(
+    this.headersRequiredForNutritionix = new Headers();
+    this.headersRequiredForNutritionix.set('Content-Type', 'application/json');
+    this.headersRequiredForNutritionix.set(
       'x-app-id',
       configService.get('NUTRITIONIX_APP_ID'),
     );
-    this.headersRequeiredForNutritionix.set(
+    this.headersRequiredForNutritionix.set(
       'x-app-key',
       configService.get('NUTRITIONIX_APP_KEY'),
     );
-    this.headersRequeiredForNutritionix.set('x-remote-user-id', '0');
+    this.headersRequiredForNutritionix.set('x-remote-user-id', '0');
   }
   async searchForFood(
     searchTerm: string,
@@ -38,7 +38,7 @@ export class NutritionixService {
     const responseFromNutritionix: Response = await fetch(
       this.searchEndpoint + '?' + queryParameters.toString(),
       {
-        headers: this.headersRequeiredForNutritionix,
+        headers: this.headersRequiredForNutritionix,
         method: 'GET',
       },
     );
