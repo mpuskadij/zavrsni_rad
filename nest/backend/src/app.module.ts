@@ -21,6 +21,7 @@ import { JournalModule } from './journal/journal.module';
 import { WorkoutPlanModule } from './workout-plan/workout-plan.module';
 import { WorkoutPlan } from './entities/workout-plan/workout-plan';
 import { Exercise } from './entities/exercise/exercise';
+import { NutritionModule } from './nutrition/nutrition.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { Exercise } from './entities/exercise/exercise';
     DtosModule,
     JournalModule,
     WorkoutPlanModule,
+    NutritionModule,
   ],
   controllers: [AppController],
   providers: [AppService, AuthenticationService],

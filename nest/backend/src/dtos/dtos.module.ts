@@ -13,6 +13,10 @@ import { WgerMuscleDto } from './wger-muscle-dto/wger-muscle-dto';
 import { WgerCategoryResponseDto } from './wger-category-response-dto/wger-category-response-dto';
 import { WgerEquipmentResponseDto } from './wger-equipment-response-dto/wger-equipment-response-dto';
 import { WgerExerciseDto } from './wger-exercise-dto/wger-exercise-dto';
+import { NutritionixInstantEndpointBrandedFoodDto } from './nutritionix-instant-endpoint-branded-food-dto/nutritionix-instant-endpoint-branded-food-dto';
+import { NutritionixInstantEndpointCommonFoodDto } from './nutritionix-instant-endpoint-food-dto/nutritionix-instant-endpoint-common-food-dto';
+import { NutritionixInstantEndpointFoodPhotoDto } from './nutritionix-instant-endpoint-food-photo-dto/nutritionix-instant-endpoint-food-photo-dto';
+import { NutritionixInstantEndpointResponseDto } from './nutritionix-instant-endpoint-response-dto/nutritionix-instant-endpoint-response-dto';
 
 @Module({
   imports: [EntitiesModule],
@@ -29,6 +33,10 @@ import { WgerExerciseDto } from './wger-exercise-dto/wger-exercise-dto';
     WgerVariatonDto,
     WgerCategoryResponseDto,
     WgerEquipmentResponseDto,
+    NutritionixInstantEndpointBrandedFoodDto,
+    NutritionixInstantEndpointCommonFoodDto,
+    NutritionixInstantEndpointFoodPhotoDto,
+    NutritionixInstantEndpointResponseDto,
   ],
   providers: [
     BmiEntryDto,
@@ -44,6 +52,10 @@ import { WgerExerciseDto } from './wger-exercise-dto/wger-exercise-dto';
     WgerVariatonDto,
     WgerCategoryResponseDto,
     WgerEquipmentResponseDto,
+    NutritionixInstantEndpointBrandedFoodDto,
+    NutritionixInstantEndpointCommonFoodDto,
+    NutritionixInstantEndpointFoodPhotoDto,
+    NutritionixInstantEndpointResponseDto,
   ],
 })
 export class DtosModule {}
