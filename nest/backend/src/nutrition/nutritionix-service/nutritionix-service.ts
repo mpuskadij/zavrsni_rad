@@ -57,6 +57,17 @@ export class NutritionixService {
       responseBody,
     );
 
+    if (foundCommonAndBrandedFoodItems.common) {
+      const tagIds = foundCommonAndBrandedFoodItems.common.map(
+        (commonFood) => commonFood.tag_id,
+      );
+      foundCommonAndBrandedFoodItems.common =
+        foundCommonAndBrandedFoodItems.common.filter(
+          (commonFood, index, array) =>
+            index === array.findIndex((cf) => cf.tag_id === commonFood.tag_id),
+        );
+    }
+
     return foundCommonAndBrandedFoodItems;
   }
 }

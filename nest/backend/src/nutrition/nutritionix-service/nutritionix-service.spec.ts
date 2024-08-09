@@ -8,6 +8,7 @@ import {
 import { ConfigModule } from '@nestjs/config';
 import { DtosModule } from '../../dtos/dtos.module';
 import { NutritionixInstantEndpointResponseDto } from '../../dtos/nutritionix-instant-endpoint-response-dto/nutritionix-instant-endpoint-response-dto';
+import { NutritionixInstantEndpointCommonFoodDto } from '../../dtos/nutritionix-instant-endpoint-food-dto/nutritionix-instant-endpoint-common-food-dto';
 
 describe('NutritionixService', () => {
   let provider: NutritionixService;
@@ -48,6 +49,29 @@ describe('NutritionixService', () => {
       const result = await provider.searchForFood('hamburger');
 
       expect(result).toStrictEqual(foodFromNutritionix);
+    });
+
+    it('should filter common foods that have the same tag_id', async () => {
+      const foodFromNutritionix = new NutritionixInstantEndpointResponseDto();
+      const hamburger = new NutritionixInstantEndpointCommonFoodDto();
+      hamburger.tag_id = '1';
+      hamburger.food_name = 'hamburger';
+
+      const hamburgers = new NutritionixInstantEndpointCommonFoodDto();
+      hamburgers.tag_id = '1';
+      hamburgers.food_name = 'hamburgers';
+
+      foodFromNutritionix.common = [hamburger, hamburgers];
+
+      const mockResponse = {
+        ok: true,
+        text: async () => JSON.stringify(foodFromNutritionix),
+      };
+      mockFetch.mockResolvedValue(mockResponse);
+
+      const result = await provider.searchForFood('hamburger');
+
+      expect(result.common).toHaveLength(1);
     });
   });
 });
