@@ -1,7 +1,7 @@
 import { Exclude, Expose, Type } from 'class-transformer';
 import { NutritionixInstantEndpointFoodPhotoDto } from '../nutritionix-instant-endpoint-food-photo-dto/nutritionix-instant-endpoint-food-photo-dto';
 
-export class NutritionixNaturalLanguageNutrientsDetailsDto {
+export class NutritionixCommonAndBrandedFoodDetailsDto {
   food_name: string;
 
   brand_name: string;

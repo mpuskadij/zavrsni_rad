@@ -8,8 +8,8 @@ import { ConfigService } from '@nestjs/config';
 import { query } from 'express';
 import { NutritionixInstantEndpointResponseDto } from '../../dtos/nutritionix-instant-endpoint-response-dto/nutritionix-instant-endpoint-response-dto';
 import { plainToInstance } from 'class-transformer';
-import { NutritionixNaturalLanguageNutrientsResponseDto } from '../../dtos/nutritionix-natural-language-nutrients-response-dto/nutritionix-natural-language-nutrients-response-dto';
-import { NutritionixNaturalLanguageNutrientsDetailsDto } from '../../dtos/nutritionix-natural-language-nutrients-details-dto/nutritionix-natural-language-nutrients-details-dto';
+import { NutritionixCommonAndBrandedFoodDetailsResponseDto } from '../../dtos/nutritionix-common-and-branded-food-details-response-dto/nutritionix-common-and-branded-food-details-response-dto';
+import { NutritionixCommonAndBrandedFoodDetailsDto } from '../../dtos/nutritionix-common-and-branded-food-details-details-dto/nutritionix-common-and-branded-food-details-dto';
 
 @Injectable()
 export class NutritionixService {
@@ -18,6 +18,8 @@ export class NutritionixService {
   private headersRequiredForNutritionix: HeadersInit;
   private commonFoodNutrientsEndpoint: string =
     this.nutritionixBaseUrl + 'natural/nutrients/';
+  private brandedFoodNutrientsEndpoint: string =
+    this.nutritionixBaseUrl + 'search/item/?';
 
   constructor(private configService: ConfigService) {
     this.headersRequiredForNutritionix = new Headers();
@@ -77,7 +79,7 @@ export class NutritionixService {
 
   async getCommonFoodItemDetails(
     commonFoodName: string,
-  ): Promise<NutritionixNaturalLanguageNutrientsDetailsDto> {
+  ): Promise<NutritionixCommonAndBrandedFoodDetailsDto> {
     if (!commonFoodName) {
       throw new BadRequestException(
         'Server did not receive food name to get details of!',
@@ -100,7 +102,7 @@ export class NutritionixService {
     const parsedBody = JSON.parse(responseBody);
 
     const commonFoodDetails = plainToInstance(
-      NutritionixNaturalLanguageNutrientsResponseDto,
+      NutritionixCommonAndBrandedFoodDetailsResponseDto,
       parsedBody,
     );
 
@@ -110,5 +112,42 @@ export class NutritionixService {
       );
     }
     return commonFoodDetails.foods[0];
+  }
+
+  async getBrandedFoodItemDetails(
+    nixId: string,
+  ): Promise<NutritionixCommonAndBrandedFoodDetailsDto> {
+    if (!nixId) {
+      throw new BadRequestException(
+        'Server did not receive id of branded food item to find details of',
+      );
+    }
+    const queryParams = new URLSearchParams({ nix_item_id: nixId });
+    const response = await fetch(
+      this.brandedFoodNutrientsEndpoint + queryParams.toString(),
+      { headers: this.headersRequiredForNutritionix, method: 'GET' },
+    );
+    if (!response.ok) {
+      throw new ServiceUnavailableException(
+        'Server had trouble getting details of requested food item!',
+      );
+    }
+
+    const responseBody = await response.text();
+    const parsedBody = JSON.parse(responseBody);
+
+    const brandedFoodDetails = plainToInstance(
+      NutritionixCommonAndBrandedFoodDetailsResponseDto,
+      parsedBody,
+      { groups: ['branded'] },
+    );
+
+    if (!brandedFoodDetails?.foods?.length) {
+      throw new BadRequestException(
+        'No details found for requested food item!',
+      );
+    }
+
+    return brandedFoodDetails.foods[0];
   }
 }

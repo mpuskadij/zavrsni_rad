@@ -42,4 +42,17 @@ describe('NutritionixService', () => {
       expect(result.food_name).toBe('hamburger');
     });
   });
+
+  describe.skip('getBrandedFoodItemDetails', () => {
+    it('should return details of branded food item that exists in Nutritionix', async () => {
+      const result = await provider.getBrandedFoodItemDetails(
+        '51c549ff97c3e6efadd60294',
+      );
+
+      expect(result).toBeDefined();
+      expect(result.food_name).toBe(
+        'Coffee Creamer, Italian Sweet Creme, Zero Sugar',
+      );
+    });
+  });
 });

@@ -9,8 +9,8 @@ import { ConfigModule } from '@nestjs/config';
 import { DtosModule } from '../../dtos/dtos.module';
 import { NutritionixInstantEndpointResponseDto } from '../../dtos/nutritionix-instant-endpoint-response-dto/nutritionix-instant-endpoint-response-dto';
 import { NutritionixInstantEndpointCommonFoodDto } from '../../dtos/nutritionix-instant-endpoint-food-dto/nutritionix-instant-endpoint-common-food-dto';
-import { NutritionixNaturalLanguageNutrientsResponseDto } from '../../dtos/nutritionix-natural-language-nutrients-response-dto/nutritionix-natural-language-nutrients-response-dto';
-import { NutritionixNaturalLanguageNutrientsDetailsDto } from '../../dtos/nutritionix-natural-language-nutrients-details-dto/nutritionix-natural-language-nutrients-details-dto';
+import { NutritionixCommonAndBrandedFoodDetailsResponseDto } from '../../dtos/nutritionix-common-and-branded-food-details-response-dto/nutritionix-common-and-branded-food-details-response-dto';
+import { NutritionixCommonAndBrandedFoodDetailsDto } from '../../dtos/nutritionix-common-and-branded-food-details-details-dto/nutritionix-common-and-branded-food-details-dto';
 
 describe('NutritionixService', () => {
   let provider: NutritionixService;
@@ -93,8 +93,8 @@ describe('NutritionixService', () => {
 
     it('should return nutrients for food if Nutritionix returns 200 OK', async () => {
       const nutritionixResponseBody =
-        new NutritionixNaturalLanguageNutrientsResponseDto();
-      const foods = new NutritionixNaturalLanguageNutrientsDetailsDto();
+        new NutritionixCommonAndBrandedFoodDetailsResponseDto();
+      const foods = new NutritionixCommonAndBrandedFoodDetailsDto();
       nutritionixResponseBody.foods = [foods];
       mockFetch.mockResolvedValue({
         ok: true,
@@ -107,7 +107,7 @@ describe('NutritionixService', () => {
 
     it('should throw exception if food details not found', async () => {
       const nutritionixResponseBody =
-        new NutritionixNaturalLanguageNutrientsResponseDto();
+        new NutritionixCommonAndBrandedFoodDetailsResponseDto();
       mockFetch.mockResolvedValue({
         ok: true,
         text: async () => JSON.stringify(nutritionixResponseBody),
@@ -115,6 +115,54 @@ describe('NutritionixService', () => {
       const result = () => provider.getCommonFoodItemDetails('hamburger');
 
       expect(result).rejects.toThrow(BadRequestException);
+    });
+  });
+
+  describe('getBrandedFoodItemDetails', () => {
+    it('should throw exception if id of branded food item is falsy', async () => {
+      const result = () => provider.getBrandedFoodItemDetails('');
+
+      expect(result).rejects.toThrow(BadRequestException);
+    });
+
+    it('should throw exception if Nutritionix sent 404 (id is invalid)', async () => {
+      mockFetch.mockResolvedValue({ ok: false });
+      const result = () => provider.getBrandedFoodItemDetails('daklsjdlaksf');
+
+      expect(result).rejects.toThrow(ServiceUnavailableException);
+    });
+
+    it('should throw exception if response body doesnt contain details', async () => {
+      const nutritionixResponseBody =
+        new NutritionixCommonAndBrandedFoodDetailsResponseDto();
+      mockFetch.mockResolvedValue({
+        ok: true,
+        text: async () => JSON.stringify(nutritionixResponseBody),
+      });
+
+      const result = () =>
+        provider.getBrandedFoodItemDetails('51c549ff97c3e6efadd60294');
+
+      expect(result).rejects.toThrow(BadRequestException);
+    });
+
+    it('should return details if details found from Nutritionix', async () => {
+      const coffee = new NutritionixCommonAndBrandedFoodDetailsDto();
+      coffee.brand_name = 'Franck';
+      coffee.food_name = 'Coffee';
+      const nutritionixResponseBody =
+        new NutritionixCommonAndBrandedFoodDetailsResponseDto();
+      nutritionixResponseBody.foods = [coffee];
+      mockFetch.mockResolvedValue({
+        ok: true,
+        text: async () => JSON.stringify(nutritionixResponseBody),
+      });
+
+      const result = await provider.getBrandedFoodItemDetails(
+        '51c549ff97c3e6efadd60294',
+      );
+
+      expect(result).toEqual(coffee);
     });
   });
 });

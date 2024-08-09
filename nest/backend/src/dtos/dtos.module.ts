@@ -18,8 +18,8 @@ import { NutritionixInstantEndpointCommonFoodDto } from './nutritionix-instant-e
 import { NutritionixInstantEndpointFoodPhotoDto } from './nutritionix-instant-endpoint-food-photo-dto/nutritionix-instant-endpoint-food-photo-dto';
 import { NutritionixInstantEndpointResponseDto } from './nutritionix-instant-endpoint-response-dto/nutritionix-instant-endpoint-response-dto';
 import { SearchFoodDto } from './search-food-dto/search-food-dto';
-import { NutritionixNaturalLanguageNutrientsResponseDto } from './nutritionix-natural-language-nutrients-response-dto/nutritionix-natural-language-nutrients-response-dto';
-import { NutritionixNaturalLanguageNutrientsDetailsDto } from './nutritionix-natural-language-nutrients-details-dto/nutritionix-natural-language-nutrients-details-dto';
+import { NutritionixCommonAndBrandedFoodDetailsResponseDto } from './nutritionix-common-and-branded-food-details-response-dto/nutritionix-common-and-branded-food-details-response-dto';
+import { NutritionixCommonAndBrandedFoodDetailsDto } from './nutritionix-common-and-branded-food-details-details-dto/nutritionix-common-and-branded-food-details-dto';
 
 @Module({
   imports: [EntitiesModule],
@@ -41,8 +41,8 @@ import { NutritionixNaturalLanguageNutrientsDetailsDto } from './nutritionix-nat
     NutritionixInstantEndpointFoodPhotoDto,
     NutritionixInstantEndpointResponseDto,
     SearchFoodDto,
-    NutritionixNaturalLanguageNutrientsResponseDto,
-    NutritionixNaturalLanguageNutrientsDetailsDto,
+    NutritionixCommonAndBrandedFoodDetailsResponseDto,
+    NutritionixCommonAndBrandedFoodDetailsDto,
   ],
   providers: [
     BmiEntryDto,
@@ -63,8 +63,8 @@ import { NutritionixNaturalLanguageNutrientsDetailsDto } from './nutritionix-nat
     NutritionixInstantEndpointFoodPhotoDto,
     NutritionixInstantEndpointResponseDto,
     SearchFoodDto,
-    NutritionixNaturalLanguageNutrientsResponseDto,
-    NutritionixNaturalLanguageNutrientsDetailsDto,
+    NutritionixCommonAndBrandedFoodDetailsResponseDto,
+    NutritionixCommonAndBrandedFoodDetailsDto,
   ],
 })
 export class DtosModule {}
