@@ -11,9 +11,30 @@ import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class NutritionixService {
+  async getCommonFoodItemDetails(foodName: string): Promise<any> {
+    if (!foodName) {
+      throw new BadRequestException(
+        'Server did not receive food name to get details of!',
+      );
+    }
+    const body = JSON.stringify({ query: foodName });
+    const nutritionixResponse = await fetch(this.commonFoodNutrientsEndpoint, {
+      headers: this.headersRequiredForNutritionix,
+      body: body,
+      method: 'POST',
+    });
+
+    if (!nutritionixResponse.ok) {
+      throw new ServiceUnavailableException(
+        'Server had trouble communicating with external API!',
+      );
+    }
+  }
   private nutritionixBaseUrl: string = 'https://trackapi.nutritionix.com/v2/';
   private searchEndpoint: string = this.nutritionixBaseUrl + 'search/instant/';
   private headersRequiredForNutritionix: HeadersInit;
+  private commonFoodNutrientsEndpoint: string =
+    this.nutritionixBaseUrl + 'natural/nutrients/';
 
   constructor(private configService: ConfigService) {
     this.headersRequiredForNutritionix = new Headers();

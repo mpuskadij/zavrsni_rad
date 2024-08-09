@@ -74,4 +74,19 @@ describe('NutritionixService', () => {
       expect(result.common).toHaveLength(1);
     });
   });
+
+  describe('getFoodItemDetails', () => {
+    it('should throw exception if the name of the food item is falsy', async () => {
+      const result = () => provider.getCommonFoodItemDetails('');
+
+      expect(result).rejects.toThrow(BadRequestException);
+    });
+
+    it('should throw exception if Nutritionix did not send 200 OK response', async () => {
+      mockFetch.mockResolvedValue({ ok: false });
+      const result = () => provider.getCommonFoodItemDetails('hamburger');
+
+      expect(result).rejects.toThrow(ServiceUnavailableException);
+    });
+  });
 });
