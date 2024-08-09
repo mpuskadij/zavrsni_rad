@@ -7,6 +7,7 @@ import { GuardsModule } from '../guards/guards.module';
 import { AuthenticationModule } from '../authentication/authentication.module';
 
 @Module({
+  exports: [NutritionixService],
   imports: [DtosModule, GuardsModule, AuthenticationModule],
   providers: [NutritionixService, ConfigService],
   controllers: [FoodController],
