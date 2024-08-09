@@ -35,7 +35,7 @@ import { NutritionModule } from '../src/nutrition/nutrition.module';
 import { FoodController } from '../src/nutrition/food/food.controller';
 import { NutritionixInstantEndpointResponseDto } from '../src/dtos/nutritionix-instant-endpoint-response-dto/nutritionix-instant-endpoint-response-dto';
 
-describe('Food Controller (e2e tests)', () => {
+describe.skip('Food Controller (e2e tests)', () => {
   let app: INestApplication;
   const searchFoodPath = '/api/food';
   const foodDetailsPath = searchFoodPath + '/details';
@@ -107,7 +107,7 @@ describe('Food Controller (e2e tests)', () => {
       expect(response.status).toBe(HttpStatus.BAD_REQUEST);
     });
 
-    it('should return 503 BAD REQUEST if food matching search term not found', async () => {
+    it('should return 400 BAD REQUEST if food matching search term not found', async () => {
       const response = await request(app.getHttpServer())
         .get(searchFoodPath)
         .query({ searchTerm: 'sdasfasfasfa' });

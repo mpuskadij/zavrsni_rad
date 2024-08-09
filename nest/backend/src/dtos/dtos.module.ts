@@ -21,6 +21,7 @@ import { SearchFoodDto } from './search-food-dto/search-food-dto';
 import { NutritionixCommonAndBrandedFoodDetailsResponseDto } from './nutritionix-common-and-branded-food-details-response-dto/nutritionix-common-and-branded-food-details-response-dto';
 import { NutritionixCommonAndBrandedFoodDetailsDto } from './nutritionix-common-and-branded-food-details-details-dto/nutritionix-common-and-branded-food-details-dto';
 import { FindFoodDetailsDto } from './find-food-details-dto/find-food-details-dto';
+import { AddFoodToNutritionDto } from './add-food-to-nutrition-dto/add-food-to-nutrition-dto';
 
 @Module({
   imports: [EntitiesModule],
@@ -45,6 +46,7 @@ import { FindFoodDetailsDto } from './find-food-details-dto/find-food-details-dt
     NutritionixCommonAndBrandedFoodDetailsResponseDto,
     NutritionixCommonAndBrandedFoodDetailsDto,
     FindFoodDetailsDto,
+    AddFoodToNutritionDto,
   ],
   providers: [
     BmiEntryDto,
@@ -68,6 +70,7 @@ import { FindFoodDetailsDto } from './find-food-details-dto/find-food-details-dt
     NutritionixCommonAndBrandedFoodDetailsResponseDto,
     NutritionixCommonAndBrandedFoodDetailsDto,
     FindFoodDetailsDto,
+    AddFoodToNutritionDto,
   ],
 })
 export class DtosModule {}
