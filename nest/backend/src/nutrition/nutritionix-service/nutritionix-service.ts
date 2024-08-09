@@ -8,16 +8,20 @@ import { ConfigService } from '@nestjs/config';
 import { query } from 'express';
 import { NutritionixInstantEndpointResponseDto } from '../../dtos/nutritionix-instant-endpoint-response-dto/nutritionix-instant-endpoint-response-dto';
 import { plainToInstance } from 'class-transformer';
+import { NutritionixNaturalLanguageNutrientsResponseDto } from '../../dtos/nutritionix-natural-language-nutrients-response-dto/nutritionix-natural-language-nutrients-response-dto';
+import { NutritionixNaturalLanguageNutrientsDetailsDto } from '../../dtos/nutritionix-natural-language-nutrients-details-dto/nutritionix-natural-language-nutrients-details-dto';
 
 @Injectable()
 export class NutritionixService {
-  async getCommonFoodItemDetails(foodName: string): Promise<any> {
-    if (!foodName) {
+  async getCommonFoodItemDetails(
+    commonFoodName: string,
+  ): Promise<NutritionixNaturalLanguageNutrientsDetailsDto> {
+    if (!commonFoodName) {
       throw new BadRequestException(
         'Server did not receive food name to get details of!',
       );
     }
-    const body = JSON.stringify({ query: foodName });
+    const body = JSON.stringify({ query: commonFoodName });
     const nutritionixResponse = await fetch(this.commonFoodNutrientsEndpoint, {
       headers: this.headersRequiredForNutritionix,
       body: body,
@@ -29,6 +33,21 @@ export class NutritionixService {
         'Server had trouble communicating with external API!',
       );
     }
+
+    const responseBody = await nutritionixResponse.text();
+    const parsedBody = JSON.parse(responseBody);
+
+    const commonFoodDetails = plainToInstance(
+      NutritionixNaturalLanguageNutrientsResponseDto,
+      parsedBody,
+    );
+
+    if (!commonFoodDetails?.foods?.length) {
+      throw new BadRequestException(
+        'No details found for requested food item!',
+      );
+    }
+    return commonFoodDetails.foods[0];
   }
   private nutritionixBaseUrl: string = 'https://trackapi.nutritionix.com/v2/';
   private searchEndpoint: string = this.nutritionixBaseUrl + 'search/instant/';

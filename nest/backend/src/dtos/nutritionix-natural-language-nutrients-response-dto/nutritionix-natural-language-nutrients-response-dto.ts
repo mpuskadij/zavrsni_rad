@@ -3,5 +3,6 @@ import { NutritionixInstantEndpointFoodPhotoDto } from '../nutritionix-instant-e
 import { NutritionixNaturalLanguageNutrientsDetailsDto } from '../nutritionix-natural-language-nutrients-details-dto/nutritionix-natural-language-nutrients-details-dto';
 
 export class NutritionixNaturalLanguageNutrientsResponseDto {
+  @Type(() => NutritionixNaturalLanguageNutrientsDetailsDto)
   foods: NutritionixNaturalLanguageNutrientsDetailsDto[];
 }

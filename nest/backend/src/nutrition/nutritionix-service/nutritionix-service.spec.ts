@@ -9,6 +9,8 @@ import { ConfigModule } from '@nestjs/config';
 import { DtosModule } from '../../dtos/dtos.module';
 import { NutritionixInstantEndpointResponseDto } from '../../dtos/nutritionix-instant-endpoint-response-dto/nutritionix-instant-endpoint-response-dto';
 import { NutritionixInstantEndpointCommonFoodDto } from '../../dtos/nutritionix-instant-endpoint-food-dto/nutritionix-instant-endpoint-common-food-dto';
+import { NutritionixNaturalLanguageNutrientsResponseDto } from '../../dtos/nutritionix-natural-language-nutrients-response-dto/nutritionix-natural-language-nutrients-response-dto';
+import { NutritionixNaturalLanguageNutrientsDetailsDto } from '../../dtos/nutritionix-natural-language-nutrients-details-dto/nutritionix-natural-language-nutrients-details-dto';
 
 describe('NutritionixService', () => {
   let provider: NutritionixService;
@@ -87,6 +89,32 @@ describe('NutritionixService', () => {
       const result = () => provider.getCommonFoodItemDetails('hamburger');
 
       expect(result).rejects.toThrow(ServiceUnavailableException);
+    });
+
+    it('should return nutrients for food if Nutritionix returns 200 OK', async () => {
+      const nutritionixResponseBody =
+        new NutritionixNaturalLanguageNutrientsResponseDto();
+      const foods = new NutritionixNaturalLanguageNutrientsDetailsDto();
+      nutritionixResponseBody.foods = [foods];
+      mockFetch.mockResolvedValue({
+        ok: true,
+        text: async () => JSON.stringify(nutritionixResponseBody),
+      });
+      const result = await provider.getCommonFoodItemDetails('hamburger');
+
+      expect(result).toStrictEqual(foods);
+    });
+
+    it('should throw exception if food details not found', async () => {
+      const nutritionixResponseBody =
+        new NutritionixNaturalLanguageNutrientsResponseDto();
+      mockFetch.mockResolvedValue({
+        ok: true,
+        text: async () => JSON.stringify(nutritionixResponseBody),
+      });
+      const result = () => provider.getCommonFoodItemDetails('hamburger');
+
+      expect(result).rejects.toThrow(BadRequestException);
     });
   });
 });
