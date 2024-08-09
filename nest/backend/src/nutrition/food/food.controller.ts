@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   HttpStatus,
+  Param,
   Query,
   UseGuards,
   ValidationPipe,
@@ -9,6 +10,8 @@ import {
 import { JwtGuard } from '../../guards/jwt/jwt.guard';
 import { SearchFoodDto } from '../../dtos/search-food-dto/search-food-dto';
 import { NutritionixService } from '../nutritionix-service/nutritionix-service';
+import { FindFoodDetailsDto } from '../../dtos/find-food-details-dto/find-food-details-dto';
+import { NutritionixCommonAndBrandedFoodDetailsDto } from '../../dtos/nutritionix-common-and-branded-food-details-details-dto/nutritionix-common-and-branded-food-details-dto';
 
 @Controller('api/food')
 export class FoodController {
@@ -29,5 +32,27 @@ export class FoodController {
     const foundFoodItems =
       await this.nutritionixService.searchForFood(searchTerm);
     return foundFoodItems;
+  }
+
+  @Get('/details')
+  @UseGuards(JwtGuard)
+  async getFoodItemDetails(
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        errorHttpStatusCode: HttpStatus.BAD_REQUEST,
+      }),
+    )
+    findFoodDetailsDto: FindFoodDetailsDto,
+  ): Promise<any> {
+    const detailsOfRequestedFoodItem: NutritionixCommonAndBrandedFoodDetailsDto =
+      findFoodDetailsDto.name
+        ? await this.nutritionixService.getCommonFoodItemDetails(
+            findFoodDetailsDto.name,
+          )
+        : await this.nutritionixService.getBrandedFoodItemDetails(
+            findFoodDetailsDto.id,
+          );
+    return detailsOfRequestedFoodItem;
   }
 }

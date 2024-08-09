@@ -20,6 +20,7 @@ import { NutritionixInstantEndpointResponseDto } from './nutritionix-instant-end
 import { SearchFoodDto } from './search-food-dto/search-food-dto';
 import { NutritionixCommonAndBrandedFoodDetailsResponseDto } from './nutritionix-common-and-branded-food-details-response-dto/nutritionix-common-and-branded-food-details-response-dto';
 import { NutritionixCommonAndBrandedFoodDetailsDto } from './nutritionix-common-and-branded-food-details-details-dto/nutritionix-common-and-branded-food-details-dto';
+import { FindFoodDetailsDto } from './find-food-details-dto/find-food-details-dto';
 
 @Module({
   imports: [EntitiesModule],
@@ -43,6 +44,7 @@ import { NutritionixCommonAndBrandedFoodDetailsDto } from './nutritionix-common-
     SearchFoodDto,
     NutritionixCommonAndBrandedFoodDetailsResponseDto,
     NutritionixCommonAndBrandedFoodDetailsDto,
+    FindFoodDetailsDto,
   ],
   providers: [
     BmiEntryDto,
@@ -65,6 +67,7 @@ import { NutritionixCommonAndBrandedFoodDetailsDto } from './nutritionix-common-
     SearchFoodDto,
     NutritionixCommonAndBrandedFoodDetailsResponseDto,
     NutritionixCommonAndBrandedFoodDetailsDto,
+    FindFoodDetailsDto,
   ],
 })
 export class DtosModule {}
