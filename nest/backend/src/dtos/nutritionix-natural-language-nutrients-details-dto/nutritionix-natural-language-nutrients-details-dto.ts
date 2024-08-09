@@ -1,4 +1,4 @@
-import { Exclude, Type } from 'class-transformer';
+import { Exclude, Expose, Type } from 'class-transformer';
 import { NutritionixInstantEndpointFoodPhotoDto } from '../nutritionix-instant-endpoint-food-photo-dto/nutritionix-instant-endpoint-food-photo-dto';
 
 export class NutritionixNaturalLanguageNutrientsDetailsDto {
@@ -12,8 +12,15 @@ export class NutritionixNaturalLanguageNutrientsDetailsDto {
 
   serving_weight_grams: number;
 
+  @Expose({ groups: ['branded'] })
+  nf_metric_qty: number;
+
+  @Expose({ groups: ['branded'] })
+  nf_metric_uom: string;
+
   nf_calories: number;
   nf_total_fat: number;
+  nf_saturated_fat: number;
   nf_cholesterol: number;
   nf_sodium: number;
   nf_total_carbohydrate: number;
@@ -73,6 +80,9 @@ export class NutritionixNaturalLanguageNutrientsDetailsDto {
   sub_recipe: string;
 
   @Exclude()
+  note: string;
+
+  @Exclude()
   class_code: string;
 
   @Exclude()
@@ -80,4 +90,7 @@ export class NutritionixNaturalLanguageNutrientsDetailsDto {
 
   @Exclude()
   tag_id: string;
+
+  @Expose({ groups: ['branded'] })
+  nf_ingredient_statement: string;
 }
