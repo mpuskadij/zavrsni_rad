@@ -22,6 +22,5 @@ export class NutritionixInstantEndpointBrandedFoodDto extends PickType(
   @Exclude()
   brand_type: number;
 
-  @Exclude()
   nix_item_id: string;
 }
