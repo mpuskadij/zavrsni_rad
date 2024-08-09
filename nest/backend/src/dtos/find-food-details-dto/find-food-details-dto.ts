@@ -5,7 +5,7 @@ export class FindFoodDetailsDto {
   @IsNotEmpty({ message: 'Name or id are required!' })
   name: string;
 
-  @ValidateIf((data) => !data.name || !data.id)
+  @ValidateIf((data) => !data.name || data.id)
   @IsNotEmpty({ message: 'Name or id are required!' })
   id: string;
 }

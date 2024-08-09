@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Controller,
   Get,
   HttpStatus,
@@ -45,6 +46,11 @@ export class FoodController {
     )
     findFoodDetailsDto: FindFoodDetailsDto,
   ): Promise<any> {
+    if (findFoodDetailsDto.name && findFoodDetailsDto.id) {
+      throw new BadRequestException(
+        'Server received both name and id, only one of them is required!',
+      );
+    }
     const detailsOfRequestedFoodItem: NutritionixCommonAndBrandedFoodDetailsDto =
       findFoodDetailsDto.name
         ? await this.nutritionixService.getCommonFoodItemDetails(

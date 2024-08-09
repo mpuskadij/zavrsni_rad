@@ -63,6 +63,15 @@ export class NutritionixService {
       responseBody,
     );
 
+    if (
+      !foundCommonAndBrandedFoodItems.common?.length &&
+      !foundCommonAndBrandedFoodItems.branded?.length
+    ) {
+      throw new BadRequestException(
+        'No food items matching search term found!',
+      );
+    }
+
     if (foundCommonAndBrandedFoodItems.common) {
       const tagIds = foundCommonAndBrandedFoodItems.common.map(
         (commonFood) => commonFood.tag_id,

@@ -11,6 +11,7 @@ import { NutritionixInstantEndpointResponseDto } from '../../dtos/nutritionix-in
 import { NutritionixInstantEndpointCommonFoodDto } from '../../dtos/nutritionix-instant-endpoint-food-dto/nutritionix-instant-endpoint-common-food-dto';
 import { NutritionixCommonAndBrandedFoodDetailsResponseDto } from '../../dtos/nutritionix-common-and-branded-food-details-response-dto/nutritionix-common-and-branded-food-details-response-dto';
 import { NutritionixCommonAndBrandedFoodDetailsDto } from '../../dtos/nutritionix-common-and-branded-food-details-details-dto/nutritionix-common-and-branded-food-details-dto';
+import { NutritionixInstantEndpointBrandedFoodDto } from '../../dtos/nutritionix-instant-endpoint-branded-food-dto/nutritionix-instant-endpoint-branded-food-dto';
 
 describe('NutritionixService', () => {
   let provider: NutritionixService;
@@ -42,6 +43,9 @@ describe('NutritionixService', () => {
 
     it('should return branded and common foods that match search term if nutritionix returns 200 OK', async () => {
       const foodFromNutritionix = new NutritionixInstantEndpointResponseDto();
+      foodFromNutritionix.branded = [
+        new NutritionixInstantEndpointBrandedFoodDto(),
+      ];
       const mockResponse = {
         ok: true,
         text: async () => JSON.stringify(foodFromNutritionix),
@@ -75,6 +79,19 @@ describe('NutritionixService', () => {
 
       expect(result.common).toHaveLength(1);
     });
+
+    it('should throw exception if no food items found', async () => {
+      const nutritionixResponseBody =
+        new NutritionixCommonAndBrandedFoodDetailsResponseDto();
+      mockFetch.mockResolvedValue({
+        ok: true,
+        text: async () => JSON.stringify(nutritionixResponseBody),
+      });
+
+      const result = () => provider.searchForFood('asdasfasf');
+
+      expect(result).rejects.toThrow(BadRequestException);
+    });
   });
 
   describe('getCommonFoodItemDetails', () => {
@@ -103,18 +120,6 @@ describe('NutritionixService', () => {
       const result = await provider.getCommonFoodItemDetails('hamburger');
 
       expect(result).toStrictEqual(foods);
-    });
-
-    it('should throw exception if food details not found', async () => {
-      const nutritionixResponseBody =
-        new NutritionixCommonAndBrandedFoodDetailsResponseDto();
-      mockFetch.mockResolvedValue({
-        ok: true,
-        text: async () => JSON.stringify(nutritionixResponseBody),
-      });
-      const result = () => provider.getCommonFoodItemDetails('hamburger');
-
-      expect(result).rejects.toThrow(BadRequestException);
     });
   });
 
