@@ -13,42 +13,6 @@ import { NutritionixNaturalLanguageNutrientsDetailsDto } from '../../dtos/nutrit
 
 @Injectable()
 export class NutritionixService {
-  async getCommonFoodItemDetails(
-    commonFoodName: string,
-  ): Promise<NutritionixNaturalLanguageNutrientsDetailsDto> {
-    if (!commonFoodName) {
-      throw new BadRequestException(
-        'Server did not receive food name to get details of!',
-      );
-    }
-    const body = JSON.stringify({ query: commonFoodName });
-    const nutritionixResponse = await fetch(this.commonFoodNutrientsEndpoint, {
-      headers: this.headersRequiredForNutritionix,
-      body: body,
-      method: 'POST',
-    });
-
-    if (!nutritionixResponse.ok) {
-      throw new ServiceUnavailableException(
-        'Server had trouble communicating with external API!',
-      );
-    }
-
-    const responseBody = await nutritionixResponse.text();
-    const parsedBody = JSON.parse(responseBody);
-
-    const commonFoodDetails = plainToInstance(
-      NutritionixNaturalLanguageNutrientsResponseDto,
-      parsedBody,
-    );
-
-    if (!commonFoodDetails?.foods?.length) {
-      throw new BadRequestException(
-        'No details found for requested food item!',
-      );
-    }
-    return commonFoodDetails.foods[0];
-  }
   private nutritionixBaseUrl: string = 'https://trackapi.nutritionix.com/v2/';
   private searchEndpoint: string = this.nutritionixBaseUrl + 'search/instant/';
   private headersRequiredForNutritionix: HeadersInit;
@@ -109,5 +73,42 @@ export class NutritionixService {
     }
 
     return foundCommonAndBrandedFoodItems;
+  }
+
+  async getCommonFoodItemDetails(
+    commonFoodName: string,
+  ): Promise<NutritionixNaturalLanguageNutrientsDetailsDto> {
+    if (!commonFoodName) {
+      throw new BadRequestException(
+        'Server did not receive food name to get details of!',
+      );
+    }
+    const body = JSON.stringify({ query: commonFoodName });
+    const nutritionixResponse = await fetch(this.commonFoodNutrientsEndpoint, {
+      headers: this.headersRequiredForNutritionix,
+      body: body,
+      method: 'POST',
+    });
+
+    if (!nutritionixResponse.ok) {
+      throw new ServiceUnavailableException(
+        'Server had trouble communicating with external API!',
+      );
+    }
+
+    const responseBody = await nutritionixResponse.text();
+    const parsedBody = JSON.parse(responseBody);
+
+    const commonFoodDetails = plainToInstance(
+      NutritionixNaturalLanguageNutrientsResponseDto,
+      parsedBody,
+    );
+
+    if (!commonFoodDetails?.foods?.length) {
+      throw new BadRequestException(
+        'No details found for requested food item!',
+      );
+    }
+    return commonFoodDetails.foods[0];
   }
 }

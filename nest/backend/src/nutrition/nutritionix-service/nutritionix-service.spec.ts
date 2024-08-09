@@ -77,7 +77,7 @@ describe('NutritionixService', () => {
     });
   });
 
-  describe('getFoodItemDetails', () => {
+  describe('getCommonFoodItemDetails', () => {
     it('should throw exception if the name of the food item is falsy', async () => {
       const result = () => provider.getCommonFoodItemDetails('');
 

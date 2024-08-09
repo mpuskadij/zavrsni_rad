@@ -33,4 +33,13 @@ describe('NutritionixService', () => {
       expect(result.common.length).toBeGreaterThan(0);
     });
   });
+
+  describe.skip('getCommonFoodItemDetails', () => {
+    it('should return details of common food item that exists in Nutritionix', async () => {
+      const result = await provider.getCommonFoodItemDetails('hamburger');
+
+      expect(result).toBeDefined();
+      expect(result.food_name).toBe('hamburger');
+    });
+  });
 });
