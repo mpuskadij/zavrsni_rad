@@ -17,6 +17,8 @@ import { ConfigService } from '@nestjs/config';
 import { DeleteJournalEntryDto } from '../../dtos/journal-entry-dto/delete-journal-entry-dto';
 import { WorkoutPlan } from '../../entities/workout-plan/workout-plan';
 import { Exercise } from '../../entities/exercise/exercise';
+import { Food } from '../../entities/food/food';
+import { UserFood } from '../../entities/user_food/user_food';
 
 describe('JournalService (integration tests)', () => {
   let provider: JournalService;
@@ -27,14 +29,10 @@ describe('JournalService (integration tests)', () => {
   const username = 'marin';
   const title = 'My first entry';
   const description = 'Today was boring...';
-  const user: User = {
-    bmiEntries: [],
-    isAdmin: 0,
-    journalEntries: [],
-    password: password,
-    username: username,
-    workoutPlans: [],
-  };
+  const user = new User();
+  user.username = username;
+  user.password = password;
+  user.journalEntries = [];
 
   const journalEntry: JournalEntry = {
     dateAdded: new Date(),
@@ -51,23 +49,18 @@ describe('JournalService (integration tests)', () => {
     username: username,
   };
 
-  const userWithJournalEntry: User = {
-    bmiEntries: [],
-    isAdmin: 0,
-    journalEntries: [journalEntry],
-    password: password,
-    username: username,
-    workoutPlans: [],
-  };
+  const userWithJournalEntry = new User();
+  userWithJournalEntry.username = username;
+  userWithJournalEntry.password = password;
+  userWithJournalEntry.journalEntries = [journalEntry];
+  user.isAdmin = 0;
 
-  const userWithJournalEntryPreviousDay: User = {
-    bmiEntries: [],
-    isAdmin: 0,
-    journalEntries: [journalEntryPreviousDay],
-    password: password,
-    username: username,
-    workoutPlans: [],
-  };
+  const userWithJournalEntryPreviousDay = new User();
+  userWithJournalEntryPreviousDay.username = username;
+  userWithJournalEntryPreviousDay.password = password;
+  userWithJournalEntryPreviousDay.journalEntries = [journalEntryPreviousDay];
+  user.isAdmin = 0;
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
@@ -76,7 +69,15 @@ describe('JournalService (integration tests)', () => {
           database: './database/test.sqlite',
           synchronize: true,
           autoLoadEntities: true,
-          entities: [JournalEntry, User, Bmientry, WorkoutPlan, Exercise],
+          entities: [
+            JournalEntry,
+            User,
+            Bmientry,
+            WorkoutPlan,
+            Exercise,
+            Food,
+            UserFood,
+          ],
         }),
         CrpytoModule,
         TypeOrmModule.forFeature([
@@ -85,6 +86,8 @@ describe('JournalService (integration tests)', () => {
           Bmientry,
           WorkoutPlan,
           Exercise,
+          Food,
+          UserFood,
         ]),
       ],
       providers: [
@@ -195,14 +198,11 @@ describe('JournalService (integration tests)', () => {
     });
 
     it('should throw BadRequestException if user has journal entries, but the date that is passed is incorrect', async () => {
-      const userWithEntry: User = {
-        bmiEntries: [],
-        isAdmin: 0,
-        journalEntries: [],
-        password: password,
-        username: username,
-        workoutPlans: [],
-      };
+      const userWithEntry = new User();
+      userWithEntry.username = username;
+      userWithEntry.password = password;
+      userWithEntry.isAdmin = 0;
+      userWithEntry.journalEntries = [];
       const entry = new JournalEntry();
       entry.dateAdded = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000);
       entry.description = 'Boring...';
@@ -225,14 +225,11 @@ describe('JournalService (integration tests)', () => {
     });
 
     it('should throw BadRequestException if user has journal entries, but the title and description passed are the same', async () => {
-      const userWithEntry: User = {
-        bmiEntries: [],
-        isAdmin: 0,
-        journalEntries: [],
-        password: password,
-        username: username,
-        workoutPlans: [],
-      };
+      const userWithEntry = new User();
+      userWithEntry.username = username;
+      userWithEntry.password = password;
+      userWithEntry.isAdmin = 0;
+      userWithEntry.journalEntries = [];
       const entry = new JournalEntry();
       entry.dateAdded = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000);
       entry.description = 'Boring...';

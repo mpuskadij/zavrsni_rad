@@ -22,6 +22,8 @@ import { WorkoutPlanModule } from './workout-plan/workout-plan.module';
 import { WorkoutPlan } from './entities/workout-plan/workout-plan';
 import { Exercise } from './entities/exercise/exercise';
 import { NutritionModule } from './nutrition/nutrition.module';
+import { Food } from './entities/food/food';
+import { UserFood } from './entities/user_food/user_food';
 
 @Module({
   imports: [
@@ -33,7 +35,15 @@ import { NutritionModule } from './nutrition/nutrition.module';
       database: './database/database.sqlite',
       synchronize: true,
       autoLoadEntities: true,
-      entities: [User, Bmientry, JournalEntry, WorkoutPlan, Exercise],
+      entities: [
+        User,
+        Bmientry,
+        JournalEntry,
+        WorkoutPlan,
+        Exercise,
+        Food,
+        UserFood,
+      ],
     }),
     EntitiesModule,
     GoogleRecaptchaModule.forRoot({

@@ -162,14 +162,10 @@ describe('UsersService (unit tests)', () => {
   });
 
   describe('checkLoginCredentials', () => {
-    const user: User = {
-      password: password,
-      username: username,
-      isAdmin: 0,
-      bmiEntries: [],
-      journalEntries: [],
-      workoutPlans: [],
-    };
+    const user = new User();
+    user.username = username;
+    user.password = password;
+    user.isAdmin = 0;
     it('should return true if username and password are correct', async () => {
       jest.spyOn(provider, 'getUser').mockResolvedValue(user);
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(user);
@@ -212,14 +208,10 @@ describe('UsersService (unit tests)', () => {
   });
 
   describe('getUser', () => {
-    const user: User = {
-      password: password,
-      username: username,
-      isAdmin: 0,
-      bmiEntries: [],
-      journalEntries: [],
-      workoutPlans: [],
-    };
+    const user = new User();
+    user.username = username;
+    user.password = password;
+    user.isAdmin = 0;
     it('should get user when username passed exists in database', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(user);
       const result: User = await provider.getUser(username);
@@ -239,14 +231,10 @@ describe('UsersService (unit tests)', () => {
   });
 
   describe('createJWT', () => {
-    const user: User = {
-      password: password,
-      username: username,
-      isAdmin: 0,
-      bmiEntries: [],
-      journalEntries: [],
-      workoutPlans: [],
-    };
+    const user = new User();
+    user.username = username;
+    user.password = password;
+    user.isAdmin = 0;
     it('should use AuthenticationService', async () => {
       mockAuthenticationService.generateJWT.mockResolvedValue(
         'asdasd.sadasd.asdasd',
@@ -264,14 +252,10 @@ describe('UsersService (unit tests)', () => {
   });
 
   describe('saveUserData', () => {
-    const user: User = {
-      password: password,
-      username: username,
-      isAdmin: 0,
-      bmiEntries: [],
-      journalEntries: [],
-      workoutPlans: [],
-    };
+    const user = new User();
+    user.username = username;
+    user.password = password;
+    user.isAdmin = 0;
     it('should use userRepository to save user and return updated user if save is successful', async () => {
       jest.spyOn(repository, 'save').mockResolvedValue(user);
 
@@ -288,14 +272,11 @@ describe('UsersService (unit tests)', () => {
   });
 
   describe('assignJournalEntry', () => {
-    const user: User = {
-      password: password,
-      username: username,
-      isAdmin: 0,
-      bmiEntries: [],
-      journalEntries: [],
-      workoutPlans: [],
-    };
+    const user = new User();
+    user.username = username;
+    user.password = password;
+    user.isAdmin = 0;
+    user.journalEntries = [];
     const journalEntry: JournalEntry = {
       dateAdded: new Date(),
       description: 'sda',
@@ -326,22 +307,18 @@ describe('UsersService (unit tests)', () => {
   });
 
   describe('unassignJournalEntry', () => {
-    const userWithNoJournalEntries: User = {
-      password: password,
-      username: username,
-      isAdmin: 0,
-      bmiEntries: [],
-      journalEntries: [],
-      workoutPlans: [],
-    };
-    const userWithEntry: User = {
-      isAdmin: 0,
-      password: password,
-      username: username,
-      bmiEntries: [],
-      journalEntries: [],
-      workoutPlans: [],
-    };
+    const userWithNoJournalEntries = new User();
+    userWithNoJournalEntries.isAdmin = 0;
+    userWithNoJournalEntries.journalEntries = [];
+    userWithNoJournalEntries.password = password;
+    userWithNoJournalEntries.username = username;
+
+    const userWithEntry: User = new User();
+    userWithEntry.isAdmin = 0;
+    userWithEntry.username = username;
+    userWithEntry.password = password;
+    userWithEntry.journalEntries = [];
+
     const journalEntry: JournalEntry = {
       dateAdded: new Date(),
       description: 'sda',

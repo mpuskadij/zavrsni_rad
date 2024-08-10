@@ -39,6 +39,8 @@ import { ExerciseService } from '../src/workout-plan/exercise-service/exercise-s
 import { WorkoutPlanDto } from '../src/dtos/workout-plan-dto/workout-plan-dto';
 import { plainToInstance } from 'class-transformer';
 import * as cookieParser from 'cookie-parser';
+import { Food } from '../src/entities/food/food';
+import { UserFood } from '../src/entities/user_food/user_food';
 
 describe('WorkoutPlanController (e2e)', () => {
   let app: INestApplication;
@@ -71,7 +73,15 @@ describe('WorkoutPlanController (e2e)', () => {
           database: './database/test.sqlite',
           synchronize: true,
           autoLoadEntities: true,
-          entities: [User, Bmientry, JournalEntry, WorkoutPlan, Exercise],
+          entities: [
+            User,
+            Bmientry,
+            JournalEntry,
+            WorkoutPlan,
+            Exercise,
+            Food,
+            UserFood,
+          ],
         }),
         TypeOrmModule.forFeature([
           User,
@@ -79,6 +89,8 @@ describe('WorkoutPlanController (e2e)', () => {
           JournalEntry,
           WorkoutPlan,
           Exercise,
+          Food,
+          UserFood,
         ]),
         AuthenticationModule,
         JwtModule.register({ secret: process.env.JWT_SECRET }),

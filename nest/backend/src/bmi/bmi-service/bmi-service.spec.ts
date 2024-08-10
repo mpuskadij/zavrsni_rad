@@ -36,20 +36,13 @@ describe('BmiService (unit tests)', () => {
     provider = module.get<BmiService>(BmiService);
   });
 
-  it('should be defined', () => {
-    expect(provider).toBeDefined();
-  });
-
   describe('addNewBmiEntry', () => {
     it('should return bmi when new bmi entry is added to database', async () => {
-      const user: User = {
-        username: username,
-        isAdmin: 0,
-        password: '123456Hj',
-        bmiEntries: [],
-        journalEntries: [],
-        workoutPlans: [],
-      };
+      const user = new User();
+      user.username = username;
+      user.password = 'sdasd';
+      user.isAdmin = 0;
+      user.bmiEntries = [];
       const weight: number = 66.7;
       const height: number = 180;
       const squaredHeight: number = Math.pow(height, 2);
@@ -124,14 +117,11 @@ describe('BmiService (unit tests)', () => {
     });
 
     it('should throw exception if saving to database failed', async () => {
-      const user: User = {
-        username: username,
-        isAdmin: 0,
-        password: '123456Hj',
-        bmiEntries: [],
-        journalEntries: [],
-        workoutPlans: [],
-      };
+      const user = new User();
+      user.username = username;
+      user.password = 'sdasd';
+      user.isAdmin = 0;
+      user.bmiEntries = [];
       const weight: number = 66.7;
       const height: number = 180;
       const squaredHeight: number = Math.pow(height, 2);
@@ -155,14 +145,11 @@ describe('BmiService (unit tests)', () => {
     });
 
     it('should throw exception if less that 7 days have passed!', async () => {
-      const user: User = {
-        username: username,
-        isAdmin: 0,
-        password: '123456Hj',
-        bmiEntries: [],
-        journalEntries: [],
-        workoutPlans: [],
-      };
+      const user = new User();
+      user.username = username;
+      user.password = 'sdasd';
+      user.isAdmin = 0;
+      user.bmiEntries = [];
       const weight: number = 66.7;
       const height: number = 1.8;
       const squaredHeight: number = Math.pow(height, 2);
@@ -181,14 +168,11 @@ describe('BmiService (unit tests)', () => {
     });
 
     it('should return bmi if 7 days passed', async () => {
-      const user: User = {
-        username: username,
-        isAdmin: 0,
-        password: '123456Hj',
-        bmiEntries: [],
-        journalEntries: [],
-        workoutPlans: [],
-      };
+      const user = new User();
+      user.username = username;
+      user.password = 'sdasd';
+      user.isAdmin = 0;
+      user.bmiEntries = [];
       const weight: number = 66.7;
       const height: number = 1.8;
       const squaredHeight: number = Math.pow(height, 2);
@@ -211,14 +195,11 @@ describe('BmiService (unit tests)', () => {
     });
 
     it('should return bmi if 8 days passed', async () => {
-      const user: User = {
-        username: username,
-        isAdmin: 0,
-        password: '123456Hj',
-        bmiEntries: [],
-        journalEntries: [],
-        workoutPlans: [],
-      };
+      const user = new User();
+      user.username = username;
+      user.password = 'sdasd';
+      user.isAdmin = 0;
+      user.bmiEntries = [];
       const weight: number = 66.7;
       const height: number = 1.8;
       const squaredHeight: number = Math.pow(height, 2);
@@ -241,14 +222,11 @@ describe('BmiService (unit tests)', () => {
     });
 
     it('should return true if it is the first bmi entry of the user', async () => {
-      const user: User = {
-        username: username,
-        isAdmin: 0,
-        password: '123456Hj',
-        bmiEntries: [],
-        journalEntries: [],
-        workoutPlans: [],
-      };
+      const user = new User();
+      user.username = username;
+      user.password = 'sdasd';
+      user.isAdmin = 0;
+      user.bmiEntries = [];
       const weight: number = 66.7;
       const height: number = 1.8;
       const squaredHeight: number = Math.pow(height, 2);
@@ -279,14 +257,11 @@ describe('BmiService (unit tests)', () => {
     });
 
     it('should throw forbidden exception if user has no bmi entries', async () => {
-      const user: User = {
-        username: username,
-        isAdmin: 0,
-        bmiEntries: [],
-        password: 'password',
-        journalEntries: [],
-        workoutPlans: [],
-      };
+      const user = new User();
+      user.username = username;
+      user.password = 'sdasd';
+      user.isAdmin = 0;
+      user.bmiEntries = [];
       mockUsersService.getUser.mockResolvedValue(user);
       await expect(
         provider.getAllBmiEntriesFromUser(username),
@@ -294,14 +269,11 @@ describe('BmiService (unit tests)', () => {
     });
 
     it('should return array of bmi entries as dto when user exists and ahs at elast one entry', async () => {
-      const user: User = {
-        username: username,
-        isAdmin: 0,
-        bmiEntries: [],
-        password: 'password',
-        journalEntries: [],
-        workoutPlans: [],
-      };
+      const user = new User();
+      user.username = username;
+      user.password = 'sdasd';
+      user.isAdmin = 0;
+      user.bmiEntries = [];
       const weight: number = 66.7;
       const height: number = 1.8;
       const squaredHeight: number = Math.pow(height, 2);

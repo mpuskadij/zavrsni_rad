@@ -34,6 +34,8 @@ import * as request from 'supertest';
 import { NutritionModule } from '../src/nutrition/nutrition.module';
 import { FoodController } from '../src/nutrition/food/food.controller';
 import { NutritionixInstantEndpointResponseDto } from '../src/dtos/nutritionix-instant-endpoint-response-dto/nutritionix-instant-endpoint-response-dto';
+import { UserFood } from '../src/entities/user_food/user_food';
+import { Food } from '../src/entities/food/food';
 
 describe.skip('Food Controller (e2e tests)', () => {
   let app: INestApplication;
@@ -58,7 +60,15 @@ describe.skip('Food Controller (e2e tests)', () => {
           database: './database/test.sqlite',
           synchronize: true,
           autoLoadEntities: true,
-          entities: [User, Bmientry, JournalEntry, WorkoutPlan, Exercise],
+          entities: [
+            User,
+            Bmientry,
+            JournalEntry,
+            WorkoutPlan,
+            Exercise,
+            UserFood,
+            Food,
+          ],
         }),
         TypeOrmModule.forFeature([
           User,
@@ -66,6 +76,8 @@ describe.skip('Food Controller (e2e tests)', () => {
           JournalEntry,
           WorkoutPlan,
           Exercise,
+          UserFood,
+          Food,
         ]),
         AuthenticationModule,
         JwtModule.register({ secret: process.env.JWT_SECRET }),

@@ -18,6 +18,8 @@ import { UsersService } from '../../users/users-service/users-service';
 import { CrpytoModule } from '../../crpyto/crpyto.module';
 import { AuthenticationModule } from '../../authentication/authentication.module';
 import { ExerciseService } from '../exercise-service/exercise-service';
+import { Food } from '../../entities/food/food';
+import { UserFood } from '../../entities/user_food/user_food';
 
 describe('WorkoutPlanService (integration tests)', () => {
   let provider: WorkoutPlanService;
@@ -41,7 +43,15 @@ describe('WorkoutPlanService (integration tests)', () => {
           database: './database/test.sqlite',
           synchronize: true,
           autoLoadEntities: true,
-          entities: [User, Bmientry, JournalEntry, WorkoutPlan, Exercise],
+          entities: [
+            User,
+            Bmientry,
+            JournalEntry,
+            WorkoutPlan,
+            Exercise,
+            Food,
+            UserFood,
+          ],
         }),
         TypeOrmModule.forFeature([
           User,
@@ -49,6 +59,8 @@ describe('WorkoutPlanService (integration tests)', () => {
           Bmientry,
           WorkoutPlan,
           Exercise,
+          Food,
+          UserFood,
         ]),
       ],
       providers: [

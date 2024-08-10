@@ -28,6 +28,8 @@ import { AppModule } from '../../app.module';
 import { JournalEntry } from '../../entities/journal-entry/journal-entry';
 import { WorkoutPlan } from '../../entities/workout-plan/workout-plan';
 import { Exercise } from '../../entities/exercise/exercise';
+import { Food } from '../../entities/food/food';
+import { UserFood } from '../../entities/user_food/user_food';
 
 describe('BmiService (integration tests)', () => {
   let provider: BmiService;
@@ -52,6 +54,8 @@ describe('BmiService (integration tests)', () => {
           JournalEntry,
           WorkoutPlan,
           Exercise,
+          Food,
+          UserFood,
         ]),
       ],
       providers: [
@@ -62,6 +66,8 @@ describe('BmiService (integration tests)', () => {
         AuthenticationService,
         JwtService,
         ConfigService,
+        Food,
+        UserFood,
       ],
     }).compile();
 
@@ -89,14 +95,11 @@ describe('BmiService (integration tests)', () => {
       const weight: number = 65;
       const height: number = 1.8;
       if (userExists == false) {
-        const user: User = {
-          username: username,
-          password: 'sdasd',
-          bmiEntries: [],
-          isAdmin: 0,
-          journalEntries: [],
-          workoutPlans: [],
-        };
+        const user = new User();
+        user.username = username;
+        user.password = 'sdasd';
+        user.isAdmin = 0;
+        user.bmiEntries = [];
         await userRepo.save(user);
       }
       return provider
@@ -131,14 +134,11 @@ describe('BmiService (integration tests)', () => {
       if (userExists != null) {
         await userRepo.remove(userExists);
       }
-      const user: User = {
-        username: username,
-        password: 'sdasd',
-        bmiEntries: [],
-        journalEntries: [],
-        isAdmin: 0,
-        workoutPlans: [],
-      };
+      const user = new User();
+      user.username = username;
+      user.password = 'sdasd';
+      user.isAdmin = 0;
+      user.bmiEntries = [];
       const sixDaysAgo = Date.now() - 6 * 24 * 60 * 60 * 1000;
 
       const bmiEntry: Bmientry = {
@@ -166,14 +166,11 @@ describe('BmiService (integration tests)', () => {
       if (userExists != null) {
         await userRepo.remove(userExists);
       }
-      const user: User = {
-        username: username,
-        password: 'sdasd',
-        bmiEntries: [],
-        isAdmin: 0,
-        journalEntries: [],
-        workoutPlans: [],
-      };
+      const user = new User();
+      user.username = username;
+      user.password = 'sdasd';
+      user.isAdmin = 0;
+      user.bmiEntries = [];
       const sevenDaysAgo = new Date().getTime() - 7 * 24 * 60 * 60 * 1000;
 
       const bmiEntry: Bmientry = {
@@ -199,14 +196,11 @@ describe('BmiService (integration tests)', () => {
       if (userExists != null) {
         await userRepo.remove(userExists);
       }
-      const user: User = {
-        username: username,
-        password: 'sdasd',
-        bmiEntries: [],
-        isAdmin: 0,
-        journalEntries: [],
-        workoutPlans: [],
-      };
+      const user = new User();
+      user.username = username;
+      user.password = 'sdasd';
+      user.isAdmin = 0;
+      user.bmiEntries = [];
       const eightDaysAgo = new Date().getTime() - 8 * 24 * 60 * 60 * 1000;
 
       const bmiEntry: Bmientry = {
@@ -232,14 +226,11 @@ describe('BmiService (integration tests)', () => {
       if (userExists != null) {
         await userRepo.remove(userExists);
       }
-      const user: User = {
-        username: username,
-        password: 'sdasd',
-        bmiEntries: [],
-        isAdmin: 0,
-        journalEntries: [],
-        workoutPlans: [],
-      };
+      const user = new User();
+      user.username = username;
+      user.password = 'sdasd';
+      user.isAdmin = 0;
+      user.bmiEntries = [];
 
       await userRepo.insert(user);
       await provider.addNewBmiEntry(username, weight, height);
@@ -271,14 +262,11 @@ describe('BmiService (integration tests)', () => {
       if (userExists != null) {
         await userRepo.remove(userExists);
       }
-      const user: User = {
-        username: username,
-        password: 'sdasd',
-        bmiEntries: [],
-        journalEntries: [],
-        isAdmin: 0,
-        workoutPlans: [],
-      };
+      const user = new User();
+      user.username = username;
+      user.password = 'sdasd';
+      user.isAdmin = 0;
+      user.bmiEntries = [];
       await userRepo.save(user);
       await expect(
         provider.getAllBmiEntriesFromUser(username),
@@ -293,14 +281,11 @@ describe('BmiService (integration tests)', () => {
       if (userExists != null) {
         await userRepo.remove(userExists);
       }
-      const user: User = {
-        username: username,
-        password: 'sdasd',
-        bmiEntries: [],
-        journalEntries: [],
-        isAdmin: 0,
-        workoutPlans: [],
-      };
+      const user = new User();
+      user.username = username;
+      user.password = 'sdasd';
+      user.isAdmin = 0;
+      user.bmiEntries = [];
       await userRepo.insert(user);
       const eightDaysAgo = new Date().getTime() - 8 * 24 * 60 * 60 * 1000;
 

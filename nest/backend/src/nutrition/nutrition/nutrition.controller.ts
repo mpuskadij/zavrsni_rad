@@ -8,8 +8,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { JwtGuard } from '../../guards/jwt/jwt.guard';
-import { FindFoodDetailsDto } from 'src/dtos/find-food-details-dto/find-food-details-dto';
-import { AddFoodToNutritionDto } from 'src/dtos/add-food-to-nutrition-dto/add-food-to-nutrition-dto';
+import { AddFoodToNutritionDto } from '../../dtos/add-food-to-nutrition-dto/add-food-to-nutrition-dto';
 import { NutritionixCommonAndBrandedFoodDetailsDto } from 'src/dtos/nutritionix-common-and-branded-food-details-details-dto/nutritionix-common-and-branded-food-details-dto';
 import { NutritionixService } from '../nutritionix-service/nutritionix-service';
 

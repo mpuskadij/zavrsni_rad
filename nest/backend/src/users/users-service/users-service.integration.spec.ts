@@ -19,6 +19,8 @@ import { WorkoutPlan } from '../../entities/workout-plan/workout-plan';
 import { Exercise } from '../../entities/exercise/exercise';
 import { WorkoutPlanService } from '../../workout-plan/workout-plan-service/workout-plan-service';
 import { title } from 'process';
+import { Food } from '../../entities/food/food';
+import { UserFood } from '../../entities/user_food/user_food';
 
 describe('UsersService (integration tests)', () => {
   let provider: UsersService;
@@ -38,7 +40,15 @@ describe('UsersService (integration tests)', () => {
           database: './database/test.sqlite',
           synchronize: true,
           autoLoadEntities: true,
-          entities: [User, Bmientry, JournalEntry, WorkoutPlan, Exercise],
+          entities: [
+            User,
+            Bmientry,
+            JournalEntry,
+            WorkoutPlan,
+            Exercise,
+            Food,
+            UserFood,
+          ],
         }),
         TypeOrmModule.forFeature([
           User,
@@ -46,6 +56,8 @@ describe('UsersService (integration tests)', () => {
           Bmientry,
           WorkoutPlan,
           Exercise,
+          Food,
+          UserFood,
         ]),
         ConfigModule.forRoot(),
         AuthenticationModule,
@@ -74,14 +86,10 @@ describe('UsersService (integration tests)', () => {
     it('should return true when username already in database', async () => {
       const user: User = await repository.findOneBy({ username: username });
       if (user == null) {
-        const user: User = {
-          isAdmin: 0,
-          username: username,
-          password: password,
-          bmiEntries: [],
-          journalEntries: [],
-          workoutPlans: [],
-        };
+        const user = new User();
+        user.username = username;
+        user.password = password;
+        user.isAdmin = 0;
         await repository.save(user);
       }
       const result =
@@ -140,14 +148,10 @@ describe('UsersService (integration tests)', () => {
     it('should return User object if username found in database', async () => {
       const usernameInDatabase = await repository.findOneBy({ username });
       if (usernameInDatabase == null) {
-        const user: User = {
-          username: username,
-          password: password,
-          isAdmin: 0,
-          bmiEntries: [],
-          journalEntries: [],
-          workoutPlans: [],
-        };
+        const user = new User();
+        user.username = username;
+        user.password = password;
+        user.isAdmin = 0;
 
         await repository.save(user);
       }
@@ -185,14 +189,10 @@ describe('UsersService (integration tests)', () => {
       if (usernameInDatabase != null) {
         await repository.remove(usernameInDatabase);
       }
-      const user: User = {
-        username: username,
-        password: password,
-        isAdmin: 0,
-        bmiEntries: [],
-        journalEntries: [],
-        workoutPlans: [],
-      };
+      const user = new User();
+      user.username = username;
+      user.password = password;
+      user.isAdmin = 0;
       await repository.save(user);
 
       const result: boolean = await provider.checkLoginCredentials(
@@ -211,14 +211,10 @@ describe('UsersService (integration tests)', () => {
       if (usernameInDatabase != null) {
         await repository.remove(usernameInDatabase);
       }
-      const user: User = {
-        username: username,
-        password: password,
-        isAdmin: 0,
-        bmiEntries: [],
-        journalEntries: [],
-        workoutPlans: [],
-      };
+      const user = new User();
+      user.username = username;
+      user.password = password;
+      user.isAdmin = 0;
       await repository.save(user);
 
       const result: boolean = await provider.checkLoginCredentials(
@@ -237,14 +233,10 @@ describe('UsersService (integration tests)', () => {
         relations: ['bmiEntries', 'journalEntries'],
       });
       if (usernameInDatabase == null) {
-        const user: User = {
-          bmiEntries: [],
-          isAdmin: 0,
-          journalEntries: [],
-          password: password,
-          username: username,
-          workoutPlans: [],
-        };
+        const user = new User();
+        user.username = username;
+        user.password = password;
+        user.isAdmin = 0;
         await repository.save(user);
       }
       const token = await provider.createJWT(username);
@@ -264,14 +256,10 @@ describe('UsersService (integration tests)', () => {
       if (usernameInDatabase != null) {
         await repository.remove(usernameInDatabase);
       }
-      const user: User = {
-        username: username,
-        password: password,
-        isAdmin: 0,
-        bmiEntries: [],
-        workoutPlans: [],
-        journalEntries: [],
-      };
+      const user = new User();
+      user.username = username;
+      user.password = password;
+      user.isAdmin = 0;
       const result = await provider.saveUserData(user);
 
       expect(result).toBe(user);

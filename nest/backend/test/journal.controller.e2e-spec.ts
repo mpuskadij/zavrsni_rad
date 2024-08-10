@@ -24,6 +24,8 @@ import { JournalEntryDto } from '../src/dtos/journal-entry-dto/journal-entry-dto
 import { DtosModule } from '../src/dtos/dtos.module';
 import { WorkoutPlan } from '../src/entities/workout-plan/workout-plan';
 import { Exercise } from '../src/entities/exercise/exercise';
+import { Food } from '../src/entities/food/food';
+import { UserFood } from '../src/entities/user_food/user_food';
 
 describe('Journal Controller (e2e)', () => {
   let app: INestApplication;
@@ -45,7 +47,15 @@ describe('Journal Controller (e2e)', () => {
           database: './database/test.sqlite',
           synchronize: true,
           autoLoadEntities: true,
-          entities: [JournalEntry, User, Bmientry, WorkoutPlan, Exercise],
+          entities: [
+            JournalEntry,
+            User,
+            Bmientry,
+            WorkoutPlan,
+            Exercise,
+            Food,
+            UserFood,
+          ],
         }),
         TypeOrmModule.forFeature([
           JournalEntry,
@@ -53,6 +63,8 @@ describe('Journal Controller (e2e)', () => {
           Bmientry,
           WorkoutPlan,
           Exercise,
+          Food,
+          UserFood,
         ]),
       ],
       controllers: [JournalController],
@@ -264,14 +276,10 @@ describe('Journal Controller (e2e)', () => {
   });
 
   it('/api/journal (PUT) should return FORBIDDEN EXCEPTION user has 0 journal entries', async () => {
-    const user: User = {
-      bmiEntries: new Array<Bmientry>(),
-      journalEntries: new Array<JournalEntry>(),
-      username: username,
-      password: password,
-      isAdmin: 0,
-      workoutPlans: [],
-    };
+    const user: User = new User();
+    user.username = username;
+    user.password = password;
+    user.isAdmin = 0;
     await userRepo.save(user);
     return await request(app.getHttpServer())
       .put('/api/journal')
@@ -285,14 +293,11 @@ describe('Journal Controller (e2e)', () => {
   });
 
   it('/api/journal (PUT) should return BAD REQUEST if entry with sent date doesnt exist', async () => {
-    const user: User = {
-      bmiEntries: new Array<Bmientry>(),
-      journalEntries: new Array<JournalEntry>(),
-      username: username,
-      password: password,
-      isAdmin: 0,
-      workoutPlans: [],
-    };
+    const user: User = new User();
+    user.password = password;
+    user.isAdmin = 0;
+    user.username = username;
+    user.journalEntries = [];
     await userRepo.save(user);
     const journalEntry: JournalEntry = new JournalEntry();
     journalEntry.dateAdded = new Date();

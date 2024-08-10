@@ -45,6 +45,7 @@ export class NutritionixCommonAndBrandedFoodDetailsDto {
   @Exclude()
   nix_item_id: string;
 
+  @Exclude()
   upc: string;
 
   @Exclude()

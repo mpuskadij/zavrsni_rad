@@ -16,6 +16,8 @@ import { BmiService } from '../src/bmi/bmi-service/bmi-service';
 import { JournalEntry } from '../src/entities/journal-entry/journal-entry';
 import { WorkoutPlan } from '../src/entities/workout-plan/workout-plan';
 import { Exercise } from '../src/entities/exercise/exercise';
+import { Food } from '../src/entities/food/food';
+import { UserFood } from '../src/entities/user_food/user_food';
 
 describe('NewBmiEntryGuard (e2e)', () => {
   let app: INestApplication;
@@ -31,7 +33,15 @@ describe('NewBmiEntryGuard (e2e)', () => {
           type: 'sqlite',
           database: './database/test.sqlite',
           synchronize: true,
-          entities: [User, Bmientry, JournalEntry, WorkoutPlan, Exercise],
+          entities: [
+            User,
+            Bmientry,
+            JournalEntry,
+            WorkoutPlan,
+            Exercise,
+            Food,
+            UserFood,
+          ],
         }),
       ],
       controllers: [BmiController],

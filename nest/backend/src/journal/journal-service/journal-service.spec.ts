@@ -18,14 +18,10 @@ describe('JournalService (unit tests)', () => {
   const username = 'marin';
   const title = 'My first entry';
   const description = 'Today was boring...';
-  const user: User = {
-    bmiEntries: [],
-    isAdmin: 0,
-    journalEntries: [],
-    password: password,
-    workoutPlans: [],
-    username: username,
-  };
+  const user = new User();
+  user.username = username;
+  user.password = password;
+  user.journalEntries = [];
 
   const mockJournalRepository = { remove: jest.fn() };
   const journalEntry: JournalEntry = {
@@ -44,23 +40,17 @@ describe('JournalService (unit tests)', () => {
     username: username,
   };
 
-  const userWithJournalEntry: User = {
-    bmiEntries: [],
-    isAdmin: 0,
-    journalEntries: [journalEntry],
-    password: password,
-    username: username,
-    workoutPlans: [],
-  };
+  const userWithJournalEntry = new User();
+  userWithJournalEntry.username = username;
+  userWithJournalEntry.password = password;
+  userWithJournalEntry.journalEntries = [journalEntry];
+  user.isAdmin = 0;
 
-  const userWithJournalEntryPreviousDay: User = {
-    bmiEntries: [],
-    isAdmin: 0,
-    journalEntries: [journalEntryPreviousDay],
-    password: password,
-    workoutPlans: [],
-    username: username,
-  };
+  const userWithJournalEntryPreviousDay = new User();
+  userWithJournalEntryPreviousDay.username = username;
+  userWithJournalEntryPreviousDay.password = password;
+  userWithJournalEntryPreviousDay.journalEntries = [journalEntryPreviousDay];
+  user.isAdmin = 0;
 
   const journalDTOPreviousDay: JournalEntryDto = {
     dateAdded: userWithJournalEntryPreviousDay.journalEntries[0].dateAdded,
