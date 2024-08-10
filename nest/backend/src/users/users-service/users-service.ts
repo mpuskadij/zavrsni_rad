@@ -13,9 +13,55 @@ import { HashedPasswordData } from '../../crpyto/hashed-password-data/hashed-pas
 import { AuthenticationService } from '../../authentication/authentication-service/authentication-service';
 import { JournalEntry } from '../../entities/journal-entry/journal-entry';
 import { WorkoutPlan } from '../../entities/workout-plan/workout-plan';
+import { UserFood } from '../../entities/user_food/user_food';
+import { Food } from 'src/entities/food/food';
 
 @Injectable()
 export class UsersService {
+  async assignFood(user: User, userFood: UserFood): Promise<void> {
+    if (!user || !userFood) {
+      throw new InternalServerErrorException(
+        'Server had trouble adding food to nutrition!',
+      );
+    }
+    user.userFoods.push(userFood);
+
+    await this.saveUserData(user);
+  }
+  async createUserFood(quantity: number): Promise<UserFood> {
+    if (!quantity) {
+      throw new InternalServerErrorException(
+        'Server had trouble adding quantity to food item!',
+      );
+    }
+    const userFood = new UserFood();
+    userFood.quantity = quantity;
+    return userFood;
+  }
+  async checkIfUserHasFoodInNutrition(
+    usersFood: UserFood[],
+    id: number,
+  ): Promise<boolean> {
+    if (!id) {
+      throw new InternalServerErrorException(
+        'Server had trouble finding the food item!',
+      );
+    }
+    if (!usersFood?.length) {
+      return false;
+    }
+
+    return usersFood.some((food) => food.foodId == id);
+  }
+
+  async getFoodOfUser(user: User): Promise<UserFood[]> {
+    if (!user) {
+      throw new InternalServerErrorException(
+        'Server had trouble finding the user!',
+      );
+    }
+    return user.userFoods;
+  }
   async getWorkoutById(
     workoutPlans: WorkoutPlan[],
     idOfWorkoutPlanToFind: number,

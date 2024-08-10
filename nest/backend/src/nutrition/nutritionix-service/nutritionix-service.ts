@@ -73,9 +73,6 @@ export class NutritionixService {
     }
 
     if (foundCommonAndBrandedFoodItems.common) {
-      const tagIds = foundCommonAndBrandedFoodItems.common.map(
-        (commonFood) => commonFood.tag_id,
-      );
       foundCommonAndBrandedFoodItems.common =
         foundCommonAndBrandedFoodItems.common.filter(
           (commonFood, index, array) =>
@@ -88,6 +85,7 @@ export class NutritionixService {
 
   async getCommonFoodItemDetails(
     commonFoodName: string,
+    group: string = null,
   ): Promise<NutritionixCommonAndBrandedFoodDetailsDto> {
     if (!commonFoodName) {
       throw new BadRequestException(
@@ -109,11 +107,19 @@ export class NutritionixService {
 
     const responseBody = await nutritionixResponse.text();
     const parsedBody = JSON.parse(responseBody);
-
-    const commonFoodDetails = plainToInstance(
-      NutritionixCommonAndBrandedFoodDetailsResponseDto,
-      parsedBody,
-    );
+    let commonFoodDetails: NutritionixCommonAndBrandedFoodDetailsResponseDto;
+    if (group) {
+      commonFoodDetails = plainToInstance(
+        NutritionixCommonAndBrandedFoodDetailsResponseDto,
+        parsedBody,
+        { groups: [group] },
+      );
+    } else {
+      commonFoodDetails = plainToInstance(
+        NutritionixCommonAndBrandedFoodDetailsResponseDto,
+        parsedBody,
+      );
+    }
 
     if (!commonFoodDetails?.foods?.length) {
       throw new BadRequestException(

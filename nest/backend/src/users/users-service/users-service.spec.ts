@@ -21,6 +21,8 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { WorkoutPlan } from '../../entities/workout-plan/workout-plan';
+import { Food } from '../../entities/food/food';
+import { UserFood } from '../../entities/user_food/user_food';
 
 describe('UsersService (unit tests)', () => {
   let provider: UsersService;
@@ -520,6 +522,97 @@ describe('UsersService (unit tests)', () => {
       const result = await provider.getWorkoutById([workoutPlan], 1);
 
       expect(result).toStrictEqual(workoutPlan);
+    });
+  });
+
+  describe('getFoodOfUser', () => {
+    it('should throw exception is user is undefined', async () => {
+      const result = () => provider.getFoodOfUser(undefined);
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should return users food is correct user received', async () => {
+      const user = new User();
+      user.userFoods = [];
+
+      const result = await provider.getFoodOfUser(user);
+      expect(result).toStrictEqual(user.userFoods);
+    });
+  });
+
+  describe('checkIfUserHasFoodInNutrition', () => {
+    it('should throw exception if id is falsy', async () => {
+      const result = () =>
+        provider.checkIfUserHasFoodInNutrition(new Array<UserFood>(), null);
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should return false if user has no food yet', async () => {
+      const result = await provider.checkIfUserHasFoodInNutrition(
+        new Array<UserFood>(),
+        3,
+      );
+      expect(result).toStrictEqual(false);
+    });
+
+    it('should return false if id of food item is not found', async () => {
+      const userFood = new UserFood();
+      userFood.foodId = 3;
+      const result = await provider.checkIfUserHasFoodInNutrition(
+        [userFood],
+        4,
+      );
+      expect(result).toStrictEqual(false);
+    });
+
+    it('should return true if id of food item is found', async () => {
+      const userFood = new UserFood();
+      userFood.foodId = 3;
+      const result = await provider.checkIfUserHasFoodInNutrition(
+        [userFood],
+        3,
+      );
+      expect(result).toStrictEqual(true);
+    });
+  });
+
+  describe('createUserFood', () => {
+    it('should throw exception if quantity is falsy', async () => {
+      const result = () => provider.createUserFood(undefined);
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should create user food if quantity is a number', async () => {
+      const quantity = 1;
+      const result = await provider.createUserFood(quantity);
+
+      expect(result).toBeDefined();
+      expect(result.quantity).toStrictEqual(quantity);
+    });
+  });
+
+  describe('assignFood', () => {
+    it('should throw exception if user is falsy', async () => {
+      const result = () => provider.assignFood(null, new UserFood());
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should throw exception if food is falsy', async () => {
+      const result = () => provider.assignFood(new User(), null);
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should assign food if parameters are not falsy', async () => {
+      const user = new User();
+      user.userFoods = [];
+      jest.spyOn(repository, 'save').mockResolvedValue(user);
+      await provider.assignFood(user, new UserFood());
+
+      expect(user.userFoods).toHaveLength(1);
     });
   });
 });

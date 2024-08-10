@@ -32,5 +32,5 @@ export class UserFood {
   user: User;
 
   @Column()
-  quantitiy: number;
+  quantity: number;
 }

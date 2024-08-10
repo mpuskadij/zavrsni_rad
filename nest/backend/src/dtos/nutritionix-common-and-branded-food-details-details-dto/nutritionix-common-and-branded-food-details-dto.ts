@@ -6,6 +6,7 @@ export class NutritionixCommonAndBrandedFoodDetailsDto {
 
   brand_name: string;
 
+  @Exclude()
   serving_qty: number;
 
   serving_unit: string;
@@ -42,7 +43,7 @@ export class NutritionixCommonAndBrandedFoodDetailsDto {
   @Exclude()
   nix_item_name: string;
 
-  @Exclude()
+  @Expose({ groups: ['branded'] })
   nix_item_id: string;
 
   @Exclude()
@@ -89,7 +90,7 @@ export class NutritionixCommonAndBrandedFoodDetailsDto {
   @Exclude()
   brick_code: string;
 
-  @Exclude()
+  @Expose({ groups: ['common'] })
   tag_id: string;
 
   @Expose({ groups: ['branded'] })

@@ -10,6 +10,12 @@ export class Food {
   name: string;
 
   @Column({ nullable: true })
+  tagId: string;
+
+  @Column({ nullable: true })
+  nixId: string;
+
+  @Column({ nullable: true })
   calories?: number;
 
   @Column({ nullable: true })
