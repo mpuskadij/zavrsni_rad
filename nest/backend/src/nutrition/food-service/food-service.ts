@@ -7,6 +7,18 @@ import { NutritionixCommonAndBrandedFoodDetailsDto } from 'src/dtos/nutritionix-
 
 @Injectable()
 export class FoodService {
+  async getFoodByTagId(tagId: string): Promise<Food> {
+    if (!tagId) {
+      throw new InternalServerErrorException(
+        'Server had trouble checking if food already in nutrition!',
+      );
+    }
+    const foodFromDatabase = await this.foodRepository.findOne({
+      where: { tagId: tagId },
+      relations: ['userFoods'],
+    });
+    return foodFromDatabase;
+  }
   async createFood(
     details: NutritionixCommonAndBrandedFoodDetailsDto,
   ): Promise<Food> {

@@ -175,4 +175,28 @@ describe('FoodService (unit tests)', () => {
       expect(result).rejects.toThrow(InternalServerErrorException);
     });
   });
+
+  describe('getFoodByTagId', () => {
+    it('should throw exception if tag id is falsy', async () => {
+      const result = () => provider.getFoodByTagId('');
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should return null if food by tag id not found', async () => {
+      mockFoodRepository.findOne.mockResolvedValue(null);
+      const result = await provider.getFoodByTagId('1');
+
+      expect(result).toBeNull();
+    });
+
+    it('should return common food entity that has matching tag id', async () => {
+      const foundFood = new Food();
+      foundFood.tagId = '1';
+      mockFoodRepository.findOne.mockResolvedValue(foundFood);
+      const result = await provider.getFoodByTagId('1');
+
+      expect(result).toStrictEqual(foundFood);
+    });
+  });
 });
