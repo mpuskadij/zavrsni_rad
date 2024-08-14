@@ -615,4 +615,46 @@ describe('UsersService (unit tests)', () => {
       expect(user.userFoods).toHaveLength(1);
     });
   });
+
+  describe('checkIfUserHasFoodWithTagIdAlreadyInNutrition', () => {
+    it('should return false if user food is falsy', async () => {
+      const result =
+        await provider.checkIfUserHasFoodWithTagIdAlreadyInNutrition(null, '1');
+      expect(result).toBeFalsy();
+    });
+
+    it('should return false if user has no food in nutrition', async () => {
+      const result =
+        await provider.checkIfUserHasFoodWithTagIdAlreadyInNutrition([], '1');
+      expect(result).toBeFalsy();
+    });
+
+    it('should return true if user has food with matching tag id', async () => {
+      const food = new Food();
+      food.tagId = '1';
+      const userFood = new UserFood();
+      userFood.food = food;
+
+      const result =
+        await provider.checkIfUserHasFoodWithTagIdAlreadyInNutrition(
+          [userFood],
+          '1',
+        );
+      expect(result).toBeTruthy();
+    });
+
+    it('should return false if user has no food with matching tag id', async () => {
+      const food = new Food();
+      food.tagId = '1';
+      const userFood = new UserFood();
+      userFood.food = food;
+
+      const result =
+        await provider.checkIfUserHasFoodWithTagIdAlreadyInNutrition(
+          [userFood],
+          '2',
+        );
+      expect(result).toBeFalsy();
+    });
+  });
 });

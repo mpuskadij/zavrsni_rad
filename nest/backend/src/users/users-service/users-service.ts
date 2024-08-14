@@ -18,6 +18,20 @@ import { Food } from 'src/entities/food/food';
 
 @Injectable()
 export class UsersService {
+  async checkIfUserHasFoodWithTagIdAlreadyInNutrition(
+    currentUserFoods: UserFood[],
+    tagIdToCheck: string,
+  ): Promise<boolean> {
+    if (!currentUserFoods?.length) {
+      return false;
+    }
+
+    const foundFood = currentUserFoods.some(
+      (usrf) => usrf.food.tagId == tagIdToCheck,
+    );
+
+    return foundFood;
+  }
   async assignFood(user: User, userFood: UserFood): Promise<void> {
     if (!user || !userFood) {
       throw new InternalServerErrorException(
