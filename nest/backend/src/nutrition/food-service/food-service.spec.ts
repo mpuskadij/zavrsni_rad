@@ -102,7 +102,20 @@ describe('FoodService (unit tests)', () => {
       details.nf_total_carbohydrate = 0.2;
       details.nf_total_fat = 0.01;
       details.nix_item_id = '1';
-
+      const dbResult = new Food();
+      dbResult.name = details.food_name;
+      dbResult.calories = details.nf_calories;
+      dbResult.potassium = details.nf_potassium;
+      dbResult.cholesterol = details.nf_cholesterol;
+      dbResult.dietery_fiber = details.nf_dietery_fiber;
+      dbResult.protein = details.nf_protein;
+      dbResult.saturated_fat = details.nf_saturated_fat;
+      dbResult.sodium = details.nf_sodium;
+      dbResult.sugars = details.nf_sugars;
+      dbResult.total_carbohydrate = details.nf_total_carbohydrate;
+      dbResult.total_fat = details.nf_total_fat;
+      dbResult.nixId = details.nix_item_id;
+      mockFoodRepository.save.mockResolvedValue(dbResult);
       const result = await provider.createFood(details);
 
       expect(result).toBeDefined();
@@ -135,6 +148,20 @@ describe('FoodService (unit tests)', () => {
       details.nf_total_carbohydrate = 0.2;
       details.nf_total_fat = 0.01;
       details.tag_id = '1';
+      const dbResult = new Food();
+      dbResult.name = details.food_name;
+      dbResult.calories = details.nf_calories;
+      dbResult.potassium = details.nf_potassium;
+      dbResult.cholesterol = details.nf_cholesterol;
+      dbResult.dietery_fiber = details.nf_dietery_fiber;
+      dbResult.protein = details.nf_protein;
+      dbResult.saturated_fat = details.nf_saturated_fat;
+      dbResult.sodium = details.nf_sodium;
+      dbResult.sugars = details.nf_sugars;
+      dbResult.total_carbohydrate = details.nf_total_carbohydrate;
+      dbResult.total_fat = details.nf_total_fat;
+      dbResult.tagId = details.tag_id;
+      mockFoodRepository.save.mockResolvedValue(dbResult);
 
       const result = await provider.createFood(details);
 

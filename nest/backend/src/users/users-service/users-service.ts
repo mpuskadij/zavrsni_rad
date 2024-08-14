@@ -18,6 +18,37 @@ import { Food } from 'src/entities/food/food';
 
 @Injectable()
 export class UsersService {
+  async updateFoodQuantity(
+    userFood: UserFood[],
+    id: number,
+    quantity: number,
+  ): Promise<void> {
+    if (!userFood?.length || !id || !quantity) {
+      throw new InternalServerErrorException(
+        'Server had trouble updating food item!',
+      );
+    }
+
+    if (quantity < 0) {
+      throw new BadRequestException('Quantity cannot be negative!');
+    }
+
+    const foundFood = userFood.find((usrf) => usrf.foodId == id);
+
+    if (!foundFood) {
+      throw new InternalServerErrorException(
+        'Server had trouble updating food item!',
+      );
+    }
+
+    if (foundFood.quantity == quantity) {
+      throw new BadRequestException(
+        'Server cannot update quantity because it remained the same!',
+      );
+    }
+
+    foundFood.quantity = quantity;
+  }
   async checkIfUserHasFoodWithTagIdAlreadyInNutrition(
     currentUserFoods: UserFood[],
     tagIdToCheck: string,
@@ -42,14 +73,20 @@ export class UsersService {
 
     await this.saveUserData(user);
   }
-  async createUserFood(quantity: number): Promise<UserFood> {
-    if (!quantity) {
+  async createUserFood(
+    foodId: number,
+    username: string,
+    quantity: number,
+  ): Promise<UserFood> {
+    if (!quantity || !foodId || !username) {
       throw new InternalServerErrorException(
         'Server had trouble adding quantity to food item!',
       );
     }
     const userFood = new UserFood();
+    userFood.username = username;
     userFood.quantity = quantity;
+    userFood.foodId = foodId;
     return userFood;
   }
   async checkIfUserHasFoodInNutrition(
@@ -184,7 +221,7 @@ export class UsersService {
   async getUser(username: string): Promise<User> {
     return await this.userRepository.findOne({
       where: { username: username },
-      relations: ['bmiEntries', 'journalEntries', 'workoutPlans'],
+      relations: ['bmiEntries', 'journalEntries', 'workoutPlans', 'userFoods'],
     });
   }
 

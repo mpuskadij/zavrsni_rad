@@ -579,14 +579,26 @@ describe('UsersService (unit tests)', () => {
 
   describe('createUserFood', () => {
     it('should throw exception if quantity is falsy', async () => {
-      const result = () => provider.createUserFood(undefined);
+      const result = () => provider.createUserFood(1, 'marin', NaN);
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should throw exception if username is falsy', async () => {
+      const result = () => provider.createUserFood(1, '', 1);
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should throw exception if username is falsy', async () => {
+      const result = () => provider.createUserFood(NaN, 'marin', 1);
 
       expect(result).rejects.toThrow(InternalServerErrorException);
     });
 
     it('should create user food if quantity is a number', async () => {
       const quantity = 1;
-      const result = await provider.createUserFood(quantity);
+      const result = await provider.createUserFood(1, username, quantity);
 
       expect(result).toBeDefined();
       expect(result.quantity).toStrictEqual(quantity);
@@ -655,6 +667,61 @@ describe('UsersService (unit tests)', () => {
           '2',
         );
       expect(result).toBeFalsy();
+    });
+  });
+
+  describe('updateFoodQuantity', () => {
+    it('should throw exception if user has no food', async () => {
+      const result = () => provider.updateFoodQuantity([], 1, 2);
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should throw exception if id is falsy', async () => {
+      const userFood = new UserFood();
+      const result = () => provider.updateFoodQuantity([userFood], NaN, 1);
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should throw exception if quantity is falsy', async () => {
+      const userFood = new UserFood();
+      const result = () => provider.updateFoodQuantity([userFood], 1, NaN);
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should throw exception if quantity is negative', async () => {
+      const userFood = new UserFood();
+      const result = () => provider.updateFoodQuantity([userFood], 1, -1);
+
+      expect(result).rejects.toThrow(BadRequestException);
+    });
+
+    it('should throw exception if food not found', async () => {
+      const userFood = new UserFood();
+      userFood.foodId = 1;
+      const result = () => provider.updateFoodQuantity([userFood], 2, 2);
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should throw exception if quantity is the same', async () => {
+      const userFood = new UserFood();
+      userFood.foodId = 1;
+      userFood.quantity = 1;
+      const result = () => provider.updateFoodQuantity([userFood], 1, 1);
+
+      expect(result).rejects.toThrow(BadRequestException);
+    });
+
+    it('should upadte quantity if quantity is different', async () => {
+      const userFood = new UserFood();
+      userFood.foodId = 1;
+      userFood.quantity = 1;
+      const result = await provider.updateFoodQuantity([userFood], 1, 1.5);
+
+      expect(userFood.quantity).toBe(1.5);
     });
   });
 });

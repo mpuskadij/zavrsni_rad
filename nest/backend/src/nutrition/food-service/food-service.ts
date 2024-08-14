@@ -44,7 +44,8 @@ export class FoodService {
     food.total_carbohydrate = details.nf_total_carbohydrate ?? null;
     food.sodium = details.nf_sodium ?? null;
     food.sugars = details.nf_sugars ?? null;
-    return food;
+    food.userFoods = [];
+    return await this.foodRepository.save(food);
   }
   async assignUser(food: Food, userFood: UserFood): Promise<void> {
     if (!food || !userFood) {
