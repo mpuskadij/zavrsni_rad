@@ -24,6 +24,7 @@ import { FindFoodDetailsDto } from './find-food-details-dto/find-food-details-dt
 import { AddFoodToNutritionDto } from './add-food-to-nutrition-dto/add-food-to-nutrition-dto';
 import { UpdateFoodQuantityDto } from './update-food-quantity-dto/update-food-quantity-dto';
 import { GetFoodDto } from './get-food-dto/get-food-dto';
+import { GetUsersDto } from './get-users-dto/get-users-dto';
 
 @Module({
   imports: [EntitiesModule],
@@ -51,6 +52,7 @@ import { GetFoodDto } from './get-food-dto/get-food-dto';
     AddFoodToNutritionDto,
     UpdateFoodQuantityDto,
     GetFoodDto,
+    GetUsersDto,
   ],
   providers: [
     BmiEntryDto,
@@ -77,6 +79,7 @@ import { GetFoodDto } from './get-food-dto/get-food-dto';
     AddFoodToNutritionDto,
     UpdateFoodQuantityDto,
     GetFoodDto,
+    GetUsersDto,
   ],
 })
 export class DtosModule {}

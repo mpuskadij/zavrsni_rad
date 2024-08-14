@@ -24,6 +24,7 @@ import { Exercise } from './entities/exercise/exercise';
 import { NutritionModule } from './nutrition/nutrition.module';
 import { Food } from './entities/food/food';
 import { UserFood } from './entities/user_food/user_food';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { UserFood } from './entities/user_food/user_food';
     JournalModule,
     WorkoutPlanModule,
     NutritionModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService, AuthenticationService],

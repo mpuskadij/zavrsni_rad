@@ -2,6 +2,7 @@ import {
   Body,
   ConflictException,
   Controller,
+  Get,
   HttpCode,
   Post,
   Res,
@@ -12,10 +13,23 @@ import { RegistrationGuard } from '../../guards/registration-guard/registration-
 import { GoogleRecaptchaGuard } from '@nestlab/google-recaptcha';
 import { UsersService } from '../users-service/users-service';
 import { Response } from 'express';
+import { JwtGuard } from '../../guards/jwt/jwt.guard';
+import { AdminGuard } from '../../guards/admin/admin.guard';
+import { User } from '../../entities/user/user';
+import { GetUsersDto } from '../../dtos/get-users-dto/get-users-dto';
+import { plainToInstance } from 'class-transformer';
 
 @Controller('api/users')
 export class UsersController {
   constructor(private userService: UsersService) {}
+
+  @Get()
+  @UseGuards(JwtGuard, AdminGuard)
+  async getAllUsers(): Promise<any> {
+    const allUsers = await this.userService.getAllUsers();
+
+    return plainToInstance(GetUsersDto, allUsers);
+  }
 
   @Post('register')
   @UseGuards(GoogleRecaptchaGuard, RegistrationGuard)
