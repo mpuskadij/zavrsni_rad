@@ -56,7 +56,7 @@ export class NutritionController {
     const foods = new Array<Food>();
     userFood.forEach((usrf) => foods.push(usrf.food));
 
-    return plainToInstance(Array<GetFoodDto>, foods);
+    return plainToInstance(GetFoodDto, foods);
   }
 
   @Post()
