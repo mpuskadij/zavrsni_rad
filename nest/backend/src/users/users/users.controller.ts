@@ -18,6 +18,7 @@ import { AdminGuard } from '../../guards/admin/admin.guard';
 import { User } from '../../entities/user/user';
 import { GetUsersDto } from '../../dtos/get-users-dto/get-users-dto';
 import { plainToInstance } from 'class-transformer';
+import { Payload } from '../../decorators/payload/payload.decorator';
 
 @Controller('api/users')
 export class UsersController {
@@ -25,8 +26,8 @@ export class UsersController {
 
   @Get()
   @UseGuards(JwtGuard, AdminGuard)
-  async getAllUsers(): Promise<any> {
-    const allUsers = await this.userService.getAllUsers();
+  async getAllUsers(@Payload('username') username: string): Promise<any> {
+    const allUsers = await this.userService.getAllUsers(username);
 
     return plainToInstance(GetUsersDto, allUsers);
   }

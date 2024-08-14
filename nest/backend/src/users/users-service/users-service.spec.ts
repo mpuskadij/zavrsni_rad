@@ -756,4 +756,30 @@ describe('UsersService (unit tests)', () => {
       expect(userFoods).toHaveLength(0);
     });
   });
+
+  describe('getAllUsers', () => {
+    it('should return all users that exist in database if no username to exclude passed', async () => {
+      const user1 = new User();
+      user1.username = 'admin';
+      const user2 = new User();
+      user2.username = 'marin';
+      const usersInDatabase = [user1, user2];
+      jest.spyOn(repository, 'find').mockResolvedValue(usersInDatabase);
+      const users = await provider.getAllUsers();
+
+      expect(users).toEqual(usersInDatabase);
+    });
+
+    it('should return all users excluding username that was passed', async () => {
+      const user1 = new User();
+      user1.username = 'admin';
+      const user2 = new User();
+      user2.username = 'marin';
+      const usersInDatabase = [user1, user2];
+      jest.spyOn(repository, 'find').mockResolvedValue(usersInDatabase);
+      const users = await provider.getAllUsers('admin');
+      expect(users).toHaveLength(1);
+      expect(users[0].username).toStrictEqual(user2.username);
+    });
+  });
 });

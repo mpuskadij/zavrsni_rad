@@ -18,6 +18,19 @@ import { Food } from 'src/entities/food/food';
 
 @Injectable()
 export class UsersService {
+  async getAllUsers(usernameToExclude: string = null): Promise<User[]> {
+    const users = await this.userRepository.find();
+
+    if (usernameToExclude) {
+      const indexOfUserToExclude = users.findIndex(
+        (user) => user.username == usernameToExclude,
+      );
+      if (indexOfUserToExclude != -1) {
+        users.splice(indexOfUserToExclude, 1);
+      }
+    }
+    return users;
+  }
   async deleteFoodFromUser(userFoods: UserFood[], id: number): Promise<void> {
     if (!userFoods?.length) {
       throw new ForbiddenException('You dont have any foods to delete!');
@@ -35,7 +48,7 @@ export class UsersService {
       throw new BadRequestException('Food to delete with given id not found!');
     }
 
-    userFoods.splice(foundFood);
+    userFoods.splice(foundFood, 1);
 
     return;
   }
@@ -176,7 +189,7 @@ export class UsersService {
       );
     }
 
-    user.workoutPlans.splice(indexOfWorkoutPlanToDelete);
+    user.workoutPlans.splice(indexOfWorkoutPlanToDelete, 1);
     await this.saveUserData(user);
     return;
   }
@@ -224,7 +237,7 @@ export class UsersService {
         'Journal entry to delete not found!',
       );
     }
-    user.journalEntries.splice(indexOfEntryToDelete);
+    user.journalEntries.splice(indexOfEntryToDelete, 1);
 
     await this.saveUserData(user);
 
