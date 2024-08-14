@@ -724,4 +724,36 @@ describe('UsersService (unit tests)', () => {
       expect(userFood.quantity).toBe(1.5);
     });
   });
+
+  describe('deleteFoodFromUser', () => {
+    it('should throw an exception if user has no food', async () => {
+      const result = () => provider.deleteFoodFromUser([], 2);
+
+      expect(result).rejects.toThrow(ForbiddenException);
+    });
+
+    it('should throw an exception id is falsy', async () => {
+      const userFood = new UserFood();
+      const result = () => provider.deleteFoodFromUser([userFood], NaN);
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should throw an exception food with passed id not found', async () => {
+      const userFood = new UserFood();
+      userFood.foodId = 1;
+      const result = () => provider.deleteFoodFromUser([userFood], 2);
+
+      expect(result).rejects.toThrow(BadRequestException);
+    });
+
+    it('should remove entry that has been deleted', async () => {
+      const userFood = new UserFood();
+      userFood.foodId = 1;
+      const userFoods = [userFood];
+      await provider.deleteFoodFromUser(userFoods, 1);
+
+      expect(userFoods).toHaveLength(0);
+    });
+  });
 });

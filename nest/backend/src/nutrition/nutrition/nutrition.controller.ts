@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   ForbiddenException,
   Get,
   HttpCode,
@@ -22,10 +23,11 @@ import { FoodService } from '../food-service/food-service';
 import { UsersService } from '../../users/users-service/users-service';
 import { Payload } from '../../decorators/payload/payload.decorator';
 import { User } from '../../entities/user/user';
-import { instanceToInstance } from 'class-transformer';
+import { instanceToInstance, plainToInstance } from 'class-transformer';
 import { Food } from 'src/entities/food/food';
 import { UpdateDescription } from 'typeorm';
 import { UpdateFoodQuantityDto } from '../../dtos/update-food-quantity-dto/update-food-quantity-dto';
+import { GetFoodDto } from '../../dtos/get-food-dto/get-food-dto';
 
 @Controller('api/nutrition')
 export class NutritionController {
@@ -53,6 +55,8 @@ export class NutritionController {
 
     const foods = new Array<Food>();
     userFood.forEach((usrf) => foods.push(usrf.food));
+
+    return plainToInstance(Array<GetFoodDto>, foods);
   }
 
   @Post()
@@ -192,6 +196,34 @@ export class NutritionController {
       id,
       updateFoodQuantityDto.quantity,
     );
+
+    await this.usersService.saveUserData(user);
+
+    return;
+  }
+
+  @Delete('/:id')
+  @UseGuards(JwtGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteFoodFroomUser(
+    @Query(
+      'id',
+      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST }),
+    )
+    id: number,
+    @Body(new ValidationPipe({ transform: true }))
+    updateFoodQuantityDto: UpdateFoodQuantityDto,
+    @Payload('username') username: string,
+  ): Promise<any> {
+    const user = await this.usersService.getUser(username);
+
+    if (!user) {
+      throw new InternalServerErrorException(
+        'Server had trouble finding the user!',
+      );
+    }
+
+    await this.usersService.deleteFoodFromUser(user.userFoods, id);
 
     await this.usersService.saveUserData(user);
 

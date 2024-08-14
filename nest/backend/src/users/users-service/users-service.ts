@@ -18,6 +18,27 @@ import { Food } from 'src/entities/food/food';
 
 @Injectable()
 export class UsersService {
+  async deleteFoodFromUser(userFoods: UserFood[], id: number): Promise<void> {
+    if (!userFoods?.length) {
+      throw new ForbiddenException('You dont have any foods to delete!');
+    }
+
+    if (!id) {
+      throw new InternalServerErrorException(
+        'Server had trouble deleting the food item!',
+      );
+    }
+
+    const foundFood = userFoods.findIndex((usrf) => usrf.foodId == id);
+
+    if (foundFood == -1) {
+      throw new BadRequestException('Food to delete with given id not found!');
+    }
+
+    userFoods.splice(foundFood);
+
+    return;
+  }
   async updateFoodQuantity(
     userFood: UserFood[],
     id: number,
