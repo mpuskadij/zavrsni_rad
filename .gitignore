@@ -130,3 +130,4 @@ dist
 .pnp.*
 nest/backend/database/test.sqlite
 nest/backend/database/database.sqlite
+nest/backend/.test.env

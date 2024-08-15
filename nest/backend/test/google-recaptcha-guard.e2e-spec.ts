@@ -19,6 +19,7 @@ import { WorkoutPlan } from '../src/entities/workout-plan/workout-plan';
 import { Exercise } from '../src/entities/exercise/exercise';
 import { Food } from '../src/entities/food/food';
 import { UserFood } from '../src/entities/user_food/user_food';
+import { AuthenticationModule } from '../src/authentication/authentication.module';
 
 describe('GoogleRecaptchaGuard (e2e)', () => {
   let app: INestApplication;
@@ -27,6 +28,7 @@ describe('GoogleRecaptchaGuard (e2e)', () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
         CrpytoModule,
+        AuthenticationModule,
         ConfigModule.forRoot(),
         GoogleRecaptchaModule.forRoot({
           secretKey: process.env.GOOGLE_RECAPTCHA_SECRET_KEY,

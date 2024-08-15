@@ -25,12 +25,23 @@ import { NutritionModule } from './nutrition/nutrition.module';
 import { Food } from './entities/food/food';
 import { UserFood } from './entities/user_food/user_food';
 import { AdminModule } from './admin/admin.module';
+import * as Joi from 'joi';
 
 @Module({
   imports: [
     UsersModule,
     GuardsModule,
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      validationSchema: Joi.object({
+        GOOGLE_RECAPTCHA_SECRET_KEY: Joi.string().min(1).required(),
+        GOOGLE_RECAPTCHA_SITE_KEY: Joi.string().min(1).required(),
+        JWT_SECRET: Joi.string().min(1).required(),
+        NUTRITIONIX_APP_ID: Joi.string().min(1).required(),
+        NUTRITIONIX_APP_KEY: Joi.string().min(1).required(),
+        TIME_OFFSET: Joi.number().integer().required(),
+      }),
+    }),
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: './database/database.sqlite',
