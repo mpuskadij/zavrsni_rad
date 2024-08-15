@@ -10,6 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JournalEntryDto } from '../../dtos/journal-entry-dto/journal-entry-dto';
 import { DeleteJournalEntryDto } from '../../dtos/journal-entry-dto/delete-journal-entry-dto';
+import { VirtualTimeService } from '../../admin/virtual-time-service/virtual-time-service';
 
 @Injectable()
 export class JournalService {
@@ -98,6 +99,7 @@ export class JournalService {
   constructor(
     @InjectRepository(JournalEntry)
     private journalEntryRepository: Repository<JournalEntry>,
+    private virtualTimeService: VirtualTimeService,
   ) {}
   async createJournalEntry(
     user: User,
@@ -106,7 +108,7 @@ export class JournalService {
   ): Promise<JournalEntry> {
     await this.canNewJournalEntryBeCreated(user);
     const journalEntry: JournalEntry = new JournalEntry();
-    journalEntry.dateAdded = new Date();
+    journalEntry.dateAdded = await this.virtualTimeService.getTime();
     journalEntry.description = description;
     journalEntry.title = title;
 
@@ -116,7 +118,7 @@ export class JournalService {
   private async canNewJournalEntryBeCreated(user: User): Promise<void> {
     const hasAtLeastOneJournalEntry = user.journalEntries?.length > 0;
     if (hasAtLeastOneJournalEntry) {
-      const currentDate = new Date();
+      const currentDate = await this.virtualTimeService.getTime();
       const entryWithSameDateExists: boolean =
         (await this.compareDates(user.journalEntries, currentDate)) !=
         undefined;

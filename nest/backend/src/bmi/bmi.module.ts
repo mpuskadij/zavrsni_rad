@@ -13,6 +13,7 @@ import { Bmientry } from '../entities/bmientry/bmientry';
 import { UsersModule } from '../users/users.module';
 import { DtosModule } from '../dtos/dtos.module';
 import { BmiEntryDto } from '../dtos/bmi-entry-dto/bmi-entry-dto';
+import { AdminModule } from '../admin/admin.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { BmiEntryDto } from '../dtos/bmi-entry-dto/bmi-entry-dto';
     UsersModule,
     TypeOrmModule.forFeature([Bmientry]),
     DtosModule,
+    AdminModule,
   ],
   exports: [BmiService],
   controllers: [BmiController],

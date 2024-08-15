@@ -30,6 +30,8 @@ import { WorkoutPlan } from '../../entities/workout-plan/workout-plan';
 import { Exercise } from '../../entities/exercise/exercise';
 import { Food } from '../../entities/food/food';
 import { UserFood } from '../../entities/user_food/user_food';
+import { AdminModule } from '../../admin/admin.module';
+import { VirtualTimeService } from '../../admin/virtual-time-service/virtual-time-service';
 
 describe('BmiService (integration tests)', () => {
   let provider: BmiService;
@@ -39,6 +41,7 @@ describe('BmiService (integration tests)', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
+        AdminModule,
         BmiModule,
         AppModule,
         TypeOrmModule.forRoot({
@@ -68,6 +71,7 @@ describe('BmiService (integration tests)', () => {
         ConfigService,
         Food,
         UserFood,
+        VirtualTimeService,
       ],
     }).compile();
 

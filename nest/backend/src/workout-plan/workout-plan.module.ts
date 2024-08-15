@@ -14,9 +14,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { WorkoutPlan } from '../entities/workout-plan/workout-plan';
 import { ExerciseService } from './exercise-service/exercise-service';
 import { Exercise } from './../entities/exercise/exercise';
+import { AdminModule } from '../admin/admin.module';
 
 @Module({
   imports: [
+    AdminModule,
     GuardsModule,
     AuthenticationModule,
     DtosModule,

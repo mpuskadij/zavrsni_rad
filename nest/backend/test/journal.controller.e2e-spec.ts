@@ -17,7 +17,7 @@ import { CrpytoModule } from '../src/crpyto/crpyto.module';
 import { AuthenticationModule } from '../src/authentication/authentication.module';
 import { AuthenticationService } from '../src/authentication/authentication-service/authentication-service';
 import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GoogleRecaptchaGuard } from '@nestlab/google-recaptcha';
 import { Repository } from 'typeorm';
 import { JournalEntryDto } from '../src/dtos/journal-entry-dto/journal-entry-dto';
@@ -26,6 +26,8 @@ import { WorkoutPlan } from '../src/entities/workout-plan/workout-plan';
 import { Exercise } from '../src/entities/exercise/exercise';
 import { Food } from '../src/entities/food/food';
 import { UserFood } from '../src/entities/user_food/user_food';
+import { AdminModule } from '../src/admin/admin.module';
+import { VirtualTimeService } from '../src/admin/virtual-time-service/virtual-time-service';
 
 describe('Journal Controller (e2e)', () => {
   let app: INestApplication;
@@ -37,6 +39,7 @@ describe('Journal Controller (e2e)', () => {
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
+        AdminModule,
         DtosModule,
         GuardsModule,
         UsersModule,
@@ -57,6 +60,7 @@ describe('Journal Controller (e2e)', () => {
             UserFood,
           ],
         }),
+        ConfigModule.forRoot({ envFilePath: '.test.env' }),
         TypeOrmModule.forFeature([
           JournalEntry,
           User,
@@ -73,6 +77,7 @@ describe('Journal Controller (e2e)', () => {
         AuthenticationService,
         JwtService,
         ConfigService,
+        VirtualTimeService,
       ],
     })
       .overrideGuard(GoogleRecaptchaGuard)

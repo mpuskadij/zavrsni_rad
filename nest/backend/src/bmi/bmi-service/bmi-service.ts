@@ -10,12 +10,14 @@ import { Repository } from 'typeorm';
 import { UsersService } from '../../users/users-service/users-service';
 import { User } from 'src/entities/user/user';
 import { BmiEntryDto } from '../../dtos/bmi-entry-dto/bmi-entry-dto';
+import { VirtualTimeService } from '../../admin/virtual-time-service/virtual-time-service';
 
 @Injectable()
 export class BmiService {
   constructor(
     @InjectRepository(Bmientry) private bmiRepository: Repository<Bmientry>,
     private usersService: UsersService,
+    private virtualTimeService: VirtualTimeService,
   ) {}
   async addNewBmiEntry(
     username: string,
@@ -42,7 +44,7 @@ export class BmiService {
     const bmi: number = Number((weight / squaredHeight).toPrecision(3));
     const bmiEntry: Bmientry = this.bmiRepository.create({
       bmi: bmi,
-      dateAdded: new Date(),
+      dateAdded: await this.virtualTimeService.getTime(),
     });
     user.bmiEntries.push(bmiEntry);
     try {
@@ -57,7 +59,7 @@ export class BmiService {
     dateFromLatestBmiEntryOfUser: Date,
   ): Promise<void> {
     const dateFromLatestBmiEntry = new Date(dateFromLatestBmiEntryOfUser);
-    const currentDate = new Date();
+    const currentDate = await this.virtualTimeService.getTime();
     currentDate.setHours(0, 0, 0, 0);
     dateFromLatestBmiEntry.setHours(0, 0, 0, 0);
     const differenceInMiliseconds = Math.abs(

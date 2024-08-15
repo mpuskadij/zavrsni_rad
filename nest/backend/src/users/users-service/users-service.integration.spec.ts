@@ -21,6 +21,7 @@ import { WorkoutPlanService } from '../../workout-plan/workout-plan-service/work
 import { title } from 'process';
 import { Food } from '../../entities/food/food';
 import { UserFood } from '../../entities/user_food/user_food';
+import { AdminModule } from '../../admin/admin.module';
 
 describe('UsersService (integration tests)', () => {
   let provider: UsersService;
@@ -60,6 +61,7 @@ describe('UsersService (integration tests)', () => {
           UserFood,
         ]),
         ConfigModule.forRoot(),
+        AdminModule,
         AuthenticationModule,
         JwtModule.register({ secret: process.env.JWT_SECRET }),
       ],

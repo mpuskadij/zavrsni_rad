@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { constants } from 'node:buffer';
 import { JournalEntryDto } from '../../dtos/journal-entry-dto/journal-entry-dto';
+import { VirtualTimeService } from '../../admin/virtual-time-service/virtual-time-service';
 
 describe('JournalService (unit tests)', () => {
   let provider: JournalService;
@@ -24,6 +25,7 @@ describe('JournalService (unit tests)', () => {
   user.journalEntries = [];
 
   const mockJournalRepository = { remove: jest.fn() };
+  const mockVirtualTimeService = { getTime: jest.fn() };
   const journalEntry: JournalEntry = {
     dateAdded: new Date(),
     description: description,
@@ -100,6 +102,7 @@ describe('JournalService (unit tests)', () => {
           provide: getRepositoryToken(JournalEntry),
           useValue: mockJournalRepository,
         },
+        { provide: VirtualTimeService, useValue: mockVirtualTimeService },
       ],
     }).compile();
 
@@ -123,12 +126,14 @@ describe('JournalService (unit tests)', () => {
     });
 
     it('should throw exception if journal entry with current date exists', async () => {
+      mockVirtualTimeService.getTime.mockResolvedValue(new Date());
       await expect(
         provider.createJournalEntry(userWithJournalEntry, title, description),
       ).rejects.toBeInstanceOf(ForbiddenException);
     });
 
     it('should create new journal entry if journal entry with different date date exists', async () => {
+      mockVirtualTimeService.getTime.mockResolvedValue(new Date());
       const result = await provider.createJournalEntry(
         userWithJournalEntryPreviousDay,
         title,

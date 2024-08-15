@@ -20,6 +20,9 @@ import { AuthenticationModule } from '../../authentication/authentication.module
 import { ExerciseService } from '../exercise-service/exercise-service';
 import { Food } from '../../entities/food/food';
 import { UserFood } from '../../entities/user_food/user_food';
+import { AdminModule } from '../../admin/admin.module';
+import { VirtualTimeService } from '../../admin/virtual-time-service/virtual-time-service';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 describe('WorkoutPlanService (integration tests)', () => {
   let provider: WorkoutPlanService;
@@ -35,8 +38,10 @@ describe('WorkoutPlanService (integration tests)', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
+        AdminModule,
         EntitiesModule,
         CrpytoModule,
+        ConfigModule.forRoot({ envFilePath: '.test.env' }),
         AuthenticationModule,
         TypeOrmModule.forRoot({
           type: 'sqlite',
@@ -70,6 +75,8 @@ describe('WorkoutPlanService (integration tests)', () => {
         Repository<User>,
         Repository<Exercise>,
         ExerciseService,
+        VirtualTimeService,
+        ConfigService,
       ],
     }).compile();
     userRepo = module.get<Repository<User>>(getRepositoryToken(User));

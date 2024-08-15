@@ -13,12 +13,14 @@ import { CryptoService } from '../../crpyto/crypto-service/crypto-service';
 import { AuthenticationService } from '../../authentication/authentication-service/authentication-service';
 import { CrpytoModule } from '../../crpyto/crpyto.module';
 import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DeleteJournalEntryDto } from '../../dtos/journal-entry-dto/delete-journal-entry-dto';
 import { WorkoutPlan } from '../../entities/workout-plan/workout-plan';
 import { Exercise } from '../../entities/exercise/exercise';
 import { Food } from '../../entities/food/food';
 import { UserFood } from '../../entities/user_food/user_food';
+import { AdminModule } from '../../admin/admin.module';
+import { VirtualTimeService } from '../../admin/virtual-time-service/virtual-time-service';
 
 describe('JournalService (integration tests)', () => {
   let provider: JournalService;
@@ -79,6 +81,8 @@ describe('JournalService (integration tests)', () => {
             UserFood,
           ],
         }),
+        AdminModule,
+        ConfigModule.forRoot(),
         CrpytoModule,
         TypeOrmModule.forFeature([
           JournalEntry,
@@ -96,6 +100,7 @@ describe('JournalService (integration tests)', () => {
         AuthenticationService,
         JwtService,
         ConfigService,
+        VirtualTimeService,
       ],
     }).compile();
 

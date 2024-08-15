@@ -9,6 +9,7 @@ import { WorkoutPlan } from '../../entities/workout-plan/workout-plan';
 import { EntitiesModule } from '../../entities/entities.module';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Exercise } from '../../entities/exercise/exercise';
+import { VirtualTimeService } from '../../admin/virtual-time-service/virtual-time-service';
 
 describe('WorkoutPlanService (unit tests)', () => {
   let provider: WorkoutPlanService;
@@ -17,6 +18,8 @@ describe('WorkoutPlanService (unit tests)', () => {
     save: jest.fn(),
     remove: jest.fn(),
   };
+
+  const mockVirtualTimeService = { getTime: jest.fn() };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -27,6 +30,7 @@ describe('WorkoutPlanService (unit tests)', () => {
           provide: getRepositoryToken(WorkoutPlan),
           useValue: mockWorkoutPlanRepository,
         },
+        { provide: VirtualTimeService, useValue: mockVirtualTimeService },
       ],
     }).compile();
 

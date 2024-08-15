@@ -22,7 +22,7 @@ export class WorkoutPlan {
   @Column()
   title: string;
 
-  @CreateDateColumn()
+  @Column()
   dateAdded: Date;
 
   @ManyToOne(() => User, (user) => user.workoutPlans, {

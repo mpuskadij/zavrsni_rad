@@ -13,11 +13,13 @@ import { UsersService } from '../../users/users-service/users-service';
 import { User } from '../../entities/user/user';
 import { BmiEntryDto } from '../../dtos/bmi-entry-dto/bmi-entry-dto';
 import { DtosModule } from '../../dtos/dtos.module';
+import { VirtualTimeService } from '../../admin/virtual-time-service/virtual-time-service';
 
 describe('BmiService (unit tests)', () => {
   let provider: BmiService;
   const mockBmiRepository = { save: jest.fn(), create: jest.fn() };
   const mockUsersService = { getUser: jest.fn(), saveUserData: jest.fn() };
+  const mockVirtualTimeService = { getTime: jest.fn() };
   const username: string = 'marin';
 
   beforeEach(async () => {
@@ -30,6 +32,7 @@ describe('BmiService (unit tests)', () => {
           useValue: mockBmiRepository,
         },
         { provide: UsersService, useValue: mockUsersService },
+        { provide: VirtualTimeService, useValue: mockVirtualTimeService },
       ],
     }).compile();
 
@@ -56,6 +59,7 @@ describe('BmiService (unit tests)', () => {
       mockBmiRepository.save.mockResolvedValue(bmiEntry);
       mockBmiRepository.create.mockReturnValue(bmiEntry);
       mockUsersService.getUser.mockResolvedValue(user);
+      mockVirtualTimeService.getTime.mockResolvedValue(new Date());
 
       return provider
         .addNewBmiEntry(username, weight, height)

@@ -7,7 +7,8 @@ import {
 import { WorkoutPlan } from '../../entities/workout-plan/workout-plan';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Exercise } from 'src/entities/exercise/exercise';
+import { Exercise } from '../../entities/exercise/exercise';
+import { VirtualTimeService } from '../../admin/virtual-time-service/virtual-time-service';
 
 @Injectable()
 export class WorkoutPlanService {
@@ -134,6 +135,7 @@ export class WorkoutPlanService {
   constructor(
     @InjectRepository(WorkoutPlan)
     private workoutPlanRepostitory: Repository<WorkoutPlan>,
+    private virtualTimeService: VirtualTimeService,
   ) {}
   async getWorkoutPlanByID(idOfWorkoutPlan: number): Promise<WorkoutPlan> {
     if (!idOfWorkoutPlan) {
@@ -159,6 +161,7 @@ export class WorkoutPlanService {
     const workoutPlan: WorkoutPlan = new WorkoutPlan();
     workoutPlan.title = title;
     workoutPlan.exercises = [];
+    workoutPlan.dateAdded = await this.virtualTimeService.getTime();
 
     return workoutPlan;
   }

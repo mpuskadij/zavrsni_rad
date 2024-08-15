@@ -8,9 +8,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { JournalEntry } from '../entities/journal-entry/journal-entry';
 import { UsersModule } from '../users/users.module';
 import { DtosModule } from '../dtos/dtos.module';
+import { AdminModule } from '../admin/admin.module';
 
 @Module({
   imports: [
+    AdminModule,
     GuardsModule,
     AuthenticationModule,
     DecoratorsModule,

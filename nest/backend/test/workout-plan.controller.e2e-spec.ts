@@ -41,6 +41,7 @@ import { plainToInstance } from 'class-transformer';
 import * as cookieParser from 'cookie-parser';
 import { Food } from '../src/entities/food/food';
 import { UserFood } from '../src/entities/user_food/user_food';
+import { AdminModule } from '../src/admin/admin.module';
 
 describe('WorkoutPlanController (e2e)', () => {
   let app: INestApplication;
@@ -62,12 +63,13 @@ describe('WorkoutPlanController (e2e)', () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
         BmiModule,
+        AdminModule,
         GuardsModule,
         DtosModule,
         UsersModule,
         CrpytoModule,
         WorkoutPlanModule,
-        ConfigModule.forRoot(),
+        ConfigModule.forRoot({ envFilePath: '.test.ev' }),
         TypeOrmModule.forRoot({
           type: 'sqlite',
           database: './database/test.sqlite',
