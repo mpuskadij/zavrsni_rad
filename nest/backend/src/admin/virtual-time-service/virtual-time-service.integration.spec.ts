@@ -28,7 +28,7 @@ describe('VirtualTimeService (integration with env file)', () => {
   });
 
   describe('getTime', () => {
-    it('should return offseted time', async () => {
+    it('should return hour in the future if offset is positive', async () => {
       const offset = 1;
       await provider.setTime(offset);
       const serverTime = await provider.getTime();
@@ -38,6 +38,30 @@ describe('VirtualTimeService (integration with env file)', () => {
       expect(serverTime.getMonth()).toEqual(currentDate.getMonth());
       expect(serverTime.getFullYear()).toEqual(currentDate.getFullYear());
       expect(serverTime.getHours()).toEqual(currentDate.getHours() + offset);
+    });
+
+    it('should return hour in the past if offset is negative', async () => {
+      const offset = -1;
+      await provider.setTime(offset);
+      const serverTime = await provider.getTime();
+      const currentDate = new Date();
+
+      expect(serverTime.getDate()).toEqual(currentDate.getDate());
+      expect(serverTime.getMonth()).toEqual(currentDate.getMonth());
+      expect(serverTime.getFullYear()).toEqual(currentDate.getFullYear());
+      expect(serverTime.getHours()).toEqual(currentDate.getHours() + offset);
+    });
+
+    it('should return current time if offset is 0', async () => {
+      const offset = 0;
+      await provider.setTime(offset);
+      const serverTime = await provider.getTime();
+      const currentDate = new Date();
+
+      expect(serverTime.getDate()).toEqual(currentDate.getDate());
+      expect(serverTime.getMonth()).toEqual(currentDate.getMonth());
+      expect(serverTime.getFullYear()).toEqual(currentDate.getFullYear());
+      expect(serverTime.getHours()).toEqual(currentDate.getHours());
     });
 
     it('should return previous day if offset is -24', async () => {

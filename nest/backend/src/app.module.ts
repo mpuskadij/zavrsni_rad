@@ -35,7 +35,6 @@ import * as Joi from 'joi';
       isGlobal: true,
       validationSchema: Joi.object({
         GOOGLE_RECAPTCHA_SECRET_KEY: Joi.string().min(1).required(),
-        GOOGLE_RECAPTCHA_SITE_KEY: Joi.string().min(1).required(),
         JWT_SECRET: Joi.string().min(1).required(),
         NUTRITIONIX_APP_ID: Joi.string().min(1).required(),
         NUTRITIONIX_APP_KEY: Joi.string().min(1).required(),

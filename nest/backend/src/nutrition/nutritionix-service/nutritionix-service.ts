@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
   ServiceUnavailableException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { query } from 'express';
 import { NutritionixInstantEndpointResponseDto } from '../../dtos/nutritionix-instant-endpoint-response-dto/nutritionix-instant-endpoint-response-dto';
 import { plainToInstance } from 'class-transformer';
@@ -22,17 +22,22 @@ export class NutritionixService {
     this.nutritionixBaseUrl + 'search/item/?';
 
   constructor(private configService: ConfigService) {
-    this.headersRequiredForNutritionix = new Headers();
-    this.headersRequiredForNutritionix.set('Content-Type', 'application/json');
-    this.headersRequiredForNutritionix.set(
-      'x-app-id',
-      configService.get('NUTRITIONIX_APP_ID'),
-    );
-    this.headersRequiredForNutritionix.set(
-      'x-app-key',
-      configService.get('NUTRITIONIX_APP_KEY'),
-    );
-    this.headersRequiredForNutritionix.set('x-remote-user-id', '0');
+    ConfigModule.envVariablesLoaded.then(() => {
+      this.headersRequiredForNutritionix = new Headers();
+      this.headersRequiredForNutritionix.set(
+        'Content-Type',
+        'application/json',
+      );
+      this.headersRequiredForNutritionix.set(
+        'x-app-id',
+        configService.getOrThrow('NUTRITIONIX_APP_ID'),
+      );
+      this.headersRequiredForNutritionix.set(
+        'x-app-key',
+        configService.getOrThrow('NUTRITIONIX_APP_KEY'),
+      );
+      this.headersRequiredForNutritionix.set('x-remote-user-id', '0');
+    });
   }
   async searchForFood(
     searchTerm: string,

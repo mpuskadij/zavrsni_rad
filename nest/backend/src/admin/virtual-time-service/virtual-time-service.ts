@@ -23,10 +23,10 @@ export class VirtualTimeService {
       10,
     );
 
-    const currentTime = new Date();
+    const serverTime = new Date();
 
-    currentTime.setHours(currentTime.getHours() + offset);
+    serverTime.setHours(serverTime.getHours() + offset);
 
-    return currentTime;
+    return serverTime;
   }
 }

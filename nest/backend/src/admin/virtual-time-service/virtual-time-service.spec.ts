@@ -5,11 +5,11 @@ import { InternalServerErrorException } from '@nestjs/common';
 
 describe('VirtualTimeService (unit tests)', () => {
   let provider: VirtualTimeService;
-  let mockConfigService = { set: jest.fn() };
+  const mockConfigService = { set: jest.fn(), getOrThrow: jest.fn() };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [ConfigModule.forRoot()],
+      imports: [ConfigModule],
       providers: [
         VirtualTimeService,
         { provide: ConfigService, useValue: mockConfigService },
@@ -23,16 +23,12 @@ describe('VirtualTimeService (unit tests)', () => {
     it('should throw excpetion if offset is not a number', async () => {
       const result = () => provider.setTime(NaN);
 
-      expect(result).toThrow(InternalServerErrorException);
+      expect(result).rejects.toThrow(InternalServerErrorException);
     });
     it('should set offset on current time based on given parameter', async () => {
       await provider.setTime(1);
 
       expect(mockConfigService.set).toHaveBeenCalled();
     });
-  });
-
-  describe('getTime', () => {
-    it('should');
   });
 });
