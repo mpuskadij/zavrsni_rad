@@ -40,18 +40,12 @@ import { JwtPayload } from '../src/authentication/jwt-payload/jwt-payload';
 import { AdminModule } from '../src/admin/admin.module';
 import { AdminGuard } from '../src/guards/admin/admin.guard';
 
-describe('Nutrition Controller (e2e tests)', () => {
+describe('Time Controller (e2e tests)', () => {
   let app: INestApplication;
   const timePath = '/api/time';
   let userRepository: Repository<User>;
-  const correctNixId = '51c549ff97c3e6efadd60294';
-  const registrationPath = '/api/users/register';
-  let foodRepository: Repository<Food>;
   const username = 'marin';
   const password = 'ajskfnU7';
-  const payload: JwtPayload = { isAdmin: 1, username: username };
-
-  const registrationRequestBody = { username: username, password: password };
 
   beforeEach(async () => {
     let module: TestingModule = await Test.createTestingModule({
@@ -122,15 +116,6 @@ describe('Nutrition Controller (e2e tests)', () => {
       .compile();
 
     app = module.createNestApplication();
-    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
-
-    const user = await userRepository.findOne({
-      where: { username: username },
-      relations: ['bmiEntries', 'journalEntries', 'workoutPlans', 'userFoods'],
-    });
-    if (user) {
-      await userRepository.remove(user);
-    }
     await app.init();
   });
 
