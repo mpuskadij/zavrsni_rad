@@ -1,9 +1,9 @@
 export class JwtPayload {
   public username: string;
 
-  public isAdmin: number;
+  public isAdmin: boolean;
 
-  constructor(username: string, isAdmin: number) {
+  constructor(username: string, isAdmin: boolean) {
     this.username = username;
     this.isAdmin = isAdmin;
   }

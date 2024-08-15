@@ -283,7 +283,7 @@ export class UsersService {
       await this.cryptoService.hashPassword(password);
 
     const newUser: User = new User();
-    newUser.isAdmin = 0;
+    newUser.isAdmin = false;
     newUser.username = username;
     newUser.password = hashedPasswordData.HashedPassword;
 

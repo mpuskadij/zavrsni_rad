@@ -102,7 +102,7 @@ describe('BmiService (integration tests)', () => {
         const user = new User();
         user.username = username;
         user.password = 'sdasd';
-        user.isAdmin = 0;
+        user.isAdmin = false;
         user.bmiEntries = [];
         await userRepo.save(user);
       }
@@ -141,7 +141,7 @@ describe('BmiService (integration tests)', () => {
       const user = new User();
       user.username = username;
       user.password = 'sdasd';
-      user.isAdmin = 0;
+      user.isAdmin = false;
       user.bmiEntries = [];
       const sixDaysAgo = Date.now() - 6 * 24 * 60 * 60 * 1000;
 
@@ -173,7 +173,7 @@ describe('BmiService (integration tests)', () => {
       const user = new User();
       user.username = username;
       user.password = 'sdasd';
-      user.isAdmin = 0;
+      user.isAdmin = false;
       user.bmiEntries = [];
       const sevenDaysAgo = new Date().getTime() - 7 * 24 * 60 * 60 * 1000;
 
@@ -203,7 +203,7 @@ describe('BmiService (integration tests)', () => {
       const user = new User();
       user.username = username;
       user.password = 'sdasd';
-      user.isAdmin = 0;
+      user.isAdmin = false;
       user.bmiEntries = [];
       const eightDaysAgo = new Date().getTime() - 8 * 24 * 60 * 60 * 1000;
 
@@ -233,7 +233,7 @@ describe('BmiService (integration tests)', () => {
       const user = new User();
       user.username = username;
       user.password = 'sdasd';
-      user.isAdmin = 0;
+      user.isAdmin = false;
       user.bmiEntries = [];
 
       await userRepo.insert(user);
@@ -269,7 +269,7 @@ describe('BmiService (integration tests)', () => {
       const user = new User();
       user.username = username;
       user.password = 'sdasd';
-      user.isAdmin = 0;
+      user.isAdmin = false;
       user.bmiEntries = [];
       await userRepo.save(user);
       await expect(
@@ -288,7 +288,7 @@ describe('BmiService (integration tests)', () => {
       const user = new User();
       user.username = username;
       user.password = 'sdasd';
-      user.isAdmin = 0;
+      user.isAdmin = false;
       user.bmiEntries = [];
       await userRepo.insert(user);
       const eightDaysAgo = new Date().getTime() - 8 * 24 * 60 * 60 * 1000;

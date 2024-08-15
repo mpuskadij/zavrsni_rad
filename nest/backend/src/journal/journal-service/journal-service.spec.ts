@@ -46,13 +46,13 @@ describe('JournalService (unit tests)', () => {
   userWithJournalEntry.username = username;
   userWithJournalEntry.password = password;
   userWithJournalEntry.journalEntries = [journalEntry];
-  user.isAdmin = 0;
+  user.isAdmin = false;
 
   const userWithJournalEntryPreviousDay = new User();
   userWithJournalEntryPreviousDay.username = username;
   userWithJournalEntryPreviousDay.password = password;
   userWithJournalEntryPreviousDay.journalEntries = [journalEntryPreviousDay];
-  user.isAdmin = 0;
+  user.isAdmin = false;
 
   const journalDTOPreviousDay: JournalEntryDto = {
     dateAdded: userWithJournalEntryPreviousDay.journalEntries[0].dateAdded,

@@ -15,7 +15,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 describe('Exercise controller (e2e)', () => {
   let app: INestApplication;
   const username = 'marin';
-  const payload: JwtPayload = { isAdmin: 0, username: username };
+  const payload: JwtPayload = { isAdmin: false, username: username };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({

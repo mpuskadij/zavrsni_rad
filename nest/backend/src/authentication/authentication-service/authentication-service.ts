@@ -10,7 +10,7 @@ export class AuthenticationService {
     private configService: ConfigService,
   ) {}
 
-  async generateJWT(username: string, isAdmin: number): Promise<string> {
+  async generateJWT(username: string, isAdmin: boolean): Promise<string> {
     const payload: JwtPayload = { isAdmin: isAdmin, username: username };
     const token = await this.jwtService.signAsync(payload);
     return token;

@@ -38,7 +38,7 @@ describe('BmiController (e2e)', () => {
   let userRepo: Repository<User>;
   const username = 'marin';
   const password = 'ajskfnU7';
-  const payload: JwtPayload = { username: username, isAdmin: 0 };
+  const payload: JwtPayload = { username: username, isAdmin: false };
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({

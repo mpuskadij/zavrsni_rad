@@ -94,7 +94,7 @@ describe('UsersService (unit tests)', () => {
       Salt: 'asadasf',
     };
     const userToAdd = new User();
-    userToAdd.isAdmin = 0;
+    userToAdd.isAdmin = false;
     userToAdd.password = 'jfdhgt6H';
     userToAdd.username = 'alex';
     const insertResult = new InsertResult();
@@ -167,7 +167,7 @@ describe('UsersService (unit tests)', () => {
     const user = new User();
     user.username = username;
     user.password = password;
-    user.isAdmin = 0;
+    user.isAdmin = false;
     it('should return true if username and password are correct', async () => {
       jest.spyOn(provider, 'getUser').mockResolvedValue(user);
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(user);
@@ -213,7 +213,7 @@ describe('UsersService (unit tests)', () => {
     const user = new User();
     user.username = username;
     user.password = password;
-    user.isAdmin = 0;
+    user.isAdmin = false;
     it('should get user when username passed exists in database', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(user);
       const result: User = await provider.getUser(username);
@@ -236,7 +236,7 @@ describe('UsersService (unit tests)', () => {
     const user = new User();
     user.username = username;
     user.password = password;
-    user.isAdmin = 0;
+    user.isAdmin = false;
     it('should use AuthenticationService', async () => {
       mockAuthenticationService.generateJWT.mockResolvedValue(
         'asdasd.sadasd.asdasd',
@@ -257,7 +257,7 @@ describe('UsersService (unit tests)', () => {
     const user = new User();
     user.username = username;
     user.password = password;
-    user.isAdmin = 0;
+    user.isAdmin = false;
     it('should use userRepository to save user and return updated user if save is successful', async () => {
       jest.spyOn(repository, 'save').mockResolvedValue(user);
 
@@ -277,7 +277,7 @@ describe('UsersService (unit tests)', () => {
     const user = new User();
     user.username = username;
     user.password = password;
-    user.isAdmin = 0;
+    user.isAdmin = false;
     user.journalEntries = [];
     const journalEntry: JournalEntry = {
       dateAdded: new Date(),
@@ -310,13 +310,13 @@ describe('UsersService (unit tests)', () => {
 
   describe('unassignJournalEntry', () => {
     const userWithNoJournalEntries = new User();
-    userWithNoJournalEntries.isAdmin = 0;
+    userWithNoJournalEntries.isAdmin = false;
     userWithNoJournalEntries.journalEntries = [];
     userWithNoJournalEntries.password = password;
     userWithNoJournalEntries.username = username;
 
     const userWithEntry: User = new User();
-    userWithEntry.isAdmin = 0;
+    userWithEntry.isAdmin = false;
     userWithEntry.username = username;
     userWithEntry.password = password;
     userWithEntry.journalEntries = [];
@@ -374,7 +374,7 @@ describe('UsersService (unit tests)', () => {
     const workoutPlanWithTitle: WorkoutPlan = new WorkoutPlan();
     workoutPlanWithTitle.title = title;
     const user: User = new User();
-    user.isAdmin = 0;
+    user.isAdmin = false;
     user.password = password;
     user.username = username;
     user.workoutPlans = [];

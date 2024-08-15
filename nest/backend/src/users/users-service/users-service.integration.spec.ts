@@ -91,7 +91,7 @@ describe('UsersService (integration tests)', () => {
         const user = new User();
         user.username = username;
         user.password = password;
-        user.isAdmin = 0;
+        user.isAdmin = false;
         await repository.save(user);
       }
       const result =
@@ -129,7 +129,7 @@ describe('UsersService (integration tests)', () => {
       const user = await repository.findOneBy({ username: username });
       expect(user).not.toBeNull();
       expect(user.password).not.toEqual(password);
-      expect(user.isAdmin).toBe(0);
+      expect(user.isAdmin).toBe(false);
     });
   });
 
@@ -153,7 +153,7 @@ describe('UsersService (integration tests)', () => {
         const user = new User();
         user.username = username;
         user.password = password;
-        user.isAdmin = 0;
+        user.isAdmin = false;
 
         await repository.save(user);
       }
@@ -194,7 +194,7 @@ describe('UsersService (integration tests)', () => {
       const user = new User();
       user.username = username;
       user.password = password;
-      user.isAdmin = 0;
+      user.isAdmin = false;
       await repository.save(user);
 
       const result: boolean = await provider.checkLoginCredentials(
@@ -216,7 +216,7 @@ describe('UsersService (integration tests)', () => {
       const user = new User();
       user.username = username;
       user.password = password;
-      user.isAdmin = 0;
+      user.isAdmin = false;
       await repository.save(user);
 
       const result: boolean = await provider.checkLoginCredentials(
@@ -238,7 +238,7 @@ describe('UsersService (integration tests)', () => {
         const user = new User();
         user.username = username;
         user.password = password;
-        user.isAdmin = 0;
+        user.isAdmin = false;
         await repository.save(user);
       }
       const token = await provider.createJWT(username);
@@ -261,7 +261,7 @@ describe('UsersService (integration tests)', () => {
       const user = new User();
       user.username = username;
       user.password = password;
-      user.isAdmin = 0;
+      user.isAdmin = false;
       const result = await provider.saveUserData(user);
 
       expect(result).toBe(user);
@@ -280,7 +280,7 @@ describe('UsersService (integration tests)', () => {
       const user: User = repository.create({
         username: username,
         password: password,
-        isAdmin: 0,
+        isAdmin: false,
         bmiEntries: [],
         journalEntries: [],
       });
@@ -307,7 +307,7 @@ describe('UsersService (integration tests)', () => {
       const user: User = repository.create({
         username: username,
         password: password,
-        isAdmin: 0,
+        isAdmin: false,
         bmiEntries: [],
         journalEntries: [],
       });

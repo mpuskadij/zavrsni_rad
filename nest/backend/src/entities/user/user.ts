@@ -12,8 +12,8 @@ export class User {
   @Column({ nullable: false })
   password: string;
 
-  @Column({ default: 0, nullable: true })
-  isAdmin: number;
+  @Column({ default: false, nullable: false })
+  isAdmin: boolean;
 
   @OneToMany(() => Bmientry, (bmiEntry) => bmiEntry.user, {
     cascade: ['insert', 'remove', 'update'],

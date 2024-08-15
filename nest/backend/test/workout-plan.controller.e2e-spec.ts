@@ -53,9 +53,9 @@ describe('WorkoutPlanController (e2e)', () => {
   const differentPassword = 'ajskfnU8';
   const differentPayload: JwtPayload = {
     username: differentUsername,
-    isAdmin: 0,
+    isAdmin: false,
   };
-  const payload: JwtPayload = { username: username, isAdmin: 0 };
+  const payload: JwtPayload = { username: username, isAdmin: false };
   const registrationPath = '/api/users/register';
   const validExerciseName = 'Bench Press';
 

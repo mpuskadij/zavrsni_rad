@@ -33,7 +33,7 @@ describe('Journal Controller (e2e)', () => {
   let app: INestApplication;
   const username = 'marin';
   const password = 'ajskfnU7';
-  const payload: JwtPayload = { username: username, isAdmin: 0 };
+  const payload: JwtPayload = { username: username, isAdmin: false };
   let userRepo: Repository<User>;
 
   beforeEach(async () => {
@@ -144,7 +144,7 @@ describe('Journal Controller (e2e)', () => {
 
   it('/api/journal (GET) should throw FORBIDDEN if user has no entries', async () => {
     const user: User = new User();
-    user.isAdmin = 0;
+    user.isAdmin = false;
     user.password = password;
     user.username = username;
     await userRepo.save(user);
@@ -163,7 +163,7 @@ describe('Journal Controller (e2e)', () => {
 
   it('/api/journal (GET) should throw FORBIDDEN if user has no entries', async () => {
     const user: User = new User();
-    user.isAdmin = 0;
+    user.isAdmin = false;
     user.password = password;
     user.username = username;
     const entry: JournalEntry = new JournalEntry();
@@ -284,7 +284,7 @@ describe('Journal Controller (e2e)', () => {
     const user: User = new User();
     user.username = username;
     user.password = password;
-    user.isAdmin = 0;
+    user.isAdmin = false;
     await userRepo.save(user);
     return await request(app.getHttpServer())
       .put('/api/journal')
@@ -300,7 +300,7 @@ describe('Journal Controller (e2e)', () => {
   it('/api/journal (PUT) should return BAD REQUEST if entry with sent date doesnt exist', async () => {
     const user: User = new User();
     user.password = password;
-    user.isAdmin = 0;
+    user.isAdmin = false;
     user.username = username;
     user.journalEntries = [];
     await userRepo.save(user);

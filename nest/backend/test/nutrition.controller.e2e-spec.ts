@@ -47,7 +47,7 @@ describe('Nutrition Controller (e2e tests)', () => {
   let foodRepository: Repository<Food>;
   const username = 'marin';
   const password = 'ajskfnU7';
-  const payload: JwtPayload = { isAdmin: 0, username: username };
+  const payload: JwtPayload = { isAdmin: false, username: username };
 
   const registrationRequestBody = { username: username, password: password };
 
