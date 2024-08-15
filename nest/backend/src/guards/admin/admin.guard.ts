@@ -16,9 +16,7 @@ export class AdminGuard implements CanActivate {
     if (payload) {
       const admin = payload.isAdmin;
       if (admin) {
-        if (admin == 1) {
-          return true;
-        }
+        return true;
       }
     }
     throw new UnauthorizedException('User is not an admin!');
