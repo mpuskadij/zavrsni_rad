@@ -27,6 +27,7 @@ import { UserFood } from '../../entities/user_food/user_food';
 describe('UsersService (unit tests)', () => {
   let provider: UsersService;
   let repository: Repository<User>;
+  let userFoodRepository: Repository<UserFood>;
   const mockCryptoService = {
     hashPassword: jest.fn(),
     compareIfPasswordsMatch: jest.fn(),
@@ -47,6 +48,7 @@ describe('UsersService (unit tests)', () => {
       providers: [
         UsersService,
         { provide: getRepositoryToken(User), useClass: Repository },
+        { provide: getRepositoryToken(UserFood), useClass: Repository },
         { provide: CryptoService, useValue: mockCryptoService },
         { provide: AuthenticationService, useValue: mockAuthenticationService },
         JwtService,
@@ -59,6 +61,9 @@ describe('UsersService (unit tests)', () => {
 
     provider = module.get<UsersService>(UsersService);
     repository = module.get<Repository<User>>(getRepositoryToken(User));
+    userFoodRepository = module.get<Repository<UserFood>>(
+      getRepositoryToken(UserFood),
+    );
 
     jest.clearAllMocks();
   });
@@ -628,43 +633,43 @@ describe('UsersService (unit tests)', () => {
     });
   });
 
-  describe('checkIfUserHasFoodWithTagIdAlreadyInNutrition', () => {
+  describe('checkIfUserHasFoodWithNameAlreadyInNutrition', () => {
     it('should return false if user food is falsy', async () => {
       const result =
-        await provider.checkIfUserHasFoodWithTagIdAlreadyInNutrition(null, '1');
+        await provider.checkIfUserHasFoodWithNameAlreadyInNutrition(null, '1');
       expect(result).toBeFalsy();
     });
 
     it('should return false if user has no food in nutrition', async () => {
       const result =
-        await provider.checkIfUserHasFoodWithTagIdAlreadyInNutrition([], '1');
+        await provider.checkIfUserHasFoodWithNameAlreadyInNutrition([], '1');
       expect(result).toBeFalsy();
     });
 
-    it('should return true if user has food with matching tag id', async () => {
+    it('should return true if user has food with matching name', async () => {
       const food = new Food();
-      food.tagId = '1';
+      food.name = 'Hamburger';
       const userFood = new UserFood();
       userFood.food = food;
 
       const result =
-        await provider.checkIfUserHasFoodWithTagIdAlreadyInNutrition(
+        await provider.checkIfUserHasFoodWithNameAlreadyInNutrition(
           [userFood],
-          '1',
+          'Hamburger',
         );
       expect(result).toBeTruthy();
     });
 
-    it('should return false if user has no food with matching tag id', async () => {
+    it('should return false if user has no food with matching name', async () => {
       const food = new Food();
-      food.tagId = '1';
+      food.name = 'Hamburger';
       const userFood = new UserFood();
       userFood.food = food;
 
       const result =
-        await provider.checkIfUserHasFoodWithTagIdAlreadyInNutrition(
+        await provider.checkIfUserHasFoodWithNameAlreadyInNutrition(
           [userFood],
-          '2',
+          'Hbr',
         );
       expect(result).toBeFalsy();
     });
@@ -751,6 +756,7 @@ describe('UsersService (unit tests)', () => {
       const userFood = new UserFood();
       userFood.foodId = 1;
       const userFoods = [userFood];
+      jest.spyOn(userFoodRepository, 'remove').mockResolvedValue(userFood);
       await provider.deleteFoodFromUser(userFoods, 1);
 
       expect(userFoods).toHaveLength(0);

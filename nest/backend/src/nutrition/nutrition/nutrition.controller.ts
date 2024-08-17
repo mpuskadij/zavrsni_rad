@@ -8,6 +8,7 @@ import {
   HttpCode,
   HttpStatus,
   InternalServerErrorException,
+  Param,
   ParseIntPipe,
   Post,
   Put,
@@ -111,12 +112,10 @@ export class NutritionController {
       addFoodToNutritionDto.name
         ? await this.nutritionixService.getCommonFoodItemDetails(
             addFoodToNutritionDto.name,
-            'common',
           )
         : await this.nutritionixService.getBrandedFoodItemDetails(
             addFoodToNutritionDto.id,
           );
-
     if (id) {
       const food = await this.foodService.createFood(
         detailsOfRequestedFoodItem,
@@ -130,9 +129,8 @@ export class NutritionController {
       await this.foodService.assignUser(food, userFood);
       return;
     }
-
-    const foodExistsInDatabase = await this.foodService.getFoodByTagId(
-      detailsOfRequestedFoodItem.tag_id,
+    const foodExistsInDatabase = await this.foodService.getFoodByName(
+      detailsOfRequestedFoodItem.food_name,
     );
 
     if (!foodExistsInDatabase) {
@@ -150,9 +148,9 @@ export class NutritionController {
     }
 
     const userHasCommonFoodInNutritionAlready =
-      await this.usersService.checkIfUserHasFoodWithTagIdAlreadyInNutrition(
+      await this.usersService.checkIfUserHasFoodWithNameAlreadyInNutrition(
         user.userFoods,
-        foodExistsInDatabase.tagId,
+        foodExistsInDatabase.name,
       );
     if (userHasCommonFoodInNutritionAlready) {
       throw new ForbiddenException(
@@ -206,14 +204,13 @@ export class NutritionController {
   @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteFoodFroomUser(
-    @Query(
+    @Param(
       'id',
       new ParseIntPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST }),
     )
     id: number,
-    @Body(new ValidationPipe({ transform: true }))
-    updateFoodQuantityDto: UpdateFoodQuantityDto,
-    @Payload('username') username: string,
+    @Payload('username')
+    username: string,
   ): Promise<any> {
     const user = await this.usersService.getUser(username);
 
@@ -222,8 +219,8 @@ export class NutritionController {
         'Server had trouble finding the user!',
       );
     }
-
-    await this.usersService.deleteFoodFromUser(user.userFoods, id);
+    const userFoods = await this.usersService.getFoodOfUser(user);
+    await this.usersService.deleteFoodFromUser(userFoods, id);
 
     await this.usersService.saveUserData(user);
 

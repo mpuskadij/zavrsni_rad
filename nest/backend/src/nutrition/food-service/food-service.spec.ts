@@ -22,7 +22,7 @@ describe('FoodService (unit tests)', () => {
     provider = module.get<FoodService>(FoodService);
   });
 
-  describe('getFoodByParameter', () => {
+  describe('getFoodByNixId', () => {
     it('should throw error if nix id undefined', async () => {
       const result = () => provider.getFoodByNixId(undefined);
 
@@ -69,25 +69,6 @@ describe('FoodService (unit tests)', () => {
   });
 
   describe('createFood', () => {
-    it('should throw exception if both tag id and nix item id missing', async () => {
-      const details = new NutritionixCommonAndBrandedFoodDetailsDto();
-      details.food_name = 'hamburger';
-      details.nf_calories = 0.3;
-      details.nf_potassium = 0.1;
-      details.nf_cholesterol = 0.2;
-      details.nf_dietery_fiber = 0.1;
-      details.nf_protein = 0.1;
-      details.nf_saturated_fat = 0.1;
-      details.nf_sodium = 0.1;
-      details.nf_sugars = 0.1;
-      details.nf_total_carbohydrate = 0.2;
-      details.nf_total_fat = 0.01;
-
-      const result = () => provider.createFood(details);
-
-      expect(result).rejects.toThrow(InternalServerErrorException);
-    });
-
     it('should return food if nix id passed', async () => {
       const details = new NutritionixCommonAndBrandedFoodDetailsDto();
       details.food_name = 'hamburger';
@@ -134,7 +115,7 @@ describe('FoodService (unit tests)', () => {
       expect(result.nixId).toStrictEqual(details.nix_item_id);
     });
 
-    it('should return food if tag id passed', async () => {
+    it('should return food if nix id not passed', async () => {
       const details = new NutritionixCommonAndBrandedFoodDetailsDto();
       details.food_name = 'hamburger';
       details.nf_calories = 0.3;
@@ -147,7 +128,6 @@ describe('FoodService (unit tests)', () => {
       details.nf_sugars = 0.1;
       details.nf_total_carbohydrate = 0.2;
       details.nf_total_fat = 0.01;
-      details.tag_id = '1';
       const dbResult = new Food();
       dbResult.name = details.food_name;
       dbResult.calories = details.nf_calories;
@@ -160,9 +140,7 @@ describe('FoodService (unit tests)', () => {
       dbResult.sugars = details.nf_sugars;
       dbResult.total_carbohydrate = details.nf_total_carbohydrate;
       dbResult.total_fat = details.nf_total_fat;
-      dbResult.tagId = details.tag_id;
       mockFoodRepository.save.mockResolvedValue(dbResult);
-
       const result = await provider.createFood(details);
 
       expect(result).toBeDefined();
@@ -178,50 +156,29 @@ describe('FoodService (unit tests)', () => {
         details.nf_total_carbohydrate,
       );
       expect(result.total_fat).toStrictEqual(details.nf_total_fat);
-      expect(result.tagId).toStrictEqual(details.tag_id);
-    });
-
-    it('should throw exception if both tag id and nix id passed', async () => {
-      const details = new NutritionixCommonAndBrandedFoodDetailsDto();
-      details.food_name = 'hamburger';
-      details.nf_calories = 0.3;
-      details.nf_potassium = 0.1;
-      details.nf_cholesterol = 0.2;
-      details.nf_dietery_fiber = 0.1;
-      details.nf_protein = 0.1;
-      details.nf_saturated_fat = 0.1;
-      details.nf_sodium = 0.1;
-      details.nf_sugars = 0.1;
-      details.nf_total_carbohydrate = 0.2;
-      details.nf_total_fat = 0.01;
-      details.tag_id = '1';
-      details.nix_item_id = '123';
-
-      const result = () => provider.createFood(details);
-
-      expect(result).rejects.toThrow(InternalServerErrorException);
+      expect(result.nixId).toStrictEqual(details.nix_item_id);
     });
   });
 
-  describe('getFoodByTagId', () => {
-    it('should throw exception if tag id is falsy', async () => {
-      const result = () => provider.getFoodByTagId('');
+  describe('getFoodByName', () => {
+    it('should throw exception if name is falsy', async () => {
+      const result = () => provider.getFoodByName('');
 
       expect(result).rejects.toThrow(InternalServerErrorException);
     });
 
-    it('should return null if food by tag id not found', async () => {
+    it('should return null if food by name not found', async () => {
       mockFoodRepository.findOne.mockResolvedValue(null);
-      const result = await provider.getFoodByTagId('1');
+      const result = await provider.getFoodByName('hamburger');
 
       expect(result).toBeNull();
     });
 
-    it('should return common food entity that has matching tag id', async () => {
+    it('should return common food entity that has matching name', async () => {
       const foundFood = new Food();
-      foundFood.tagId = '1';
+      foundFood.name = 'hamburger';
       mockFoodRepository.findOne.mockResolvedValue(foundFood);
-      const result = await provider.getFoodByTagId('1');
+      const result = await provider.getFoodByName('hamburger');
 
       expect(result).toStrictEqual(foundFood);
     });

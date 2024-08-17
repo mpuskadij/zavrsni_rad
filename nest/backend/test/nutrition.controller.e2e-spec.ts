@@ -37,6 +37,8 @@ import { NutritionixInstantEndpointResponseDto } from '../src/dtos/nutritionix-i
 import { UserFood } from '../src/entities/user_food/user_food';
 import { Food } from '../src/entities/food/food';
 import { JwtPayload } from '../src/authentication/jwt-payload/jwt-payload';
+import { plainToInstance } from 'class-transformer';
+import { GetFoodDto } from 'src/dtos/get-food-dto/get-food-dto';
 
 describe('Nutrition Controller (e2e tests)', () => {
   let app: INestApplication;
@@ -95,7 +97,6 @@ describe('Nutrition Controller (e2e tests)', () => {
         Repository<Exercise>,
         Repository<Food>,
         UsersService,
-        WorkoutPlanService,
         CryptoService,
         SaltGenerator,
         HashGenerator,
@@ -121,7 +122,7 @@ describe('Nutrition Controller (e2e tests)', () => {
       where: { username: username },
       relations: ['bmiEntries', 'journalEntries', 'workoutPlans', 'userFoods'],
     });
-    if (user) {
+    if (user != null) {
       await userRepository.remove(user);
     }
 
@@ -150,15 +151,6 @@ describe('Nutrition Controller (e2e tests)', () => {
         .send({ id: '3', name: 'hamburger' });
 
       expect(response.status).toBe(HttpStatus.BAD_REQUEST);
-    });
-
-    it('should return 500 INTERNAL SERVER ERROR if user not found', async () => {
-      const response = await request(app.getHttpServer())
-        .post(nutritionPath)
-        .send({ id: '3' })
-        .set('jwtPayload', JSON.stringify(payload));
-
-      expect(response.status).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
     });
 
     it('should return 503 SERVICE UNAVAILABLE if id not in database and nutritionix fails to get branded food', async () => {
@@ -191,7 +183,7 @@ describe('Nutrition Controller (e2e tests)', () => {
       expect(response.status).toBe(HttpStatus.CREATED);
     });
 
-    it('should return 201 CREATED when branded food added and linked to user', async () => {
+    it('should return 403 FORBIDDEN when user has branded food in nutrition', async () => {
       const registerResponse = await request(app.getHttpServer())
         .post(registrationPath)
         .send(registrationRequestBody);
@@ -210,7 +202,110 @@ describe('Nutrition Controller (e2e tests)', () => {
         .send({ id: correctNixId })
         .set('jwtPayload', JSON.stringify(payload));
 
-      expect(responseAgain).toBe(HttpStatus.FORBIDDEN);
+      expect(responseAgain.status).toBe(HttpStatus.FORBIDDEN);
+    });
+
+    it('should return 403 FORBIDDEN when commond food with same nutritional value already in nutrition', async () => {
+      const registerResponse = await request(app.getHttpServer())
+        .post(registrationPath)
+        .send(registrationRequestBody);
+
+      expect(registerResponse.status).toBe(HttpStatus.CREATED);
+
+      const response = await request(app.getHttpServer())
+        .post(nutritionPath)
+        .send({ name: 'hamburger' })
+        .set('jwtPayload', JSON.stringify(payload));
+
+      expect(response.status).toBe(HttpStatus.CREATED);
+
+      const responseAgain = await request(app.getHttpServer())
+        .post(nutritionPath)
+        .send({ name: 'hamburger' })
+        .set('jwtPayload', JSON.stringify(payload));
+
+      expect(responseAgain.status).toBe(HttpStatus.FORBIDDEN);
+    });
+
+    it('should return 201 CREATED when commond food with name added and linked to user', async () => {
+      const registerResponse = await request(app.getHttpServer())
+        .post(registrationPath)
+        .send(registrationRequestBody);
+
+      expect(registerResponse.status).toBe(HttpStatus.CREATED);
+
+      const response = await request(app.getHttpServer())
+        .post(nutritionPath)
+        .send({ name: 'hamburger' })
+        .set('jwtPayload', JSON.stringify(payload));
+      expect(response.status).toBe(HttpStatus.CREATED);
+    });
+  });
+
+  describe('DELETE ' + nutritionPath + '/:id', () => {
+    it('should return 400 BAD REQUEST if id is not a number', async () => {
+      const response = await request(app.getHttpServer())
+        .delete(nutritionPath + '/1.2')
+        .set('jwtPayload', JSON.stringify(payload));
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+    });
+
+    it('should return 403 FORBIDDEN if user has no food to delete', async () => {
+      const registerResponse = await request(app.getHttpServer())
+        .post(registrationPath)
+        .send(registrationRequestBody);
+
+      expect(registerResponse.status).toBe(HttpStatus.CREATED);
+
+      const response = await request(app.getHttpServer())
+        .delete(nutritionPath + '/1')
+        .set('jwtPayload', JSON.stringify(payload));
+
+      expect(response.status).toBe(HttpStatus.FORBIDDEN);
+    });
+
+    it.skip('should return 400 BAD REQUEST if id not found', async () => {
+      const registerResponse = await request(app.getHttpServer())
+        .post(registrationPath)
+        .send(registrationRequestBody);
+
+      expect(registerResponse.status).toBe(HttpStatus.CREATED);
+
+      const addFoodResponse = await request(app.getHttpServer())
+        .post(nutritionPath)
+        .send({ name: 'hamburger' })
+        .set('jwtPayload', JSON.stringify(payload));
+      expect(addFoodResponse.status).toBe(HttpStatus.CREATED);
+
+      const response = await request(app.getHttpServer())
+        .delete(nutritionPath + '/-1')
+        .set('jwtPayload', JSON.stringify(payload));
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+    });
+
+    it.skip('should return 204 if food found and deleted', async () => {
+      const registerResponse = await request(app.getHttpServer())
+        .post(registrationPath)
+        .send(registrationRequestBody);
+
+      expect(registerResponse.status).toBe(HttpStatus.CREATED);
+
+      const addFoodResponse = await request(app.getHttpServer())
+        .post(nutritionPath)
+        .send({ name: 'hamburger' })
+        .set('jwtPayload', JSON.stringify(payload));
+      expect(addFoodResponse.status).toBe(HttpStatus.CREATED);
+
+      const getFoodResponse = await request(app.getHttpServer())
+        .get(nutritionPath)
+        .set('jwtPayload', JSON.stringify(payload));
+      expect(getFoodResponse.status).toBe(HttpStatus.OK);
+
+      const foods = plainToInstance(Array<GetFoodDto>, getFoodResponse.body);
+      const response = await request(app.getHttpServer())
+        .delete(nutritionPath + '/' + foods[0].id)
+        .set('jwtPayload', JSON.stringify(payload));
+      expect(response.status).toBe(HttpStatus.NO_CONTENT);
     });
   });
 

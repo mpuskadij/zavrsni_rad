@@ -7,14 +7,14 @@ import { NutritionixCommonAndBrandedFoodDetailsDto } from 'src/dtos/nutritionix-
 
 @Injectable()
 export class FoodService {
-  async getFoodByTagId(tagId: string): Promise<Food> {
-    if (!tagId) {
+  async getFoodByName(foodName: string): Promise<Food> {
+    if (!foodName) {
       throw new InternalServerErrorException(
         'Server had trouble checking if food already in nutrition!',
       );
     }
     const foodFromDatabase = await this.foodRepository.findOne({
-      where: { tagId: tagId },
+      where: { name: foodName },
       relations: ['userFoods'],
     });
     return foodFromDatabase;
@@ -22,21 +22,12 @@ export class FoodService {
   async createFood(
     details: NutritionixCommonAndBrandedFoodDetailsDto,
   ): Promise<Food> {
-    if (
-      (!details.nix_item_id && !details.tag_id) ||
-      (details.nix_item_id && details.tag_id)
-    ) {
-      throw new InternalServerErrorException(
-        'Server cannot create food item because of missing properties!',
-      );
-    }
     const food = new Food();
     food.name = details.food_name;
     food.calories = details.nf_calories ?? null;
     food.cholesterol = details.nf_cholesterol ?? null;
     food.dietery_fiber = details.nf_dietery_fiber ?? null;
     food.nixId = details.nix_item_id ?? null;
-    food.tagId = details.tag_id ?? null;
     food.potassium = details.nf_potassium ?? null;
     food.protein = details.nf_protein ?? null;
     food.saturated_fat = details.nf_saturated_fat ?? null;

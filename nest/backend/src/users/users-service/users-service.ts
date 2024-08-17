@@ -48,6 +48,8 @@ export class UsersService {
       throw new BadRequestException('Food to delete with given id not found!');
     }
 
+    await this.userFoodRepository.remove(userFoods[foundFood]);
+
     userFoods.splice(foundFood, 1);
 
     return;
@@ -83,16 +85,16 @@ export class UsersService {
 
     foundFood.quantity = quantity;
   }
-  async checkIfUserHasFoodWithTagIdAlreadyInNutrition(
+  async checkIfUserHasFoodWithNameAlreadyInNutrition(
     currentUserFoods: UserFood[],
-    tagIdToCheck: string,
+    nameToCheck: string,
   ): Promise<boolean> {
     if (!currentUserFoods?.length) {
       return false;
     }
 
     const foundFood = currentUserFoods.some(
-      (usrf) => usrf.food.tagId == tagIdToCheck,
+      (usrf) => usrf.food.name == nameToCheck,
     );
 
     return foundFood;
@@ -245,6 +247,8 @@ export class UsersService {
   }
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(UserFood)
+    private userFoodRepository: Repository<UserFood>,
     private cryptoService: CryptoService,
     private authenticationService: AuthenticationService,
   ) {}

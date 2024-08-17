@@ -7,11 +7,12 @@ import { User } from '../entities/user/user';
 import { CrpytoModule } from '../crpyto/crpyto.module';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { Bmientry } from '../entities/bmientry/bmientry';
+import { UserFood } from '../entities/user_food/user_food';
 
 @Module({
   imports: [
     GuardsModule,
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, UserFood]),
     CrpytoModule,
     AuthenticationModule,
   ],

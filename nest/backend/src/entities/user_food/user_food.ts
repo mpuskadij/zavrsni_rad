@@ -20,6 +20,7 @@ export class UserFood {
   @ManyToOne(() => Food, (food) => food.userFoods, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
+    eager: true,
   })
   @JoinColumn({ referencedColumnName: 'id', name: 'foodId' })
   food: Food;
