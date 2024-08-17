@@ -111,7 +111,7 @@ describe('UserController (e2e)', () => {
       .expect(HttpStatus.CREATED);
   });
 
-  it('/api/users/login (POST) should return 400 when username not recognized in database', async () => {
+  it('/api/users/login (POST) should return 401 UNAUTHORIZED when username not recognized in database', async () => {
     return await request(app.getHttpServer())
       .post('/api/users/login')
       .send(userCredentials)
@@ -129,7 +129,7 @@ describe('UserController (e2e)', () => {
       .expect(HttpStatus.OK);
   });
 
-  it('/api/users/login (POST) should return 400 HTTP response with correct username,but incorrect password after /api/users/register', async () => {
+  it('/api/users/login (POST) should return 401 UNAUTHORIZED with correct username,but incorrect password after /api/users/register', async () => {
     const userCredentials = { username: username, password: password };
     const invalidUserCredentials = {
       username: username,
@@ -142,6 +142,24 @@ describe('UserController (e2e)', () => {
     return await request(app.getHttpServer())
       .post('/api/users/login')
       .send(invalidUserCredentials)
+      .expect(401);
+  });
+
+  it('/api/users/login (POST) should return 401 UNAUTHORIZED if user sent correct password and username. but is currently locked', async () => {
+    const userCredentials = { username: username, password: password };
+    await request(app.getHttpServer())
+      .post('/api/users/register')
+      .send(userCredentials)
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .put('/api/users/' + username)
+      .send(userCredentials)
+      .expect(204);
+
+    return await request(app.getHttpServer())
+      .post('/api/users/login')
+      .send(userCredentials)
       .expect(401);
   });
 
