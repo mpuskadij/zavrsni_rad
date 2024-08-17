@@ -46,7 +46,7 @@ describe('AuthenticationService (integration tests)', () => {
       expect(result.isAdmin).toEqual(false);
     });
 
-    it('should return false if jwt is invalid', async () => {
+    it('should throw exception if jwt is invalid', async () => {
       const token: string = await provider.generateJWT(username, isAdmin);
       try {
         const result: JwtPayload = await provider.validateJWT(token + 's');
