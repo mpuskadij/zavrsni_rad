@@ -27,6 +27,7 @@
     "@nestjs/jwt": "^10.2.0",
     "@nestjs/mapped-types": "^2.0.5",
     "@nestjs/platform-express": "^10.0.0",
+    "@nestjs/throttler": "^6.1.1",
     "@nestjs/typeorm": "^10.0.2",
     "@nestlab/google-recaptcha": "^3.7.0",
     "@types/csprng": "^0.1.4",

@@ -23,7 +23,7 @@ import { plainToInstance } from 'class-transformer';
 import { JournalEntryDto } from '../../dtos/journal-entry-dto/journal-entry-dto';
 import { DeleteJournalEntryDto } from '../../dtos/journal-entry-dto/delete-journal-entry-dto';
 
-@Controller('api/journal')
+@Controller('journal')
 export class JournalController {
   constructor(
     private usersService: UsersService,

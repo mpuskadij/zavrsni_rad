@@ -13,7 +13,7 @@ import { AdminGuard } from '../../guards/admin/admin.guard';
 import { JwtGuard } from '../../guards/jwt/jwt.guard';
 import { VirtualTimeService } from '../virtual-time-service/virtual-time-service';
 
-@Controller('api/time')
+@Controller('time')
 export class TimeController {
   constructor(private virtualTimeService: VirtualTimeService) {}
   @Get()

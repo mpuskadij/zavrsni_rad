@@ -96,6 +96,7 @@ describe('Journal Controller (e2e)', () => {
     if (userInDatabase != null) {
       await userRepo.remove(userInDatabase);
     }
+    app.setGlobalPrefix('api');
     await app.init();
   });
 

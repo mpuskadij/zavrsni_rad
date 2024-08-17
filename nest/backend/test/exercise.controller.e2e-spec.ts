@@ -28,6 +28,7 @@ describe('Exercise controller (e2e)', () => {
       .compile();
 
     app = module.createNestApplication();
+    app.setGlobalPrefix('api');
 
     await app.init();
   });

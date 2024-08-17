@@ -89,6 +89,7 @@ describe('UserController (e2e)', () => {
       await repo.remove(userInDatabase);
     }
     app = moduleFixture.createNestApplication();
+    app.setGlobalPrefix('api');
     app.use(cookieParser());
     await app.init();
   });

@@ -152,6 +152,7 @@ describe('WorkoutPlanController (e2e)', () => {
       await exerciseRepo.remove(exercise);
     }
     app.use(cookieParser());
+    app.setGlobalPrefix('api');
     await app.init();
   });
 

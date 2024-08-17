@@ -25,7 +25,7 @@ import { GetUsersDto } from '../../dtos/get-users-dto/get-users-dto';
 import { plainToInstance } from 'class-transformer';
 import { Payload } from '../../decorators/payload/payload.decorator';
 
-@Controller('api/users')
+@Controller('users')
 export class UsersController {
   constructor(private userService: UsersService) {}
 

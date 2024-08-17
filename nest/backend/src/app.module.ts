@@ -26,11 +26,17 @@ import { Food } from './entities/food/food';
 import { UserFood } from './entities/user_food/user_food';
 import { AdminModule } from './admin/admin.module';
 import * as Joi from 'joi';
+import { ThrottlerModule, seconds, ThrottlerGuard } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
     UsersModule,
     GuardsModule,
+    ThrottlerModule.forRoot([
+      { ttl: seconds(60), limit: 30 },
+      { name: 'nutritionix', ttl: seconds(60), limit: 10 },
+    ]),
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
@@ -78,6 +84,13 @@ import * as Joi from 'joi';
     AdminModule,
   ],
   controllers: [AppController],
-  providers: [AppService, AuthenticationService],
+  providers: [
+    AppService,
+    AuthenticationService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}

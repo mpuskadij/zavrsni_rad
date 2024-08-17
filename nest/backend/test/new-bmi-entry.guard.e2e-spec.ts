@@ -52,8 +52,8 @@ describe('NewBmiEntryGuard (e2e)', () => {
       .overrideGuard(GoogleRecaptchaGuard)
       .useValue(true)
       .compile();
-
     app = moduleFixture.createNestApplication();
+    app.setGlobalPrefix('api');
     await app.init();
   });
 

@@ -16,7 +16,7 @@ import { BmiService } from '../bmi-service/bmi-service';
 import { plainToInstance } from 'class-transformer';
 import { BmiEntryDto } from '../../dtos/bmi-entry-dto/bmi-entry-dto';
 
-@Controller('api/bmi')
+@Controller('bmi')
 export class BmiController {
   constructor(private bmiService: BmiService) {}
   @Post()

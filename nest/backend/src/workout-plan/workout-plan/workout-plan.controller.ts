@@ -30,7 +30,7 @@ import { WgerCategoryDto } from 'src/dtos/wger-category-dto/wger-category-dto';
 import { ExerciseService } from '../exercise-service/exercise-service';
 import { DeleteExerciseDto } from '../../dtos/delete-exercise-dto/delete-exercise-dto';
 
-@Controller('/api/workout-plans')
+@Controller('workout-plans')
 export class WorkoutPlanController {
   constructor(
     private workoutPlanService: WorkoutPlanService,

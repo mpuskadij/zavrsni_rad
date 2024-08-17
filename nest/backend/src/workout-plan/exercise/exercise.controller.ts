@@ -10,7 +10,7 @@ import { SearchExerciseDto } from '../../dtos/search-exercise-dto/search-exercis
 import { WgerService } from '../wger-service/wger-service';
 import { WgerExerciseDto } from '../../dtos/wger-exercise-dto/wger-exercise-dto';
 
-@Controller('api/exercise')
+@Controller('exercise')
 export class ExerciseController {
   constructor(private wgerService: WgerService) {}
 

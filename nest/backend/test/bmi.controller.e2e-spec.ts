@@ -90,6 +90,7 @@ describe('BmiController (e2e)', () => {
       .compile();
 
     app = moduleFixture.createNestApplication();
+    app.setGlobalPrefix('api');
     userRepo = moduleFixture.get<Repository<User>>(getRepositoryToken(User));
 
     if ((await userRepo.existsBy({ username })) == true) {

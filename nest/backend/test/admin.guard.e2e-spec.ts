@@ -56,8 +56,8 @@ describe('Admin Guard (e2e)', () => {
       .overrideGuard(JwtGuard)
       .useValue(true)
       .compile();
-
     app = moduleFixture.createNestApplication();
+    app.setGlobalPrefix('api');
     await app.init();
   });
 

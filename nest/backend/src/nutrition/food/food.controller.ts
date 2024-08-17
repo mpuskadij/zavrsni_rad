@@ -13,11 +13,13 @@ import { SearchFoodDto } from '../../dtos/search-food-dto/search-food-dto';
 import { NutritionixService } from '../nutritionix-service/nutritionix-service';
 import { FindFoodDetailsDto } from '../../dtos/find-food-details-dto/find-food-details-dto';
 import { NutritionixCommonAndBrandedFoodDetailsDto } from '../../dtos/nutritionix-common-and-branded-food-details-details-dto/nutritionix-common-and-branded-food-details-dto';
+import { SkipThrottle } from '@nestjs/throttler';
 
-@Controller('api/food')
+@Controller('food')
 export class FoodController {
   constructor(private nutritionixService: NutritionixService) {}
   @Get()
+  @SkipThrottle({ default: false, nutritionix: true })
   @UseGuards(JwtGuard)
   async searchForFood(
     @Query(
@@ -36,6 +38,7 @@ export class FoodController {
   }
 
   @Get('/details')
+  @SkipThrottle({ default: false, nutritionix: true })
   @UseGuards(JwtGuard)
   async getFoodItemDetails(
     @Query(

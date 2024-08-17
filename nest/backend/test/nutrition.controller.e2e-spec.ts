@@ -116,6 +116,7 @@ describe('Nutrition Controller (e2e tests)', () => {
       .compile();
 
     app = module.createNestApplication();
+    app.setGlobalPrefix('api');
     userRepository = module.get<Repository<User>>(getRepositoryToken(User));
 
     const user = await userRepository.findOne({

@@ -116,6 +116,7 @@ describe('Time Controller (e2e tests)', () => {
       .compile();
 
     app = module.createNestApplication();
+    app.setGlobalPrefix('api');
     await app.init();
   });
 

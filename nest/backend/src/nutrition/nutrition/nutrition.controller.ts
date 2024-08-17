@@ -16,6 +16,7 @@ import {
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
+import { SkipThrottle } from '@nestjs/throttler';
 import { JwtGuard } from '../../guards/jwt/jwt.guard';
 import { AddFoodToNutritionDto } from '../../dtos/add-food-to-nutrition-dto/add-food-to-nutrition-dto';
 import { NutritionixCommonAndBrandedFoodDetailsDto } from 'src/dtos/nutritionix-common-and-branded-food-details-details-dto/nutritionix-common-and-branded-food-details-dto';
@@ -30,7 +31,7 @@ import { UpdateDescription } from 'typeorm';
 import { UpdateFoodQuantityDto } from '../../dtos/update-food-quantity-dto/update-food-quantity-dto';
 import { GetFoodDto } from '../../dtos/get-food-dto/get-food-dto';
 
-@Controller('api/nutrition')
+@Controller('nutrition')
 export class NutritionController {
   constructor(
     private nutritionixService: NutritionixService,
@@ -61,6 +62,7 @@ export class NutritionController {
   }
 
   @Post()
+  @SkipThrottle({ default: false, nutritionix: true })
   @UseGuards(JwtGuard)
   async addFoodToNutrition(
     @Body(
