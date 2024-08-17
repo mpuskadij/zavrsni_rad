@@ -282,10 +282,15 @@ export class UsersService {
     if (userDatabase == null) {
       return false;
     }
-    return await this.cryptoService.compareIfPasswordsMatch(
+    const passwordMatch = await this.cryptoService.compareIfPasswordsMatch(
       password,
       userDatabase.password,
     );
+
+    if (passwordMatch && userDatabase.isActive) {
+      return true;
+    }
+    return false;
   }
 
   async addUser(username: string, password: string): Promise<boolean> {

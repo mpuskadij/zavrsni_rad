@@ -173,6 +173,7 @@ describe('UsersService (unit tests)', () => {
     user.username = username;
     user.password = password;
     user.isAdmin = false;
+    user.isActive = true;
     it('should return true if username and password are correct', async () => {
       jest.spyOn(provider, 'getUser').mockResolvedValue(user);
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(user);
@@ -210,6 +211,24 @@ describe('UsersService (unit tests)', () => {
       );
 
       expect(mockCryptoService.compareIfPasswordsMatch).toHaveBeenCalled();
+      expect(result).toBe(false);
+    });
+
+    it('should return false when user is locked', async () => {
+      const lockedUser = new User();
+      lockedUser.isActive = false;
+      lockedUser.username = username;
+      lockedUser.password = password;
+      lockedUser.isAdmin = false;
+      jest.spyOn(provider, 'getUser').mockResolvedValue(lockedUser);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(lockedUser);
+      mockCryptoService.compareIfPasswordsMatch.mockResolvedValue(true);
+
+      const result: boolean = await provider.checkLoginCredentials(
+        username,
+        password,
+      );
+
       expect(result).toBe(false);
     });
   });
