@@ -195,6 +195,7 @@ describe('UsersService (integration tests)', () => {
       user.username = username;
       user.password = password;
       user.isAdmin = false;
+      user.isActive = true;
       await repository.save(user);
 
       const result: boolean = await provider.checkLoginCredentials(
@@ -205,7 +206,7 @@ describe('UsersService (integration tests)', () => {
       expect(result).toBe(false);
     });
 
-    it('should return true if username exists nad password is correct', async () => {
+    it('should return false if username exists, password is correct, but user is locked', async () => {
       const usernameInDatabase = await repository.findOne({
         where: { username: username },
         relations: ['bmiEntries', 'journalEntries'],
@@ -217,6 +218,30 @@ describe('UsersService (integration tests)', () => {
       user.username = username;
       user.password = password;
       user.isAdmin = false;
+      user.isActive = false;
+      await repository.save(user);
+
+      const result: boolean = await provider.checkLoginCredentials(
+        username,
+        password,
+      );
+
+      expect(result).toBe(false);
+    });
+
+    it('should return true if username exists and password is correct', async () => {
+      const usernameInDatabase = await repository.findOne({
+        where: { username: username },
+        relations: ['bmiEntries', 'journalEntries'],
+      });
+      if (usernameInDatabase != null) {
+        await repository.remove(usernameInDatabase);
+      }
+      const user = new User();
+      user.username = username;
+      user.password = password;
+      user.isAdmin = false;
+      user.isActive = true;
       await repository.save(user);
 
       const result: boolean = await provider.checkLoginCredentials(
