@@ -25,6 +25,8 @@ import { WorkoutPlan } from '../src/entities/workout-plan/workout-plan';
 import { Exercise } from '../src/entities/exercise/exercise';
 import { Food } from '../src/entities/food/food';
 import { UserFood } from '../src/entities/user_food/user_food';
+import { AdminGuard } from '../src/guards/admin/admin.guard';
+import { JwtGuard } from '../src/guards/jwt/jwt.guard';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
@@ -71,6 +73,10 @@ describe('UserController (e2e)', () => {
       ],
     })
       .overrideGuard(GoogleRecaptchaGuard)
+      .useValue(true)
+      .overrideGuard(AdminGuard)
+      .useValue(true)
+      .overrideGuard(JwtGuard)
       .useValue(true)
       .compile();
     repo = moduleFixture.get<Repository<User>>(getRepositoryToken(User));
@@ -151,6 +157,27 @@ describe('UserController (e2e)', () => {
       .expect((response) => {
         expect(response.headers['set-cookie']).toBeDefined();
       });
+  });
+
+  describe('PUT /api/users/:username', () => {
+    it('should return 400 BAD REQUEST if nonexistent username sent', async () => {
+      const response = await request(app.getHttpServer()).put(
+        '/api/users/marin',
+      );
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+    });
+
+    it('should return 204 NO CONTENT if username found and status updated', async () => {
+      const registerResponse = await request(app.getHttpServer())
+        .post('/api/users/register')
+        .send(userCredentials);
+      expect(registerResponse.status).toBe(HttpStatus.CREATED);
+
+      const response = await request(app.getHttpServer()).put(
+        '/api/users/' + username,
+      );
+      expect(response.status).toBe(HttpStatus.NO_CONTENT);
+    });
   });
 
   afterEach(async () => {

@@ -81,11 +81,6 @@ export class UsersController {
   async updateActiveStatus(
     @Param('username') usernameToUpdateActiveStatus: string,
   ): Promise<any> {
-    if (!usernameToUpdateActiveStatus) {
-      throw new BadRequestException(
-        'Server did not receive username to update active status!',
-      );
-    }
     const userToUpdate = await this.userService.getUser(
       usernameToUpdateActiveStatus,
     );
