@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GuardsModule } from './guards/guards.module';
@@ -83,9 +81,8 @@ import { APP_GUARD } from '@nestjs/core';
     NutritionModule,
     AdminModule,
   ],
-  controllers: [AppController],
+  controllers: [],
   providers: [
-    AppService,
     AuthenticationService,
     {
       provide: APP_GUARD,

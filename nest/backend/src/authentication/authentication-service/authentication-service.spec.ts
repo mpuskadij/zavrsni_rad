@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { JwtPayload } from '../jwt-payload/jwt-payload';
 
-describe('AuthenticationService (integration tests)', () => {
+describe('AuthenticationService (unit tests)', () => {
   let provider: AuthenticationService;
   const mockJwtService = { signAsync: jest.fn(), verifyAsync: jest.fn() };
 
