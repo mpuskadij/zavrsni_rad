@@ -25,7 +25,7 @@ describe('AuthenticationService (integration tests)', () => {
   });
 
   const username = 'marin';
-  const isAdmin = 0;
+  const isAdmin = false;
 
   describe('generateJWT', () => {
     it('should generate JWT', async () => {
@@ -38,16 +38,16 @@ describe('AuthenticationService (integration tests)', () => {
 
   describe('validateJWT', () => {
     it('should return true if jwt is valid', async () => {
-      const token: string = await provider.generateJWT(username, 0);
+      const token: string = await provider.generateJWT(username, isAdmin);
       const result: JwtPayload = await provider.validateJWT(token);
       expect(result).toBeDefined();
       expect(result).not.toBeNull();
       expect(result.username).toEqual(username);
-      expect(result.isAdmin).toEqual(0);
+      expect(result.isAdmin).toEqual(false);
     });
 
     it('should return false if jwt is invalid', async () => {
-      const token: string = await provider.generateJWT(username, 0);
+      const token: string = await provider.generateJWT(username, isAdmin);
       try {
         const result: JwtPayload = await provider.validateJWT(token + 's');
       } catch (error) {
