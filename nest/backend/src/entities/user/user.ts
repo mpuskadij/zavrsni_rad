@@ -15,6 +15,9 @@ export class User {
   @Column({ default: false, nullable: false })
   isAdmin: boolean;
 
+  @Column({ default: true, nullable: false })
+  isActive: boolean;
+
   @OneToMany(() => Bmientry, (bmiEntry) => bmiEntry.user, {
     cascade: ['insert', 'remove', 'update'],
   })

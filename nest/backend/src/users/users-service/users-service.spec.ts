@@ -788,4 +788,28 @@ describe('UsersService (unit tests)', () => {
       expect(users[0].username).toStrictEqual(user2.username);
     });
   });
+
+  describe('changeStatus', () => {
+    it('should throw InternalServerError if user is falsy', async () => {
+      const result = () => provider.changeStatus(undefined);
+
+      expect(result).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should update change status from true to false', async () => {
+      const user = new User();
+      user.isActive = true;
+      await provider.changeStatus(user);
+
+      expect(user.isActive).toBe(false);
+    });
+
+    it('should change status from false to true', async () => {
+      const user = new User();
+      user.isActive = false;
+      await provider.changeStatus(user);
+
+      expect(user.isActive).toBe(true);
+    });
+  });
 });

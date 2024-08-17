@@ -18,6 +18,17 @@ import { Food } from 'src/entities/food/food';
 
 @Injectable()
 export class UsersService {
+  async changeStatus(userToUpdate: User): Promise<void> {
+    if (!userToUpdate) {
+      throw new InternalServerErrorException(
+        'Server had trouble finding the user!',
+      );
+    }
+
+    userToUpdate.isActive = !userToUpdate.isActive;
+
+    return;
+  }
   async getAllUsers(usernameToExclude: string = null): Promise<User[]> {
     const users = await this.userRepository.find();
 
@@ -290,6 +301,7 @@ export class UsersService {
     newUser.isAdmin = false;
     newUser.username = username;
     newUser.password = hashedPasswordData.HashedPassword;
+    newUser.isActive = true;
 
     await this.saveUserData(newUser);
 

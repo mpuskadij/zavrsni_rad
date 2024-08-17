@@ -1,10 +1,15 @@
 import {
+  BadRequestException,
   Body,
   ConflictException,
   Controller,
   Get,
   HttpCode,
+  HttpStatus,
+  Param,
+  ParseBoolPipe,
   Post,
+  Put,
   Res,
   UnauthorizedException,
   UseGuards,
@@ -68,5 +73,31 @@ export class UsersController {
     const token = await this.userService.createJWT(username);
     response.cookie('token', token, { httpOnly: true });
     return;
+  }
+
+  @Put('/:username')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(JwtGuard, AdminGuard)
+  async updateActiveStatus(
+    @Param('username') usernameToUpdateActiveStatus: string,
+  ): Promise<any> {
+    if (!usernameToUpdateActiveStatus) {
+      throw new BadRequestException(
+        'Server did not receive username to update active status!',
+      );
+    }
+    const userToUpdate = await this.userService.getUser(
+      usernameToUpdateActiveStatus,
+    );
+
+    if (!userToUpdate) {
+      throw new BadRequestException(
+        'User with username ' + usernameToUpdateActiveStatus + ' not found!',
+      );
+    }
+
+    await this.userService.changeStatus(userToUpdate);
+
+    await this.userService.saveUserData(userToUpdate);
   }
 }
