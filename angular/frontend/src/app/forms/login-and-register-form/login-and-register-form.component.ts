@@ -50,10 +50,6 @@ export class LoginAndRegisterFormComponent {
           throw new Error('Password must contain at least 1 uppercase letter!');
         }
 
-        if (!/[a-z]/.test(password)) {
-          throw new Error('Password must contain at least 1 lowercase letter!');
-        }
-
         const user: IUser = { username: username, password: password };
 
         this.onSubmit.emit(user);

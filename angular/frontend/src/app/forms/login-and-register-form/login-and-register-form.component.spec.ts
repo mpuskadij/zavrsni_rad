@@ -79,14 +79,6 @@ describe('LoginAndRegisterFormComponent', () => {
       expect(component.errorMessage).toBeTruthy();
     });
 
-    it('should set error message if password doesnt contain lowercase character', () => {
-      component.form.controls.username.setValue('marin');
-      component.form.controls.password.setValue('1234567S');
-      component.submitForm();
-
-      expect(component.errorMessage).toBeTruthy();
-    });
-
     it('should omit if username is 5 characters and password contains one number, one uppercase and 1 lowercase character', () => {
       component.form.controls.username.setValue('marin');
       component.form.controls.password.setValue('123456sS');
