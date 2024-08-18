@@ -31,6 +31,17 @@ module.exports = function (config) {
     },
     reporters: ["progress", "kjhtml"],
     browsers: ["Firefox"],
+    customLaunchers: {
+      ChromeHeadless: {
+        base: "Chrome",
+        flags: [
+          "--no-sandbox",
+          "--headless",
+          "--disable-gpu",
+          "--remote-debugging-port=9222",
+        ],
+      },
+    },
     restartOnFileChange: true,
   });
 };
