@@ -82,6 +82,12 @@ jobs:
           working-directory: ./angular/frontend/
           run: npm run build
 
+        - name: Setup chrome
+          uses: browser-actions/setup-chrome@v1
+
+        - name: Install latest Chrome version
+          run: chrome --version
+
         - name: Test Angular project
           working-directory: ./angular/frontend/
           run: npm run test:ci
