@@ -5,7 +5,7 @@ on:
     workflow_dispatch:
 
 jobs:
-    build_test:
+    build_test_backend:
         runs-on: ubuntu-latest
     
         steps:
@@ -57,5 +57,33 @@ jobs:
         - name: Perform E2E tests with SuperTest
           working-directory: ./nest/backend/
           run: npm run test:e2e
+
+    build_test_frontend:
+      runs-on: ubuntu-latest
+
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4.1.6
+        
+        - name: Install Node
+          uses: actions/setup-node@v4
+          with:
+            node-version: 18
+
+        - name: Install Angular CLI
+          working-directory: ./angular
+          run: npm i -g @angular/cli@17
+          
+        - name: Install dependencies for Angular project
+          working-directory: ./angular/frontend/
+          run: npm install
+
+        - name: Build Angular project
+          working-directory: ./angular/frontend/
+          run: npm run build
+
+        - name: Test Angular project
+          working-directory: ./angular/frontend/
+          run: npm run test
 
         
