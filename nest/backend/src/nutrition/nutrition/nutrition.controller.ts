@@ -174,7 +174,7 @@ export class NutritionController {
   @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async updateQuantity(
-    @Query(
+    @Param(
       'id',
       new ParseIntPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST }),
     )
@@ -190,14 +190,12 @@ export class NutritionController {
         'Server had trouble finding the user!',
       );
     }
-
+    const userFoods = await this.usersService.getFoodOfUser(user);
     await this.usersService.updateFoodQuantity(
-      user.userFoods,
+      userFoods,
       id,
       updateFoodQuantityDto.quantity,
     );
-
-    await this.usersService.saveUserData(user);
 
     return;
   }

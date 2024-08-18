@@ -739,10 +739,11 @@ describe('UsersService (unit tests)', () => {
       expect(result).rejects.toThrow(BadRequestException);
     });
 
-    it('should upadte quantity if quantity is different', async () => {
+    it('should update quantity if quantity is different', async () => {
       const userFood = new UserFood();
       userFood.foodId = 1;
       userFood.quantity = 1;
+      jest.spyOn(userFoodRepository, 'save').mockResolvedValue(userFood);
       const result = await provider.updateFoodQuantity([userFood], 1, 1.5);
 
       expect(userFood.quantity).toBe(1.5);

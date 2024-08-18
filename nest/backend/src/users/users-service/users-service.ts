@@ -95,6 +95,7 @@ export class UsersService {
     }
 
     foundFood.quantity = quantity;
+    await this.userFoodRepository.save(foundFood);
   }
   async checkIfUserHasFoodWithNameAlreadyInNutrition(
     currentUserFoods: UserFood[],

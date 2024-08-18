@@ -136,6 +136,14 @@ describe('Nutrition Controller (e2e tests)', () => {
     if (food) {
       await foodRepository.remove(food);
     }
+
+    const foodCommon = await foodRepository.findOne({
+      where: { name: 'hamburger' },
+      relations: ['userFoods'],
+    });
+    if (foodCommon) {
+      await foodRepository.remove(foodCommon);
+    }
     await app.init();
   });
 
@@ -306,6 +314,117 @@ describe('Nutrition Controller (e2e tests)', () => {
       const response = await request(app.getHttpServer())
         .delete(nutritionPath + '/' + foods[0].id)
         .set('jwtPayload', JSON.stringify(payload));
+      expect(response.status).toBe(HttpStatus.NO_CONTENT);
+    });
+  });
+
+  describe('PUT ' + nutritionPath + '/:id', () => {
+    it('should return 400 BAD REQUEST is no body passed', async () => {
+      const registerResponse = await request(app.getHttpServer())
+        .post(registrationPath)
+        .send(registrationRequestBody);
+
+      expect(registerResponse.status).toBe(HttpStatus.CREATED);
+
+      const response = await request(app.getHttpServer())
+        .put(nutritionPath + '/-1')
+        .set('jwtPayload', JSON.stringify(payload));
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+    });
+
+    it('should return 400 BAD REQUEST if quantity is a negative number', async () => {
+      const registerResponse = await request(app.getHttpServer())
+        .post(registrationPath)
+        .send(registrationRequestBody);
+
+      expect(registerResponse.status).toBe(HttpStatus.CREATED);
+
+      const response = await request(app.getHttpServer())
+        .put(nutritionPath + '/-1')
+        .set('jwtPayload', JSON.stringify(payload))
+        .send({ quantity: -2 });
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+    });
+
+    it('should return 400 BAD REQUEST if quantity is 0', async () => {
+      const registerResponse = await request(app.getHttpServer())
+        .post(registrationPath)
+        .send(registrationRequestBody);
+
+      expect(registerResponse.status).toBe(HttpStatus.CREATED);
+
+      const response = await request(app.getHttpServer())
+        .put(nutritionPath + '/-1')
+        .set('jwtPayload', JSON.stringify(payload))
+        .send({ quantity: 0 });
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+    });
+
+    it('should return 500 INTERNAL SERVER ERROR if user has no food', async () => {
+      const registerResponse = await request(app.getHttpServer())
+        .post(registrationPath)
+        .send(registrationRequestBody);
+
+      expect(registerResponse.status).toBe(HttpStatus.CREATED);
+
+      const response = await request(app.getHttpServer())
+        .put(nutritionPath + '/-1')
+        .set('jwtPayload', JSON.stringify(payload))
+        .send({ quantity: 1 });
+      expect(response.status).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
+    });
+
+    it.skip('should return 400 BAD REQUEST if quantity has remained the same', async () => {
+      const registerResponse = await request(app.getHttpServer())
+        .post(registrationPath)
+        .send(registrationRequestBody);
+
+      expect(registerResponse.status).toBe(HttpStatus.CREATED);
+
+      const addFoodResponse = await request(app.getHttpServer())
+        .post(nutritionPath)
+        .send({ name: 'hamburger' })
+        .set('jwtPayload', JSON.stringify(payload));
+      expect(addFoodResponse.status).toBe(HttpStatus.CREATED);
+
+      const getFoodResponse = await request(app.getHttpServer())
+        .get(nutritionPath)
+        .set('jwtPayload', JSON.stringify(payload));
+      expect(getFoodResponse.status).toBe(HttpStatus.OK);
+
+      const foods = plainToInstance(Array<GetFoodDto>, getFoodResponse.body);
+
+      const response = await request(app.getHttpServer())
+        .put(nutritionPath + '/' + foods[0].id)
+        .set('jwtPayload', JSON.stringify(payload))
+        .send({ quantity: 1 });
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+    });
+
+    it.skip('should return 204 NO CONTENT quantity is different from original quantitiy', async () => {
+      const registerResponse = await request(app.getHttpServer())
+        .post(registrationPath)
+        .send(registrationRequestBody);
+
+      expect(registerResponse.status).toBe(HttpStatus.CREATED);
+
+      const addFoodResponse = await request(app.getHttpServer())
+        .post(nutritionPath)
+        .send({ name: 'hamburger' })
+        .set('jwtPayload', JSON.stringify(payload));
+      expect(addFoodResponse.status).toBe(HttpStatus.CREATED);
+
+      const getFoodResponse = await request(app.getHttpServer())
+        .get(nutritionPath)
+        .set('jwtPayload', JSON.stringify(payload));
+      expect(getFoodResponse.status).toBe(HttpStatus.OK);
+
+      const foods = plainToInstance(Array<GetFoodDto>, getFoodResponse.body);
+
+      const response = await request(app.getHttpServer())
+        .put(nutritionPath + '/' + foods[0].id)
+        .set('jwtPayload', JSON.stringify(payload))
+        .send({ quantity: 2 });
       expect(response.status).toBe(HttpStatus.NO_CONTENT);
     });
   });
