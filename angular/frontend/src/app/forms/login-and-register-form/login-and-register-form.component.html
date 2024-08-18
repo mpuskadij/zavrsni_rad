@@ -1,0 +1,9 @@
+<label for="username">Username:</label>
+<input id="username" type="text" formControlName="username" required minlength="5" maxlength="25">
+
+<label for="password">Password:</label>
+<input id="password" type="password" formControlName="password" required minlength="8">
+
+<button type="button" [disabled]="form.status !== 'VALID'" (click)="submitForm()">{{buttonName}}</button>
+
+<p *ngIf="errorMessage">{{errorMessage}}</p>
