@@ -31,5 +31,12 @@ describe('NavigationComponent', () => {
 
       expect(link).not.toBeNull();
     });
+
+    it('should have a /login link', () => {
+      const ui: HTMLElement = fixture.nativeElement;
+      const link = ui.querySelector('a[routerLink="/login"]');
+
+      expect(link).not.toBeNull();
+    });
   });
 });

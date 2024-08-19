@@ -4,15 +4,15 @@ import { UserService } from '../user-service/user.service';
 import { catchError, of } from 'rxjs';
 
 @Component({
-  selector: 'app-register',
-  templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss'],
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.scss',
 })
-export class RegisterComponent {
+export class LoginComponent {
   public errorMessage: string = '';
 
   constructor(private userService: UserService) {}
-  sendCredentials(user: IUser) {
+  sendRegistrationCredentials(user: IUser) {
     try {
       if (!user.password.length || !user.username.length) {
         throw new Error('Username and/or password are required!');
