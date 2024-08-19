@@ -10,6 +10,10 @@ import {
   HttpClientTestingModule,
   HttpTestingController,
 } from '@angular/common/http/testing';
+import { NavigationComponent } from 'src/app/navigation/navigation.component';
+import { RouterTestingHarness } from '@angular/router/testing';
+import { RouterModule } from '@angular/router';
+import { AppRoutingModule } from 'src/app/app-routing.module';
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
@@ -20,7 +24,12 @@ describe('RegisterComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [UserService],
-      imports: [FormsModule, HttpClientTestingModule],
+      imports: [
+        FormsModule,
+        HttpClientTestingModule,
+        NavigationComponent,
+        AppRoutingModule,
+      ],
       declarations: [RegisterComponent],
     });
     fixture = TestBed.createComponent(RegisterComponent);
