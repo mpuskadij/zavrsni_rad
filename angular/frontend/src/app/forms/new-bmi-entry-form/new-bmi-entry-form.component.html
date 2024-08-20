@@ -1,0 +1,10 @@
+<form [formGroup]="form">
+    <label for="height">Height ({{minHeight}} - {{maxHeight}}):</label>
+    <input id="height" type="number" [min]="minHeight" [max]="maxHeight" required>
+
+    <label for="weight">Weight ({{minWeight}} - {{maxWeight}}):</label>
+    <input id="weight" type="number" [min]="minWeight" [max]="maxWeight" required>
+
+    <button type="button" [disabled]="form.status != 'VALID'" (click)="submitForm()">Calculate</button>
+
+</form>

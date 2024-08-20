@@ -16,6 +16,7 @@ describe('UserService', () => {
   let httpClient: HttpClient;
   let httpTestingController: HttpTestingController;
   const registerUrl = `${environment.url}api/users/register`;
+  const loginUrl = `${environment.url}api/users/login`;
 
   beforeEach(() => {
     TestBed.configureTestingModule({ imports: [HttpClientTestingModule] });
@@ -45,6 +46,36 @@ describe('UserService', () => {
       service.register(user).subscribe();
 
       const request = httpTestingController.expectOne(registerUrl);
+      const responseBody: IBackendError = {
+        message: 'Username already exists',
+      };
+      request.flush(responseBody);
+
+      expect(request.request.method).toEqual('POST');
+    });
+  });
+
+  describe('login', () => {
+    it('should throw exception if username is falsy', () => {
+      const user: IUser = { username: '', password: 'asfkjsan77A' };
+      const result = () => service.login(user);
+
+      expect(result).toThrowError();
+    });
+
+    it('should throw exception if password is falsy', () => {
+      const user: IUser = { username: 'marin', password: '' };
+      const result = () => service.login(user);
+
+      expect(result).toThrowError();
+    });
+
+    it('should execute HTTP request when subscribed', () => {
+      const user: IUser = { username: 'marin', password: 'asjfa9s9asS' };
+
+      service.login(user).subscribe();
+
+      const request = httpTestingController.expectOne(loginUrl);
       const responseBody: IBackendError = {
         message: 'Username already exists',
       };

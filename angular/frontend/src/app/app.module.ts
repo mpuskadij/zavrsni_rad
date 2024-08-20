@@ -6,10 +6,17 @@ import { AppComponent } from './app.component';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { UserModule } from './user/user.module';
 import { NavigationComponent } from './navigation/navigation.component';
+import { BmiModule } from './bmi/bmi.module';
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, AppRoutingModule, UserModule, NavigationComponent],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    UserModule,
+    NavigationComponent,
+    BmiModule,
+  ],
   providers: [provideHttpClient(withFetch())],
   bootstrap: [AppComponent],
 })

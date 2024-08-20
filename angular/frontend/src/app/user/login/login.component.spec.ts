@@ -74,4 +74,45 @@ describe('LoginComponent', () => {
       expect(component.errorMessage).toBeFalsy();
     });
   });
+
+  describe('sendLoginCredentials', () => {
+    it('should throw exception if username is missing', () => {
+      const user: IUser = { username: '', password: 'akjldgkadgn23S' };
+      component.sendLoginCredentials(user);
+
+      expect(component.errorMessage).toBeTruthy();
+    });
+
+    it('should throw exception if password is missing', () => {
+      const user: IUser = { username: 'marin', password: '' };
+      component.sendLoginCredentials(user);
+
+      expect(component.errorMessage).toBeTruthy();
+    });
+
+    it('should throw exception if password is missing', () => {
+      const user: IUser = { username: 'marin', password: '' };
+      component.sendLoginCredentials(user);
+
+      expect(component.errorMessage).toBeTruthy();
+    });
+
+    it('should set error message if there was an error on backend', () => {
+      const user: IUser = { username: 'marin', password: '' };
+      const userService = TestBed.inject(UserService);
+      spyOn(userService, 'login').and.throwError('Username already exists');
+      component.sendLoginCredentials(user);
+
+      expect(component.errorMessage).toBeTruthy();
+    });
+
+    it('should not set error message if user registered', () => {
+      const user: IUser = { username: 'marin', password: 'abcdefsa' };
+      const userService = TestBed.inject(UserService);
+      spyOn(userService, 'login').and.returnValue(of());
+      component.sendRegistrationCredentials(user);
+
+      expect(component.errorMessage).toBeFalsy();
+    });
+  });
 });
