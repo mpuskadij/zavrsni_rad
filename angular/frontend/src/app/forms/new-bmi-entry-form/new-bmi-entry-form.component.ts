@@ -1,4 +1,4 @@
-import { Component, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { IBmi } from 'src/interfaces/ibmi';
 
@@ -13,10 +13,10 @@ export class NewBmiEntryFormComponent {
   public maxHeight = 300;
   public minWeight = 0;
   public maxWeight = 1000;
-  public onSubmit = new EventEmitter<IBmi>();
+  @Output() public onSubmit = new EventEmitter<IBmi>();
   public form = this.formBuilder.group({
     height: [
-      0,
+      this.minHeight - 1,
       [
         Validators.required,
         Validators.min(this.minHeight),
@@ -24,7 +24,7 @@ export class NewBmiEntryFormComponent {
       ],
     ],
     weight: [
-      0,
+      this.minWeight - 1,
       [
         Validators.required,
         Validators.min(this.minWeight),

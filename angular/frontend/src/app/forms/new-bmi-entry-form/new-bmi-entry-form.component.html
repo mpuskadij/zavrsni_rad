@@ -3,8 +3,8 @@
     <input id="height" type="number" [min]="minHeight" [max]="maxHeight" required>
 
     <label for="weight">Weight ({{minWeight}} - {{maxWeight}}):</label>
-    <input id="weight" type="number" [min]="minWeight" [max]="maxWeight" required>
+    <input id="weight" type="number" value="" [min]="minWeight" [max]="maxWeight" required>
 
-    <button type="button" [disabled]="form.status != 'VALID'" (click)="submitForm()">Calculate</button>
+    <button type="button" id="submitBmi" [disabled]="form.status !== 'VALID'" (click)="submitForm()">Calculate</button>
 
 </form>
