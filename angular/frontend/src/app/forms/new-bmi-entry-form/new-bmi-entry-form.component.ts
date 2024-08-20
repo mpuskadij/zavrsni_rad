@@ -8,18 +8,6 @@ import { IBmi } from 'src/interfaces/ibmi';
   styleUrl: './new-bmi-entry-form.component.scss',
 })
 export class NewBmiEntryFormComponent {
-  submitForm() {
-    try {
-      const height = this.form.controls.height.value;
-      if (height !== null) {
-        if (height < 0) {
-          throw new Error('Height cannot be less than 0!');
-        }
-      }
-    } catch (error: any) {
-      this.errorMessage = error.message;
-    }
-  }
   public errorMessage = '';
   public minHeight = 0;
   public maxHeight = 300;
@@ -46,4 +34,35 @@ export class NewBmiEntryFormComponent {
   });
 
   constructor(private formBuilder: FormBuilder) {}
+
+  public submitForm(): void {
+    try {
+      const height = this.form.controls.height.value;
+      const weight = this.form.controls.weight.value;
+      if (height !== null && weight !== null) {
+        if (height < this.minHeight || height > this.maxHeight) {
+          throw new Error(
+            'Height must be in range: ' +
+              this.minHeight +
+              ' - ' +
+              this.maxHeight
+          );
+        }
+        if (weight < this.minWeight || weight > this.maxWeight) {
+          throw new Error(
+            'Weight must be in range: ' +
+              this.minWeight +
+              ' - ' +
+              this.maxWeight
+          );
+        }
+        const bmi: IBmi = { height: height, weight: weight };
+        this.onSubmit.emit(bmi);
+      } else {
+        throw new Error('Error getting height and weight!');
+      }
+    } catch (error: any) {
+      this.errorMessage = error.message;
+    }
+  }
 }
