@@ -105,10 +105,21 @@ describe('NewBmiEntryFormComponent', () => {
       expect(button!.disabled).toBeTrue();
     });
 
-    it('should display a enabled button if weight and height in range', () => {
+    it('should display a enabled button if weight and height at minimum', () => {
       const ui: HTMLElement = fixture.nativeElement;
       component.form.controls.weight.setValue(component.minWeight);
       component.form.controls.height.setValue(component.minHeight);
+
+      fixture.detectChanges();
+
+      const button = ui.querySelector('button');
+      expect(button!.disabled).toBeFalse();
+    });
+
+    it('should display a enabled button if weight and height at maximum', () => {
+      const ui: HTMLElement = fixture.nativeElement;
+      component.form.controls.weight.setValue(component.maxWeight);
+      component.form.controls.height.setValue(component.maxHeight);
 
       fixture.detectChanges();
 
