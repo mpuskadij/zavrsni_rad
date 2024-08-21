@@ -33,5 +33,48 @@ describe('GraphComponent', () => {
       const lineChart = ui.querySelector('canvas[id="lineChart"]');
       expect(lineChart).not.toBeNull();
     });
+
+    it('should contain bar chart when input property passed', () => {
+      const ui: HTMLElement = fixture.nativeElement;
+      const bmiData: IBmiGraphData = { bmi: 17.5, dateAdded: new Date() };
+      component.graphData = [bmiData];
+
+      const lineChart = ui.querySelector('canvas[id="barChart"]');
+      expect(lineChart).not.toBeNull();
+    });
+
+    it('should contain scatter chart when input property passed', () => {
+      const ui: HTMLElement = fixture.nativeElement;
+      const bmiData: IBmiGraphData = { bmi: 17.5, dateAdded: new Date() };
+      component.graphData = [bmiData];
+
+      const lineChart = ui.querySelector('canvas[id="scatterChart"]');
+      expect(lineChart).not.toBeNull();
+    });
+  });
+
+  describe('ngOnInit', () => {
+    it('should not extract data from input property if input property is undefined', () => {
+      component.graphData = undefined;
+      component.ngOnInit();
+
+      expect(component.chartData.datasets.length).toBe(0);
+    });
+
+    it('should not extract data from input property if input property is empty', () => {
+      component.graphData = [];
+      component.ngOnInit();
+
+      expect(component.chartData.datasets.length).toBe(0);
+    });
+
+    it('should extract data from input property and place it into datasets', () => {
+      component.graphData = [{ bmi: 1, dateAdded: new Date() }];
+
+      fixture.detectChanges();
+      component.ngOnInit();
+
+      expect(component.chartData.datasets.length).toBe(1);
+    });
   });
 });
