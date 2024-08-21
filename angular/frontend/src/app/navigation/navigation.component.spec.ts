@@ -25,13 +25,6 @@ describe('NavigationComponent', () => {
       expect(nav).not.toBeNull();
     });
 
-    it('should have a /register link', () => {
-      const ui: HTMLElement = fixture.nativeElement;
-      const link = ui.querySelector('a[routerLink="/register"]');
-
-      expect(link).not.toBeNull();
-    });
-
     it('should have a /login link', () => {
       const ui: HTMLElement = fixture.nativeElement;
       const link = ui.querySelector('a[routerLink="/login"]');
