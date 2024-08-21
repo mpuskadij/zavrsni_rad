@@ -1,0 +1,3 @@
+<app-navigation></app-navigation>
+<app-new-bmi-entry-form *ngIf="canShowForm()" (onSubmit)="sendBmi($event)"></app-new-bmi-entry-form>
+<p *ngIf="errorMessage">{{errorMessage}}</p>

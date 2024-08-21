@@ -25,7 +25,7 @@ export class UserService {
     }
     return this.httpClient.post(
       `${environment.url}${this.endpoint}login`,
-      user
+      JSON.stringify(user)
     );
   }
 
