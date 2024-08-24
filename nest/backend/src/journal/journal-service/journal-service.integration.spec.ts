@@ -190,15 +190,10 @@ describe('JournalService (integration tests)', () => {
 
   describe('updateEntry', () => {
     it('should throw ForbiddenException if user has 0 entries', async () => {
-      await userRepo.save(user);
-
-      const userNoEntries = await userRepo.findOne({
-        where: { username: user.username },
-        relations: ['journalEntries'],
-      });
+      const dbUSer = await userRepo.save(user);
 
       await expect(
-        provider.updateEntry(userNoEntries.journalEntries, null),
+        provider.updateEntry(dbUSer.journalEntries, null),
       ).rejects.toBeInstanceOf(ForbiddenException);
     });
 
