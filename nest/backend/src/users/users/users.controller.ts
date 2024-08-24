@@ -24,6 +24,7 @@ import { User } from '../../entities/user/user';
 import { GetUsersDto } from '../../dtos/get-users-dto/get-users-dto';
 import { plainToInstance } from 'class-transformer';
 import { Payload } from '../../decorators/payload/payload.decorator';
+import { LoginDto } from '../../dtos/login-dto/login-dto';
 
 @Controller('users')
 export class UsersController {
@@ -72,7 +73,9 @@ export class UsersController {
     }
     const token = await this.userService.createJWT(username);
     response.cookie('token', token, { httpOnly: true, sameSite: true });
-    return;
+    const user = await this.userService.getUser(username);
+    const loginData: LoginDto = { isAdmin: user.isAdmin };
+    return loginData;
   }
 
   @Put('/:username')

@@ -178,6 +178,21 @@ describe('UserController (e2e)', () => {
       });
   });
 
+  it('/api/users/register (POST) should return 200 with isAdmin in body', async () => {
+    const userCredentials = { username: username, password: password };
+    const registerResponse = await request(app.getHttpServer())
+      .post('/api/users/register')
+      .send(userCredentials);
+
+    expect(registerResponse.status).toBe(HttpStatus.CREATED);
+
+    const loginResponse = await request(app.getHttpServer())
+      .post('/api/users/login')
+      .send(userCredentials);
+
+    expect(loginResponse.body).toHaveProperty('isAdmin');
+  });
+
   describe('PUT /api/users/:username', () => {
     it('should return 400 BAD REQUEST if nonexistent username sent', async () => {
       const response = await request(app.getHttpServer()).put(
