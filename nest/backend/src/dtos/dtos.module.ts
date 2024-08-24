@@ -25,6 +25,7 @@ import { AddFoodToNutritionDto } from './add-food-to-nutrition-dto/add-food-to-n
 import { UpdateFoodQuantityDto } from './update-food-quantity-dto/update-food-quantity-dto';
 import { GetFoodDto } from './get-food-dto/get-food-dto';
 import { GetUsersDto } from './get-users-dto/get-users-dto';
+import { TimeDto } from './time-dto/time-dto';
 
 @Module({
   imports: [EntitiesModule],
@@ -53,6 +54,7 @@ import { GetUsersDto } from './get-users-dto/get-users-dto';
     UpdateFoodQuantityDto,
     GetFoodDto,
     GetUsersDto,
+    TimeDto,
   ],
   providers: [
     BmiEntryDto,
@@ -80,6 +82,7 @@ import { GetUsersDto } from './get-users-dto/get-users-dto';
     UpdateFoodQuantityDto,
     GetFoodDto,
     GetUsersDto,
+    TimeDto,
   ],
 })
 export class DtosModule {}

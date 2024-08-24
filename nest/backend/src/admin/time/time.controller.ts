@@ -12,6 +12,8 @@ import {
 import { AdminGuard } from '../../guards/admin/admin.guard';
 import { JwtGuard } from '../../guards/jwt/jwt.guard';
 import { VirtualTimeService } from '../virtual-time-service/virtual-time-service';
+import { plainToInstance } from 'class-transformer';
+import { TimeDto } from '../../dtos/time-dto/time-dto';
 
 @Controller('time')
 export class TimeController {
@@ -21,7 +23,8 @@ export class TimeController {
   async getServerTime(): Promise<any> {
     try {
       const serverTime = await this.virtualTimeService.getTime();
-      return serverTime;
+      const timeDto: TimeDto = { time: serverTime };
+      return timeDto;
     } catch (error) {
       throw new InternalServerErrorException(
         'Server had trouble getting time!',

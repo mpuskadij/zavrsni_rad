@@ -39,6 +39,7 @@ import { Food } from '../src/entities/food/food';
 import { JwtPayload } from '../src/authentication/jwt-payload/jwt-payload';
 import { AdminModule } from '../src/admin/admin.module';
 import { AdminGuard } from '../src/guards/admin/admin.guard';
+import { TimeDto } from '../src/dtos/time-dto/time-dto';
 
 describe('Time Controller (e2e tests)', () => {
   let app: INestApplication;
@@ -125,7 +126,7 @@ describe('Time Controller (e2e tests)', () => {
       const response = await request(app.getHttpServer()).get(timePath);
 
       expect(response.status).toBe(HttpStatus.OK);
-      expect(response.body).toBeDefined();
+      expect(response.body).toHaveProperty('time');
     });
   });
 
