@@ -166,14 +166,10 @@ describe('JournalService (integration tests)', () => {
 
   describe('getJournalEntries', () => {
     it('should throw ForbiddenException if user has no journal entries', async () => {
-      await userRepo.save(user);
-      const userNoEntries = await userRepo.findOne({
-        where: { username: user.username },
-        relations: ['journalEntries'],
-      });
-      await expect(
-        provider.getJournalEntries(userNoEntries),
-      ).rejects.toBeInstanceOf(ForbiddenException);
+      const dbUser = await userRepo.save(user);
+      await expect(provider.getJournalEntries(dbUser)).rejects.toBeInstanceOf(
+        ForbiddenException,
+      );
     });
 
     it('should return correct number of entries if entries exist', async () => {
@@ -208,19 +204,14 @@ describe('JournalService (integration tests)', () => {
       entry.description = 'Boring...';
       entry.title = 'First day!';
       userWithEntry.journalEntries.push(entry);
-      await userRepo.save(userWithEntry);
-
-      const userWithEntryDatabase = await userRepo.findOne({
-        where: { username: userWithEntry.username },
-        relations: ['journalEntries'],
-      });
+      const dbUser = await userRepo.save(userWithEntry);
       const sentData: JournalEntryDto = {
         dateAdded: new Date(),
         description: 'a',
         title: 'as',
       };
       await expect(
-        provider.updateEntry(userWithEntryDatabase.journalEntries, sentData),
+        provider.updateEntry(dbUser.journalEntries, sentData),
       ).rejects.toBeInstanceOf(BadRequestException);
     });
 
@@ -235,19 +226,14 @@ describe('JournalService (integration tests)', () => {
       entry.description = 'Boring...';
       entry.title = 'First day!';
       userWithEntry.journalEntries.push(entry);
-      await userRepo.save(userWithEntry);
-
-      const userWithEntryDatabase = await userRepo.findOne({
-        where: { username: userWithEntry.username },
-        relations: ['journalEntries'],
-      });
+      const dbUser = await userRepo.save(userWithEntry);
       const sentData: JournalEntryDto = {
         dateAdded: new Date(),
         description: entry.description,
         title: entry.title,
       };
       await expect(
-        provider.updateEntry(userWithEntryDatabase.journalEntries, sentData),
+        provider.updateEntry(dbUser.journalEntries, sentData),
       ).rejects.toBeInstanceOf(BadRequestException);
     });
   });
