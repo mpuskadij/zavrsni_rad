@@ -173,14 +173,8 @@ describe('JournalService (integration tests)', () => {
     });
 
     it('should return correct number of entries if entries exist', async () => {
-      await userRepo.save(userWithJournalEntry);
-      const userWithEntry = await userRepo.findOne({
-        where: { username: userWithJournalEntry.username },
-        relations: ['journalEntries'],
-      });
-      await expect(
-        provider.getJournalEntries(userWithEntry),
-      ).resolves.toHaveLength(1);
+      const dbUser = await userRepo.save(userWithJournalEntry);
+      await expect(provider.getJournalEntries(dbUser)).resolves.toHaveLength(1);
     });
   });
 
