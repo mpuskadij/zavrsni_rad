@@ -11,8 +11,9 @@ import {
   HttpClientTestingModule,
   HttpTestingController,
 } from '@angular/common/http/testing';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { TimeModule } from 'src/app/time/time.module';
+import { IBmiGraphData } from 'src/interfaces/ibmi-graph-data';
 
 describe('BmiComponent', () => {
   let component: BmiComponent;
@@ -42,7 +43,7 @@ describe('BmiComponent', () => {
   });
 
   describe('ngOnInit', () => {
-    it('should use bmi service to GET previous bmi entries', () => {
+    it('should set previous bmi entries if there are any', () => {
       spyOn(bmiService, 'getPreviousBmiEntries').and.returnValue(of());
 
       component.ngOnInit();
@@ -50,12 +51,26 @@ describe('BmiComponent', () => {
       expect(bmiService.getPreviousBmiEntries).toHaveBeenCalled();
     });
 
-    it('should set previous bmi entries if there are any', () => {
-      spyOn(bmiService, 'getPreviousBmiEntries').and.returnValue(of());
+    it('should set previous bmi entries if backend returned OK', () => {
+      const previousEntry: IBmiGraphData = { bmi: 0, dateAdded: new Date() };
+      spyOn(bmiService, 'getPreviousBmiEntries').and.returnValue(
+        of([previousEntry])
+      );
 
       component.ngOnInit();
 
-      expect(bmiService.getPreviousBmiEntries).toHaveBeenCalled();
+      expect(component.previousBmiEntries.length).toBe(1);
+      expect(component.previousBmiEntries[0]).toEqual(previousEntry);
+    });
+
+    it('should set display error message if there was an error fetchig bmi entries', () => {
+      spyOn(bmiService, 'getPreviousBmiEntries').and.returnValue(
+        throwError(() => new Error('Backend error!'))
+      );
+
+      component.ngOnInit();
+
+      expect(component.errorMessage).toBeTruthy();
     });
   });
 

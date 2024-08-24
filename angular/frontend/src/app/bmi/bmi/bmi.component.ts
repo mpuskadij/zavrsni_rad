@@ -18,8 +18,14 @@ export class BmiComponent implements OnInit {
   constructor(private bmiService: BmiService) {}
 
   ngOnInit(): void {
-    this.bmiService.getPreviousBmiEntries().subscribe((response) => {
-      this.previousBmiEntries = response;
+    this.bmiService.getPreviousBmiEntries().subscribe({
+      next: (previousBmis) => {
+        this.previousBmiEntries = previousBmis;
+      },
+      error: () => {
+        this.errorMessage =
+          'Something went wrong while getting your previous bmi entries!';
+      },
     });
   }
 
