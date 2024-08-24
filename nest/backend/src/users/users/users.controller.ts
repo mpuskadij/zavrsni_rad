@@ -71,7 +71,7 @@ export class UsersController {
       throw new UnauthorizedException('Username and/or password not valid!');
     }
     const token = await this.userService.createJWT(username);
-    response.cookie('token', token, { httpOnly: true });
+    response.cookie('token', token, { httpOnly: true, sameSite: true });
     return;
   }
 
