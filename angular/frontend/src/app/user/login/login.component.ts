@@ -27,7 +27,6 @@ export class LoginComponent {
             'Something went wrong while trying to register your account!';
         },
       });
-      //this.sendLoginCredentials(user);
     } catch (error: any) {
       this.errorMessage = error.message;
     }

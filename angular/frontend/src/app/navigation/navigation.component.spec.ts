@@ -24,12 +24,31 @@ describe('NavigationComponent', () => {
 
       expect(nav).not.toBeNull();
     });
+  });
 
-    it('should have a /login link', () => {
-      const ui: HTMLElement = fixture.nativeElement;
-      const link = ui.querySelector('a[routerLink="/login"]');
+  describe('ngOnInit', () => {
+    it('should set isLoggedIn to true if session storage isAdmin is true', () => {
+      sessionStorage.setItem('isAdmin', 'true');
 
-      expect(link).not.toBeNull();
+      component.ngOnInit();
+
+      expect(component.isLoggedIn).toBeTrue();
+    });
+
+    it('should set isLoggedIn to true if session storage isAdmin is false', () => {
+      sessionStorage.setItem('isAdmin', 'false');
+
+      component.ngOnInit();
+
+      expect(component.isLoggedIn).toBeTrue();
+    });
+
+    it('should set isLoggedIn to false if session storage isAdmin is neither true or false', () => {
+      sessionStorage.setItem('isAdmin', '0');
+
+      component.ngOnInit();
+
+      expect(component.isLoggedIn).toBeFalse();
     });
   });
 });
