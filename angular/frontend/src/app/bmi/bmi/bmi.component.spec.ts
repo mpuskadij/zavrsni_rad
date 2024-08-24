@@ -12,6 +12,7 @@ import {
   HttpTestingController,
 } from '@angular/common/http/testing';
 import { of } from 'rxjs';
+import { TimeModule } from 'src/app/time/time.module';
 
 describe('BmiComponent', () => {
   let component: BmiComponent;
@@ -27,6 +28,7 @@ describe('BmiComponent', () => {
         GraphsModule,
         FormsModule,
         AppRoutingModule,
+        TimeModule,
         HttpClientTestingModule,
       ],
       providers: [BmiService],
@@ -57,24 +59,46 @@ describe('BmiComponent', () => {
     });
   });
 
-  describe('canShowForm', () => {
+  describe('checkIfFormCanBeShown', () => {
     it('should return true if no previous bmi entries!', () => {
       component.previousBmiEntries = [];
 
-      const result = component.canShowForm();
+      component.checkIfFormCanBeShown(new Date());
 
-      expect(result).toBeTrue();
+      expect(component.canShow).toBeTrue();
     });
 
-    it('should return false if 6 days passed', () => {
+    it('should set canShow to false if 6 days passed', () => {
       component.previousBmiEntries.push({
         bmi: 0,
         dateAdded: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
       });
 
-      const result = component.canShowForm();
+      component.checkIfFormCanBeShown(new Date());
 
-      expect(result).toBeFalse();
+      expect(component.canShow).toBeFalse();
+    });
+
+    it('should set canShow to true if 7 days passed', () => {
+      component.previousBmiEntries.push({
+        bmi: 0,
+        dateAdded: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      });
+
+      component.checkIfFormCanBeShown(new Date());
+
+      expect(component.canShow).toBeTrue();
+    });
+
+    it('should set canShow to true if 8 days passed', () => {
+      component.previousBmiEntries.push({
+        bmi: 0,
+        dateAdded: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000),
+      });
+
+      component.checkIfFormCanBeShown(new Date());
+
+      expect(component.canShow).toBeTrue();
     });
   });
 });

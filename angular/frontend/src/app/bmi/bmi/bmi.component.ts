@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { IBmi } from 'src/interfaces/ibmi';
 import { BmiService } from '../bmi-service/bmi.service';
 import { IBmiGraphData } from 'src/interfaces/ibmi-graph-data';
+import { ClockComponent } from 'src/app/time/clock/clock.component';
 
 @Component({
   selector: 'app-bmi',
@@ -10,6 +11,7 @@ import { IBmiGraphData } from 'src/interfaces/ibmi-graph-data';
   styleUrl: './bmi.component.scss',
 })
 export class BmiComponent implements OnInit {
+  public canShow: boolean = false;
   public errorMessage: string = '';
   previousBmiEntries: IBmiGraphData[] = [];
 
@@ -25,7 +27,29 @@ export class BmiComponent implements OnInit {
     throw new Error('Method not implemented.');
   }
 
-  canShowForm(): boolean {
-    return this.previousBmiEntries.length == 0;
+  checkIfFormCanBeShown(serverTime: Date): void {
+    if (this.previousBmiEntries.length > 0) {
+      const latestEntry = this.previousBmiEntries.find((bmi) =>
+        Math.max(bmi.dateAdded.getTime())
+      );
+
+      const currentDate = new Date(serverTime.getTime());
+      currentDate.setHours(0, 0, 0, 0);
+
+      const latestEntryDate = new Date(latestEntry!.dateAdded.getTime());
+      latestEntryDate.setHours(0, 0, 0, 0);
+
+      const differenceInMiliseconds = Math.abs(
+        currentDate.getTime() - latestEntryDate.getTime()
+      );
+      const differenceInDays = Math.floor(
+        differenceInMiliseconds / (1000 * 60 * 60 * 24)
+      );
+      if (differenceInDays < 7) {
+        return;
+      }
+      this.canShow = true;
+    }
+    this.canShow = true;
   }
 }
