@@ -11,6 +11,7 @@ import {
 } from '@angular/common/http/testing';
 import { NavigationComponent } from 'src/app/navigation/navigation.component';
 import { FormsModule } from 'src/app/forms/forms.module';
+import { ILoginData } from 'src/interfaces/ilogin-data';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -106,13 +107,15 @@ describe('LoginComponent', () => {
       expect(component.errorMessage).toBeTruthy();
     });
 
-    it('should not set error message if user registered', () => {
+    it('should set session storage isAdmin based on response', () => {
       const user: IUser = { username: 'marin', password: 'abcdefsa' };
       const userService = TestBed.inject(UserService);
-      spyOn(userService, 'login').and.returnValue(of());
-      component.sendRegistrationCredentials(user);
+      const loginData: ILoginData = { isAdmin: false };
+      spyOn(userService, 'login').and.returnValue(of(loginData));
+      component.sendLoginCredentials(user);
 
-      expect(component.errorMessage).toBeFalsy();
+      expect(sessionStorage.getItem('isAdmin')).toBeTruthy();
+      expect(sessionStorage.getItem('isAdmin')).toEqual('false');
     });
   });
 });

@@ -2,13 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { ILoginData } from 'src/interfaces/ilogin-data';
 import { IUser } from 'src/interfaces/iuser';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  private endpoint: string = 'api/users/';
+  private endpoint: string = 'users/';
   register(user: IUser) {
     if (!user.username.length || !user.password.length) {
       throw new Error('Username and password are both required!');
@@ -23,7 +24,7 @@ export class UserService {
     if (!user.username.length || !user.password.length) {
       throw new Error('Username and password are both required!');
     }
-    return this.httpClient.post(
+    return this.httpClient.post<ILoginData>(
       `${environment.url}${this.endpoint}login`,
       JSON.stringify(user)
     );

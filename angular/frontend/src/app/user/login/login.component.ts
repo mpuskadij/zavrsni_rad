@@ -18,17 +18,16 @@ export class LoginComponent {
       if (!user.password.length || !user.username.length) {
         throw new Error('Username and/or password are required!');
       }
-      this.userService
-        .register(user)
-        .pipe(
-          catchError((error) => {
-            this.errorMessage = error.message;
-            return of();
-          })
-        )
-        .subscribe(() => {
+      this.userService.register(user).subscribe({
+        next: () => {
           this.sendLoginCredentials(user);
-        });
+        },
+        error: () => {
+          this.errorMessage =
+            'Something went wrong while trying to register your account!';
+        },
+      });
+      //this.sendLoginCredentials(user);
     } catch (error: any) {
       this.errorMessage = error.message;
     }
@@ -39,15 +38,14 @@ export class LoginComponent {
       if (!user.password.length || !user.username.length) {
         throw new Error('Username and/or password are required!');
       }
-      this.userService
-        .login(user)
-        .pipe(
-          catchError((error) => {
-            this.errorMessage = error.message;
-            return of();
-          })
-        )
-        .subscribe(() => {});
+      this.userService.login(user).subscribe({
+        next: (loginData) => {
+          sessionStorage.setItem('isAdmin', loginData.isAdmin.toString());
+        },
+        error: () => {
+          this.errorMessage = 'Something went wrong while trying to login!';
+        },
+      });
     } catch (error: any) {
       this.errorMessage = error.message;
     }

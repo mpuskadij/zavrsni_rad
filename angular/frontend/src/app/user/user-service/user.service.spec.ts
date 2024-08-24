@@ -15,8 +15,8 @@ describe('UserService', () => {
   let service: UserService;
   let httpClient: HttpClient;
   let httpTestingController: HttpTestingController;
-  const registerUrl = `${environment.url}api/users/register`;
-  const loginUrl = `${environment.url}api/users/login`;
+  const registerUrl = `${environment.url}users/register`;
+  const loginUrl = `${environment.url}users/login`;
 
   beforeEach(() => {
     TestBed.configureTestingModule({ imports: [HttpClientTestingModule] });
