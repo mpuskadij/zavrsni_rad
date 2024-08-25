@@ -22,7 +22,11 @@ export class BmiService {
     return this.httpClient.post<IResponseBmi>(
       this.endPoint,
       JSON.stringify(bmi),
-      { observe: 'body' }
+      {
+        observe: 'body',
+        withCredentials: true,
+        headers: { 'Content-Type': 'applicaiton/json' },
+      }
     );
   }
 
@@ -30,6 +34,7 @@ export class BmiService {
     return this.httpClient.get<IBmiGraphData[]>(this.endPoint, {
       responseType: 'json',
       observe: 'body',
+      withCredentials: true,
     });
   }
 }

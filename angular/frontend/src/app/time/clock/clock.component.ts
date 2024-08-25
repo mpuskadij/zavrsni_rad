@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { TimeService } from '../time-service/time.service';
-import { catchError, throwError } from 'rxjs';
+import { catchError, map, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
@@ -16,17 +16,25 @@ export class ClockComponent implements OnInit {
   constructor(private timeService: TimeService) {}
 
   ngOnInit(): void {
-    this.timeService.getServerTime().subscribe({
-      next: (serverTime) => {
-        this.time = serverTime.time;
-      },
-      error: () => {
-        this.note = 'Note: displayed time is not server time';
-        this.onTimeSet.emit(this.time);
-      },
-      complete: () => {
-        this.onTimeSet.emit(this.time);
-      },
-    });
+    this.timeService
+      .getServerTime()
+      .pipe(
+        map((time) => {
+          time.time = new Date(time.time);
+          return time;
+        })
+      )
+      .subscribe({
+        next: (serverTime) => {
+          this.time = serverTime.time;
+        },
+        error: () => {
+          this.note = 'Note: displayed time is not server time';
+          this.onTimeSet.emit(this.time);
+        },
+        complete: () => {
+          this.onTimeSet.emit(this.time);
+        },
+      });
   }
 }

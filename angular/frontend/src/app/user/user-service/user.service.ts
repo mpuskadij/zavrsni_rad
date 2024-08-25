@@ -17,7 +17,11 @@ export class UserService {
     return this.httpClient.post<HttpResponse<object>>(
       `${environment.url}${this.endpoint}register`,
       JSON.stringify(user),
-      { observe: 'response', headers: { recaptcha: token } }
+      {
+        observe: 'response',
+        headers: { recaptcha: token, 'Content-Type': 'application/json' },
+        withCredentials: true,
+      }
     );
   }
 
@@ -28,7 +32,12 @@ export class UserService {
     return this.httpClient.post<ILoginData>(
       `${environment.url}${this.endpoint}login`,
       JSON.stringify(user),
-      { observe: 'body', responseType: 'json', headers: { recaptcha: token } }
+      {
+        observe: 'body',
+        responseType: 'json',
+        headers: { recaptcha: token, 'Content-Type': 'application/json' },
+        withCredentials: true,
+      }
     );
   }
 

@@ -26,6 +26,14 @@ describe('TimeService', () => {
 
       expect(request.request.method).toBe('GET');
     });
+
+    it('should fetch server time with credentials', () => {
+      service.getServerTime().subscribe();
+
+      const request = httpTestingController.expectOne(`${environment.url}time`);
+
+      expect(request.request.withCredentials).toBe(true);
+    });
   });
 
   afterEach(() => {

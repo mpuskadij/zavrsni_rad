@@ -7,7 +7,7 @@ import { User } from './entities/user/user';
 import { GoogleRecaptchaModule } from '@nestlab/google-recaptcha';
 import { ConfigModule } from '@nestjs/config';
 import { CrpytoModule } from './crpyto/crpyto.module';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AuthenticationService } from './authentication/authentication-service/authentication-service';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { BmiModule } from './bmi/bmi.module';
@@ -69,7 +69,7 @@ import { APP_GUARD } from '@nestjs/core';
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       global: true,
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: '15min' },
     }),
     CrpytoModule,
     AuthenticationModule,

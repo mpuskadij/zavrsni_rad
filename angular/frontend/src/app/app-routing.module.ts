@@ -6,6 +6,7 @@ import { BmiComponent } from './bmi/bmi/bmi.component';
 const routes: Routes = [
   { path: 'login', component: LoginComponent, title: 'Login' },
   { path: 'bmi', component: BmiComponent, title: 'BMI' },
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
 ];
 
 @NgModule({

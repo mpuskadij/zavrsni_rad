@@ -37,7 +37,7 @@ export class LoginComponent {
       }
       this.userService.register(user, token).subscribe({
         next: () => {
-          this.sendLoginCredentials(user, token);
+          this.errorMessage = 'Registration was a success!';
         },
         error: () => {
           this.errorMessage =
@@ -88,17 +88,14 @@ export class LoginComponent {
   public register() {
     try {
       const user = this.validateForm();
-      this.recaptchaService
-        .execute('register')
-        .subscribe({
-          next: (token) => {
-            this.sendRegistrationCredentials(user, token);
-          },
-          error: () => {
-            this.errorMessage = 'Recaptcha encountered an error!';
-          },
-        })
-        .unsubscribe();
+      this.recaptchaService.execute('register').subscribe({
+        next: (token) => {
+          this.sendRegistrationCredentials(user, token);
+        },
+        error: () => {
+          this.errorMessage = 'Something went wrong with recaptcha!';
+        },
+      });
     } catch (error: any) {
       this.errorMessage = error.message;
     }
@@ -107,17 +104,14 @@ export class LoginComponent {
   public login() {
     try {
       const user = this.validateForm();
-      this.recaptchaService
-        .execute('login')
-        .subscribe({
-          next: (token) => {
-            this.sendLoginCredentials(user, token);
-          },
-          error: () => {
-            this.errorMessage = 'Recaptcha encountered an error!';
-          },
-        })
-        .unsubscribe();
+      this.recaptchaService.execute('login').subscribe({
+        next: (token) => {
+          this.sendLoginCredentials(user, token);
+        },
+        error: () => {
+          this.errorMessage = 'Recaptcha encountered an error!';
+        },
+      });
     } catch (error: any) {
       this.errorMessage = error.message;
     }

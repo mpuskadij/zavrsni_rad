@@ -10,6 +10,9 @@ import { BmiModule } from './bmi/bmi.module';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { RECAPTCHA_V3_SITE_KEY, RecaptchaV3Module } from 'ng-recaptcha';
 import { environment } from 'src/environments/environment';
+import { LoginComponent } from './user/login/login.component';
+import { UserService } from './user/user-service/user.service';
+import { BmiService } from './bmi/bmi-service/bmi.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -25,6 +28,8 @@ import { environment } from 'src/environments/environment';
     provideHttpClient(withFetch()),
     provideCharts(withDefaultRegisterables()),
     { provide: RECAPTCHA_V3_SITE_KEY, useValue: environment.site_key },
+    UserService,
+    BmiService,
   ],
   bootstrap: [AppComponent],
 })

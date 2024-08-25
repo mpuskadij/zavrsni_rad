@@ -6,10 +6,22 @@ import { provideHttpClient, withFetch } from '@angular/common/http';
 import { NavigationComponent } from '../navigation/navigation.component';
 import { LoginComponent } from './login/login.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { RECAPTCHA_V3_SITE_KEY, RecaptchaV3Module } from 'ng-recaptcha';
+import { environment } from 'src/environments/environment';
 
 @NgModule({
   declarations: [LoginComponent],
-  providers: [UserService, provideHttpClient(withFetch())],
-  imports: [CommonModule, ReactiveFormsModule, NavigationComponent],
+  providers: [
+    UserService,
+    provideHttpClient(withFetch()),
+    { provide: RECAPTCHA_V3_SITE_KEY, useValue: environment.site_key },
+  ],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    NavigationComponent,
+    RecaptchaV3Module,
+  ],
+  exports: [LoginComponent],
 })
 export class UserModule {}

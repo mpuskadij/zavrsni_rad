@@ -43,6 +43,24 @@ describe('BmiService', () => {
 
       expect(request.request.method).toBe('POST');
     });
+
+    it('should send credentials with http client', () => {
+      const data: IBmi = { height: 150, weight: 12 };
+      service.sendBmiData(data).subscribe();
+
+      const request = httpTestingController.expectOne(`${environment.url}bmi`);
+
+      expect(request.request.withCredentials).toBe(true);
+    });
+
+    it('should set Content-Type to application/json', () => {
+      const data: IBmi = { height: 150, weight: 12 };
+      service.sendBmiData(data).subscribe();
+
+      const request = httpTestingController.expectOne(`${environment.url}bmi`);
+
+      expect(request.request.headers.has('Content-Type')).toBe(true);
+    });
   });
 
   describe('getPreviousBmiEntries', () => {
