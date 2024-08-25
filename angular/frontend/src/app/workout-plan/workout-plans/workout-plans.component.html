@@ -1,1 +1,17 @@
-<p>workout-plans works!</p>
+<app-navigation></app-navigation>
+<table *ngIf="workoutPlans.length">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Date created</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let workoutPlan of workoutPlans">
+            <td>{{workoutPlan.title}}</td>
+            <td>{{workoutPlan.dateAdded.toLocaleString()}}</td>
+        </tr>
+    </tbody>
+</table>
+<button id="addWorkoutPlan">Create a new workout plan</button>
+<app-clock></app-clock>

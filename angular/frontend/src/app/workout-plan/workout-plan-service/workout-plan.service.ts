@@ -9,8 +9,8 @@ import { IWorkoutPlan } from 'src/interfaces/iworkout-plan';
 })
 export class WorkoutPlanService {
   private endpoint: string = `${environment.url}workout-plans`;
-  getAllWorkoutPlans(): Observable<IWorkoutPlan> {
-    return this.httpClient.get<IWorkoutPlan>(this.endpoint, {
+  getAllWorkoutPlans(): Observable<IWorkoutPlan[]> {
+    return this.httpClient.get<IWorkoutPlan[]>(this.endpoint, {
       observe: 'body',
       responseType: 'json',
     });
