@@ -28,14 +28,20 @@ describe('UserService', () => {
   describe('register', () => {
     it('should throw exception if username is falsy', () => {
       const user: IUser = { username: '', password: 'asfkjsan77A' };
-      const result = () => service.register(user);
-
+      const result = () => service.register(user, '123');
       expect(result).toThrowError();
     });
 
     it('should throw exception if password is falsy', () => {
       const user: IUser = { username: 'marin', password: '' };
-      const result = () => service.register(user);
+      const result = () => service.register(user, 'adasdas');
+
+      expect(result).toThrowError();
+    });
+
+    it('should throw exception if token is falsy', () => {
+      const user: IUser = { username: 'marin', password: 'asdasdas' };
+      const result = () => service.register(user, '');
 
       expect(result).toThrowError();
     });
@@ -43,7 +49,7 @@ describe('UserService', () => {
     it('should execute HTTP request when subscribed', () => {
       const user: IUser = { username: 'marin', password: 'asjfa9s9asS' };
 
-      service.register(user).subscribe();
+      service.register(user, 'asdasd').subscribe();
 
       const request = httpTestingController.expectOne(registerUrl);
       const responseBody: IBackendError = {
@@ -52,20 +58,28 @@ describe('UserService', () => {
       request.flush(responseBody);
 
       expect(request.request.method).toEqual('POST');
+      expect(request.request.headers.has('recaptcha')).toBe(true);
     });
   });
 
   describe('login', () => {
     it('should throw exception if username is falsy', () => {
       const user: IUser = { username: '', password: 'asfkjsan77A' };
-      const result = () => service.login(user);
+      const result = () => service.login(user, '2qwdsdsaf');
 
       expect(result).toThrowError();
     });
 
     it('should throw exception if password is falsy', () => {
       const user: IUser = { username: 'marin', password: '' };
-      const result = () => service.login(user);
+      const result = () => service.login(user, 'sadasda');
+
+      expect(result).toThrowError();
+    });
+
+    it('should throw exception if token is falsy', () => {
+      const user: IUser = { username: 'marin', password: 'asdasd' };
+      const result = () => service.login(user, '');
 
       expect(result).toThrowError();
     });
@@ -73,7 +87,7 @@ describe('UserService', () => {
     it('should execute HTTP request when subscribed', () => {
       const user: IUser = { username: 'marin', password: 'asjfa9s9asS' };
 
-      service.login(user).subscribe();
+      service.login(user, 'asdasd').subscribe();
 
       const request = httpTestingController.expectOne(loginUrl);
       const responseBody: IBackendError = {
@@ -82,6 +96,7 @@ describe('UserService', () => {
       request.flush(responseBody);
 
       expect(request.request.method).toEqual('POST');
+      expect(request.request.headers.has('recaptcha')).toBe(true);
     });
   });
 

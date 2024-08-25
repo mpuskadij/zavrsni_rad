@@ -14,6 +14,8 @@ import {
 import { of, throwError } from 'rxjs';
 import { TimeModule } from 'src/app/time/time.module';
 import { IBmiGraphData } from 'src/interfaces/ibmi-graph-data';
+import { IBmi } from 'src/interfaces/ibmi';
+import { IResponseBmi } from 'src/interfaces/iresponse-bmi';
 
 describe('BmiComponent', () => {
   let component: BmiComponent;
@@ -114,6 +116,49 @@ describe('BmiComponent', () => {
       component.checkIfFormCanBeShown(new Date());
 
       expect(component.canShow).toBeTrue();
+    });
+  });
+  describe('sendBmi', () => {
+    it('should use bmi service to post to server', () => {
+      const mockBody: IResponseBmi = { bmi: 17.5 };
+      spyOn(bmiService, 'sendBmiData').and.returnValue(of(mockBody));
+      const formData: IBmi = { height: 66.6, weight: 1.5 };
+
+      component.sendBmi(formData);
+
+      expect(bmiService.sendBmiData).toHaveBeenCalled();
+    });
+
+    it('should set canShow to false if server posting was a success', () => {
+      const mockBody: IResponseBmi = { bmi: 17.5 };
+      spyOn(bmiService, 'sendBmiData').and.returnValue(of(mockBody));
+      const formData: IBmi = { height: 66.6, weight: 1.5 };
+
+      component.sendBmi(formData);
+
+      expect(component.canShow).toBeFalse();
+    });
+
+    it('should set paragraph to display BMI', () => {
+      const mockBody: IResponseBmi = { bmi: 17.5 };
+      spyOn(bmiService, 'sendBmiData').and.returnValue(of(mockBody));
+      const formData: IBmi = { height: 66.6, weight: 1.5 };
+
+      component.sendBmi(formData);
+
+      expect(component.errorMessage).toBeTruthy();
+    });
+
+    it('should display custom error message if server sent error', () => {
+      const mockBody: IResponseBmi = { bmi: 17.5 };
+      spyOn(bmiService, 'sendBmiData').and.returnValue(
+        throwError(() => new Error('Backend error!'))
+      );
+      const formData: IBmi = { height: 66.6, weight: 1.5 };
+
+      component.sendBmi(formData);
+
+      expect(component.errorMessage).toBeTruthy();
     });
   });
 });

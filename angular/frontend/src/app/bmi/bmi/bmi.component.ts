@@ -4,6 +4,7 @@ import { IBmi } from 'src/interfaces/ibmi';
 import { BmiService } from '../bmi-service/bmi.service';
 import { IBmiGraphData } from 'src/interfaces/ibmi-graph-data';
 import { ClockComponent } from 'src/app/time/clock/clock.component';
+import { HttpStatusCode } from '@angular/common/http';
 
 @Component({
   selector: 'app-bmi',
@@ -30,7 +31,16 @@ export class BmiComponent implements OnInit {
   }
 
   sendBmi(bmi: IBmi) {
-    throw new Error('Method not implemented.');
+    this.bmiService.sendBmiData(bmi).subscribe({
+      next: (body) => {
+        this.canShow = false;
+        this.errorMessage = 'Your BMI is: ' + body.bmi;
+      },
+      error: () => {
+        this.errorMessage =
+          'Something went wrong while sending your height and weight to the server!';
+      },
+    });
   }
 
   checkIfFormCanBeShown(serverTime: Date): void {

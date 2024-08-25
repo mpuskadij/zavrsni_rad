@@ -8,6 +8,8 @@ import { UserModule } from './user/user.module';
 import { NavigationComponent } from './navigation/navigation.component';
 import { BmiModule } from './bmi/bmi.module';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { RECAPTCHA_V3_SITE_KEY, RecaptchaV3Module } from 'ng-recaptcha';
+import { environment } from 'src/environments/environment';
 
 @NgModule({
   declarations: [AppComponent],
@@ -17,10 +19,12 @@ import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
     UserModule,
     NavigationComponent,
     BmiModule,
+    RecaptchaV3Module,
   ],
   providers: [
     provideHttpClient(withFetch()),
     provideCharts(withDefaultRegisterables()),
+    { provide: RECAPTCHA_V3_SITE_KEY, useValue: environment.site_key },
   ],
   bootstrap: [AppComponent],
 })
