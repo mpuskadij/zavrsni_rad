@@ -9,14 +9,14 @@ import { IBmi } from 'src/interfaces/ibmi';
 })
 export class NewBmiEntryFormComponent {
   public errorMessage = '';
-  public minHeight = 0;
-  public maxHeight = 300;
-  public minWeight = 0;
+  public minHeight = 1;
+  public maxHeight = 3.0;
+  public minWeight = 1;
   public maxWeight = 1000;
   @Output() public onSubmit = new EventEmitter<IBmi>();
   public form = this.formBuilder.group({
     height: [
-      this.minHeight - 1,
+      0,
       [
         Validators.required,
         Validators.min(this.minHeight),
@@ -24,7 +24,7 @@ export class NewBmiEntryFormComponent {
       ],
     ],
     weight: [
-      this.minWeight - 1,
+      0,
       [
         Validators.required,
         Validators.min(this.minWeight),

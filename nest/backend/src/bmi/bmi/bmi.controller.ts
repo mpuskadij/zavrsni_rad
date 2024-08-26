@@ -15,6 +15,7 @@ import { JwtPayload } from '../../authentication/jwt-payload/jwt-payload';
 import { BmiService } from '../bmi-service/bmi-service';
 import { plainToInstance } from 'class-transformer';
 import { BmiEntryDto } from '../../dtos/bmi-entry-dto/bmi-entry-dto';
+import { BmiBodyDto } from '../../dtos/bmi-body-dto/bmi-body-dto';
 
 @Controller('bmi')
 export class BmiController {
@@ -27,7 +28,8 @@ export class BmiController {
     @Payload('username') username: string,
   ): Promise<any> {
     const bmi = await this.bmiService.addNewBmiEntry(username, weight, height);
-    return bmi;
+    const body: BmiBodyDto = { bmi: bmi };
+    return body;
   }
 
   @Get()

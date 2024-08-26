@@ -25,7 +25,7 @@ export class BmiService {
       {
         observe: 'body',
         withCredentials: true,
-        headers: { 'Content-Type': 'applicaiton/json' },
+        headers: { 'Content-Type': 'application/json' },
       }
     );
   }

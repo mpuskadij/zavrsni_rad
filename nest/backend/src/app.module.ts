@@ -69,7 +69,7 @@ import { APP_GUARD } from '@nestjs/core';
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       global: true,
-      signOptions: { expiresIn: '15min' },
+      signOptions: { expiresIn: '15m' },
     }),
     CrpytoModule,
     AuthenticationModule,

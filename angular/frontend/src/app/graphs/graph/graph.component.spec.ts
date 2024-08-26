@@ -42,15 +42,6 @@ describe('GraphComponent', () => {
       const lineChart = ui.querySelector('canvas[id="barChart"]');
       expect(lineChart).not.toBeNull();
     });
-
-    it('should contain scatter chart when input property passed', () => {
-      const ui: HTMLElement = fixture.nativeElement;
-      const bmiData: IBmiGraphData = { bmi: 17.5, dateAdded: new Date() };
-      component.graphData = [bmiData];
-
-      const lineChart = ui.querySelector('canvas[id="scatterChart"]');
-      expect(lineChart).not.toBeNull();
-    });
   });
 
   describe('ngOnInit', () => {

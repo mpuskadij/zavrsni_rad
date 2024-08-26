@@ -6,6 +6,7 @@ import {
   OnChanges,
   OnInit,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import {
   ChartData,
@@ -14,6 +15,7 @@ import {
   ChartType,
   LabelItem,
 } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
 import { IBmiGraphData } from 'src/interfaces/ibmi-graph-data';
 
 @Component({
@@ -44,10 +46,12 @@ export class GraphComponent implements OnInit {
         week.dateAdded.toLocaleDateString()
       );
 
-      this.chartDataset.data = bmis;
-      this.chartLabels = dates;
+      bmis.forEach((bmi) => {
+        this.chartDataset.data.push(bmi);
+      });
+      dates.forEach((date) => this.chartLabels.push(date));
 
-      this.chartData.datasets = [this.chartDataset];
+      this.chartData.datasets.push(this.chartDataset);
     }
   }
 }

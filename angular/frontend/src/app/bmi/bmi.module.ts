@@ -15,6 +15,7 @@ import { TimeModule } from '../time/time.module';
     GraphsModule,
     NavigationComponent,
     TimeModule,
+    BaseChartDirective,
   ],
   exports: [BmiComponent],
 })

@@ -5,6 +5,7 @@ import { BmiService } from '../bmi-service/bmi.service';
 import { IBmiGraphData } from 'src/interfaces/ibmi-graph-data';
 import { ClockComponent } from 'src/app/time/clock/clock.component';
 import { HttpStatusCode } from '@angular/common/http';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-bmi',
@@ -19,18 +20,32 @@ export class BmiComponent implements OnInit {
   constructor(private bmiService: BmiService) {}
 
   ngOnInit(): void {
-    this.bmiService.getPreviousBmiEntries().subscribe({
-      next: (previousBmis) => {
-        this.previousBmiEntries = previousBmis;
-      },
-      error: () => {
-        this.errorMessage =
-          'Something went wrong while getting your previous bmi entries!';
-      },
-    });
+    this.bmiService
+      .getPreviousBmiEntries()
+      .pipe(
+        map((graphData) => {
+          graphData.forEach((entry) => {
+            entry.dateAdded = new Date(entry.dateAdded);
+          });
+          return graphData;
+        })
+      )
+      .subscribe({
+        next: (previousBmis) => {
+          this.previousBmiEntries = previousBmis;
+        },
+        error: () => {
+          this.errorMessage =
+            'Something went wrong while getting your previous bmi entries!';
+        },
+      });
   }
 
   sendBmi(bmi: IBmi) {
+    if (!bmi.height || !bmi.weight) {
+      this.errorMessage = 'Weight and/or height cannot be 0!';
+      return;
+    }
     this.bmiService.sendBmiData(bmi).subscribe({
       next: (body) => {
         this.canShow = false;
