@@ -10,7 +10,7 @@ import { IResponseBmi } from 'src/interfaces/iresponse-bmi';
   providedIn: 'root',
 })
 export class BmiService {
-  private endPoint: string = `${environment.url}bmi`;
+  private endPoint: string = `${environment.apiUrl}bmi`;
 
   constructor(private httpClient: HttpClient) {}
 

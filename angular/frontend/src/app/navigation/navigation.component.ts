@@ -31,7 +31,7 @@ export class NavigationComponent implements OnInit {
   logout() {
     sessionStorage.removeItem('isAdmin');
     this.ngZone.run(() => {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/login'], { replaceUrl: true });
     });
   }
 }

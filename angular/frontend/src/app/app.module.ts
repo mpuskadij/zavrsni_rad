@@ -13,6 +13,7 @@ import { environment } from 'src/environments/environment';
 import { LoginComponent } from './user/login/login.component';
 import { UserService } from './user/user-service/user.service';
 import { BmiService } from './bmi/bmi-service/bmi.service';
+import { WorkoutPlanModule } from './workout-plan/workout-plan.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -23,6 +24,7 @@ import { BmiService } from './bmi/bmi-service/bmi.service';
     NavigationComponent,
     BmiModule,
     RecaptchaV3Module,
+    WorkoutPlanModule,
   ],
   providers: [
     provideHttpClient(withFetch()),

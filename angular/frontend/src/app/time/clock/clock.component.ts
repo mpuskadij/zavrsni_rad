@@ -27,12 +27,10 @@ export class ClockComponent implements OnInit {
       .subscribe({
         next: (serverTime) => {
           this.time = serverTime.time;
+          this.onTimeSet.emit(this.time);
         },
         error: () => {
           this.note = 'Note: displayed time is not server time';
-          this.onTimeSet.emit(this.time);
-        },
-        complete: () => {
           this.onTimeSet.emit(this.time);
         },
       });

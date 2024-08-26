@@ -9,7 +9,7 @@ import { environment } from 'src/environments/environment';
 
 describe('WorkoutPlanService', () => {
   let service: WorkoutPlanService;
-  const apiEndpoint = `${environment.url}workout-plans`;
+  const apiEndpoint = `${environment.apiUrl}workout-plans`;
   let httpTestingController: HttpTestingController;
 
   beforeEach(() => {

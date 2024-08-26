@@ -15,7 +15,7 @@ export class UserService {
       throw new Error('Username and password are both required!');
     }
     return this.httpClient.post<HttpResponse<object>>(
-      `${environment.url}${this.endpoint}register`,
+      `${environment.apiUrl}${this.endpoint}register`,
       JSON.stringify(user),
       {
         observe: 'response',
@@ -30,7 +30,7 @@ export class UserService {
       throw new Error('Username and password are both required!');
     }
     return this.httpClient.post<ILoginData>(
-      `${environment.url}${this.endpoint}login`,
+      `${environment.apiUrl}${this.endpoint}login`,
       JSON.stringify(user),
       {
         observe: 'body',

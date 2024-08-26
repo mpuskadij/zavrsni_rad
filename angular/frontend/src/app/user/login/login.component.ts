@@ -1,4 +1,4 @@
-import { Component, NgZone } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { IUser } from 'src/interfaces/iuser';
 import { UserService } from '../user-service/user.service';
 import { catchError, of } from 'rxjs';
@@ -12,7 +12,7 @@ import { environment } from 'src/environments/environment';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   public form = this.formBuilder.group({
     username: [
       '',
@@ -21,7 +21,7 @@ export class LoginComponent {
     password: ['', [Validators.required, Validators.minLength(8)]],
   });
   public errorMessage: string = '';
-  private bmiPage: string = `${environment.url}bmi`;
+  private bmiPage: string = `${environment.apiUrl}bmi`;
 
   constructor(
     private userService: UserService,
@@ -30,6 +30,9 @@ export class LoginComponent {
     private recaptchaService: ReCaptchaV3Service,
     private ngZone: NgZone
   ) {}
+  ngOnInit(): void {
+    sessionStorage.removeItem('isAdmin');
+  }
   sendRegistrationCredentials(user: IUser, token: string) {
     try {
       if (!user.password.length || !user.username.length || !token) {

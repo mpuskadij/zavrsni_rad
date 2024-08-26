@@ -1,0 +1,22 @@
+<app-navigation></app-navigation>
+<table *ngIf="workoutPlanDetails !== undefined && workoutPlanDetails.exercises.length > 0">
+    <thead>
+        <tr>
+            <th scope="col">Exercise name</th>
+            <th scope="col">Exercise description</th>
+            <th scope="col">Exercise category</th>
+            <th scope="col">Exercise equipment</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let exercise of workoutPlanDetails.exercises">
+            <td>{{exercise.name}}</td>
+            <td>{{exercise.description}}</td>
+            <td>{{exercise.category}}</td>
+            <td>{{exercise.equipment}}</td>
+            <td (click)="deleteExercise(exercise.name)"></td>
+        </tr>
+    </tbody>
+</table>
+<p *ngIf="note">{{note}}</p>
+<app-clock></app-clock>

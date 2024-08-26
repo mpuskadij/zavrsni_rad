@@ -79,8 +79,11 @@ describe('BmiComponent', () => {
   describe('checkIfFormCanBeShown', () => {
     it('should return true if no previous bmi entries!', () => {
       component.previousBmiEntries = [];
-
+      jasmine.clock().install();
       component.checkIfFormCanBeShown(new Date());
+      jasmine.clock().tick(1000);
+
+      jasmine.clock().uninstall();
 
       expect(component.canShow).toBeTrue();
     });
@@ -91,7 +94,11 @@ describe('BmiComponent', () => {
         dateAdded: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
       });
 
+      jasmine.clock().install();
       component.checkIfFormCanBeShown(new Date());
+      jasmine.clock().tick(1000);
+
+      jasmine.clock().uninstall();
 
       expect(component.canShow).toBeFalse();
     });
@@ -102,7 +109,11 @@ describe('BmiComponent', () => {
         dateAdded: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
       });
 
+      jasmine.clock().install();
       component.checkIfFormCanBeShown(new Date());
+      jasmine.clock().tick(1000);
+
+      jasmine.clock().uninstall();
 
       expect(component.canShow).toBeTrue();
     });
@@ -113,7 +124,11 @@ describe('BmiComponent', () => {
         dateAdded: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000),
       });
 
+      jasmine.clock().install();
       component.checkIfFormCanBeShown(new Date());
+      jasmine.clock().tick(1000);
+
+      jasmine.clock().uninstall();
 
       expect(component.canShow).toBeTrue();
     });

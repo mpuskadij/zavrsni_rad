@@ -1,0 +1,11 @@
+<app-navigation></app-navigation>
+<form [formGroup]="form">
+    <label for="title">Title</label>
+    <input type="text" formControlName="title" name="title" required>
+
+    <button type="button" [disabled]="!form.valid" (click)="submit()">Create</button>
+    <button type="button" (click)="cancel()">Cancel</button>
+
+</form>
+<p *ngIf="errorMessage">{{errorMessage}}</p>
+<app-clock></app-clock>

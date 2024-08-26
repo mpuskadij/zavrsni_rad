@@ -39,7 +39,9 @@ describe('BmiService', () => {
       const data: IBmi = { height: 150, weight: 12 };
       service.sendBmiData(data).subscribe();
 
-      const request = httpTestingController.expectOne(`${environment.url}bmi`);
+      const request = httpTestingController.expectOne(
+        `${environment.apiUrl}bmi`
+      );
 
       expect(request.request.method).toBe('POST');
     });
@@ -48,7 +50,9 @@ describe('BmiService', () => {
       const data: IBmi = { height: 150, weight: 12 };
       service.sendBmiData(data).subscribe();
 
-      const request = httpTestingController.expectOne(`${environment.url}bmi`);
+      const request = httpTestingController.expectOne(
+        `${environment.apiUrl}bmi`
+      );
 
       expect(request.request.withCredentials).toBe(true);
     });
@@ -57,7 +61,9 @@ describe('BmiService', () => {
       const data: IBmi = { height: 150, weight: 12 };
       service.sendBmiData(data).subscribe();
 
-      const request = httpTestingController.expectOne(`${environment.url}bmi`);
+      const request = httpTestingController.expectOne(
+        `${environment.apiUrl}bmi`
+      );
 
       expect(request.request.headers.has('Content-Type')).toBe(true);
     });
@@ -67,7 +73,9 @@ describe('BmiService', () => {
     it('should use the http client to GET specific endpoint', () => {
       service.getPreviousBmiEntries().subscribe();
 
-      const request = httpTestingController.expectOne(`${environment.url}bmi`);
+      const request = httpTestingController.expectOne(
+        `${environment.apiUrl}bmi`
+      );
 
       expect(request.request.method).toBe('GET');
     });

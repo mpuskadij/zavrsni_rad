@@ -8,7 +8,7 @@ import { IServerTime } from 'src/interfaces/iserver-time';
   providedIn: 'root',
 })
 export class TimeService {
-  private timeApiEndpoint = `${environment.url}time`;
+  private timeApiEndpoint = `${environment.apiUrl}time`;
   constructor(private httpClient: HttpClient) {}
   getServerTime(): Observable<IServerTime> {
     return this.httpClient.get<IServerTime>(this.timeApiEndpoint, {

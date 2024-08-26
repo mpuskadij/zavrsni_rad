@@ -22,7 +22,9 @@ describe('TimeService', () => {
     it('should fetch server time using http client', () => {
       service.getServerTime().subscribe();
 
-      const request = httpTestingController.expectOne(`${environment.url}time`);
+      const request = httpTestingController.expectOne(
+        `${environment.apiUrl}time`
+      );
 
       expect(request.request.method).toBe('GET');
     });
@@ -30,7 +32,9 @@ describe('TimeService', () => {
     it('should fetch server time with credentials', () => {
       service.getServerTime().subscribe();
 
-      const request = httpTestingController.expectOne(`${environment.url}time`);
+      const request = httpTestingController.expectOne(
+        `${environment.apiUrl}time`
+      );
 
       expect(request.request.withCredentials).toBe(true);
     });
