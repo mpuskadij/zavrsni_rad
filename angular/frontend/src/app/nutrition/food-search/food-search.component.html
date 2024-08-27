@@ -1,0 +1,48 @@
+<app-navigation></app-navigation>
+<label for="food">Food name:</label>
+<input type="text" #input>
+
+<button type="button" (click)="search(input.value)">Search</button>
+<div *ngIf="foods !== undefined">
+    <table *ngIf="foods.common.length > 0">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Serving unit</th>
+                <th scope="col">Serving quantity</th>
+                <th scope="col">Photo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let commonFood of foods.common">
+                <td>{{commonFood.food_name}}</td>
+                <td>{{commonFood.serving_unit}}</td>
+                <td>{{commonFood.serving_qty}}</td>
+                <td><img alt="Food photo" [src]="commonFood.photo.thumb"></td>
+            </tr>
+        </tbody>
+    </table>
+    <p *ngIf="foods.common.length == 0">No common food that matches search term found!</p>
+
+    <table *ngIf="foods.branded.length > 0">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Serving unit</th>
+                <th scope="col">Serving quantity</th>
+                <th scope="col">Photo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let brandedFood of foods.branded">
+                <td>{{brandedFood.brand_name_item_name}}</td>
+                <td>{{brandedFood.serving_unit}}</td>
+                <td>{{brandedFood.serving_qty}}</td>
+                <td><img alt="Food photo" [src]="brandedFood.photo.thumb"></td>
+            </tr>
+        </tbody>
+    </table>
+    <p *ngIf="foods.branded.length == 0">No branded food that matches search term found!</p>
+
+</div>
+<p *ngIf="note">{{note}}</p>

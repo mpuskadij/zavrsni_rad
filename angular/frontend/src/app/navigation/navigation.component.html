@@ -2,6 +2,8 @@
     <a routerLink="/login" routerLinkActive="active" *ngIf="!isLoggedIn">Login/Register</a>
     <a routerLink="/bmi" routerLinkActive="active" *ngIf="isLoggedIn">Calculate BMI</a>
     <a routerLink="/workout-plans" routerLinkActive="active" *ngIf="isLoggedIn">Workout plans</a>
+    <a routerLink="/nutrition" routerLinkActive="active" *ngIf="isLoggedIn">Nutrition</a>
+
     <a *ngIf="isLoggedIn" (click)="logout()">Logout</a>
 </nav>
 <router-outlet></router-outlet>

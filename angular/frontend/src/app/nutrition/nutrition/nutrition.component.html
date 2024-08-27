@@ -1,0 +1,49 @@
+<app-navigation></app-navigation>
+<div *ngIf="foods.length > 0">
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Calories</th>
+                <th scope="col">Total Fat</th>
+                <th scope="col">Saturated Fat</th>
+                <th scope="col">Cholesterol</th>
+                <th scope="col">Sodium</th>
+                <th scope="col">Total Carbohydrates</th>
+                <th scope="col">Dietary Fiber</th>
+                <th scope="col">Sugars</th>
+                <th scope="col">Protein</th>
+                <th scope="col">Potassium</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Update quantity</th>
+                <th scope="col">Delete food</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let food of foods; let i = index">
+                <td>{{food.name}}</td>
+                <td>{{food.calories}}</td>
+                <td>{{food.total_fat}}</td>
+                <td>{{food.saturated_fat}}</td>
+                <td>{{food.cholesterol}}</td>
+                <td>{{food.sodium}}</td>
+                <td>{{food.total_carbohydrate}}</td>
+                <td>{{food.dietary_fiber}}</td>
+                <td>{{food.sugars}}</td>
+                <td>{{food.protein}}</td>
+                <td>{{food.potassium}}</td>
+                <td>
+                    <input type="number" [defaultValue]="food.quantity" (input)="changeQuantity(food)" [min]="1"
+                        [step]="1">
+                </td>
+                <td (click)="deleteFood(food.id, i)">
+                    Remove food
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <button type="submit" *ngIf="changedFoods.length > 0">Save</button>
+</div>
+<button type="button" (click)="navigateToFoodSearch()">Add food</button>
+<p *ngIf="note">{{note}}</p>
+<app-clock></app-clock>

@@ -7,6 +7,8 @@ import { loginGuard } from './login-guard/login.guard';
 import { CreateWorkoutPlanComponent } from './workout-plan/create-workout-plan/create-workout-plan.component';
 import { WorkoutPlanDetailsComponent } from './workout-plan/workout-plan-details/workout-plan-details.component';
 import { ExerciseComponent } from './workout-plan/exercise/exercise.component';
+import { NutritionComponent } from './nutrition/nutrition/nutrition.component';
+import { FoodSearchComponent } from './nutrition/food-search/food-search.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent, title: 'Login' },
@@ -40,6 +42,18 @@ const routes: Routes = [
     title: 'Add exercise',
     canActivate: [loginGuard],
     component: ExerciseComponent,
+  },
+  {
+    path: 'nutrition',
+    title: 'Nutrition',
+    canActivate: [loginGuard],
+    component: NutritionComponent,
+  },
+  {
+    path: 'nutrition/add',
+    title: 'Search for food',
+    canActivate: [loginGuard],
+    component: FoodSearchComponent,
   },
 ];
 

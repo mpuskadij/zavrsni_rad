@@ -1,15 +1,6 @@
-import { Exclude } from 'class-transformer';
-
-export class GetFoodDto {
+export interface INutritionFood {
   id: number;
-
   name: string;
-
-  @Exclude()
-  tagId: string;
-
-  @Exclude()
-  nixId: string;
 
   calories?: number;
 
@@ -23,7 +14,7 @@ export class GetFoodDto {
 
   total_carbohydrate?: number;
 
-  dietery_fiber?: number;
+  dietary_fiber?: number;
 
   sugars?: number;
 
@@ -31,9 +22,5 @@ export class GetFoodDto {
 
   potassium?: number;
 
-  @Exclude()
-  userFoods: [];
-
-  @Exclude()
   quantity: number;
 }
