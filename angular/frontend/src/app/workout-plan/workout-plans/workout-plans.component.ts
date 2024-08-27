@@ -38,8 +38,7 @@ export class WorkoutPlansComponent implements OnInit {
           this.workoutPlans = workoutPlansFromServer;
         },
         error: () => {
-          this.errorMessage =
-            'Something went wrong with getting your workout plans!';
+          this.errorMessage = 'No workout plans yet!';
         },
       });
   }

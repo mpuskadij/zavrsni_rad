@@ -32,7 +32,7 @@ import { APP_GUARD } from '@nestjs/core';
     UsersModule,
     GuardsModule,
     ThrottlerModule.forRoot([
-      { ttl: seconds(60), limit: 30 },
+      { ttl: seconds(60), limit: 60 },
       { name: 'nutritionix', ttl: seconds(60), limit: 10 },
     ]),
     ConfigModule.forRoot({

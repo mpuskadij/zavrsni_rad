@@ -4,6 +4,10 @@ import { IWorkoutPlanDetails } from 'src/interfaces/iworkout-plan-details';
 import { map } from 'rxjs';
 import { IDeleteExercise } from 'src/interfaces/idelete-exercise';
 import { HttpStatusCode } from '@angular/common/http';
+import { IDeleteWorkoutPlan } from 'src/interfaces/idelete-workout-plan';
+import { Router } from '@angular/router';
+import { IExercise } from 'src/interfaces/iexercise';
+import { IWorkoutPlanExercise } from 'src/interfaces/iworkout-plan-exercise';
 
 @Component({
   selector: 'app-workout-plan-details',
@@ -11,10 +15,37 @@ import { HttpStatusCode } from '@angular/common/http';
   styleUrl: './workout-plan-details.component.scss',
 })
 export class WorkoutPlanDetailsComponent implements OnInit {
+  navigateToSearch() {
+    if (this.workoutPlanDetails) {
+      this.router.navigate([
+        `/workout-plans/${this.workoutPlanDetails.id}/add`,
+      ]);
+    } else {
+      this.note = 'Invalid workout plan id!';
+    }
+  }
+  deleteWorkout(workoutPlanId: number) {
+    const body: IDeleteWorkoutPlan = { id: workoutPlanId };
+    this.workoutPlanService.deleteWorkoutPlan(body).subscribe({
+      next: (response) => {
+        if (response.status == HttpStatusCode.NoContent) {
+          this.note = '';
+          this.router.navigate(['/workout-plans'], { replaceUrl: true });
+        }
+      },
+      error: () => {
+        this.note =
+          'Something went wrong while trying to delete your workout plan!';
+      },
+    });
+  }
   @Input({ required: true }) id: string = '';
   public note: string = '';
   workoutPlanDetails?: IWorkoutPlanDetails;
-  constructor(private workoutPlanService: WorkoutPlanService) {}
+  constructor(
+    private workoutPlanService: WorkoutPlanService,
+    private router: Router
+  ) {}
   ngOnInit(): void {
     if (!+this.id) {
       this.note = 'Invalid parameter!';
@@ -42,8 +73,8 @@ export class WorkoutPlanDetailsComponent implements OnInit {
       });
   }
 
-  deleteExercise(exerciseName: string) {
-    const body: IDeleteExercise = { name: exerciseName };
+  deleteExercise(exercise: IWorkoutPlanExercise, index: number) {
+    const body: IDeleteExercise = { name: exercise.name };
     if (this.workoutPlanDetails) {
       this.workoutPlanService
         .deleteExercise(this.workoutPlanDetails.id, body)
@@ -51,10 +82,7 @@ export class WorkoutPlanDetailsComponent implements OnInit {
           next: (response) => {
             this.note = 'Successfully deleted exercise!';
             if (response.status == HttpStatusCode.NoContent) {
-              const index = this.workoutPlanDetails!.exercises.findIndex(
-                (exercise) => exercise.name == exerciseName
-              );
-              this.workoutPlanDetails!.exercises.splice(index);
+              this.workoutPlanDetails?.exercises.splice(index, 1);
             }
           },
           error: () => {

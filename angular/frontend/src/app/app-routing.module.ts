@@ -6,6 +6,7 @@ import { WorkoutPlansComponent } from './workout-plan/workout-plans/workout-plan
 import { loginGuard } from './login-guard/login.guard';
 import { CreateWorkoutPlanComponent } from './workout-plan/create-workout-plan/create-workout-plan.component';
 import { WorkoutPlanDetailsComponent } from './workout-plan/workout-plan-details/workout-plan-details.component';
+import { ExerciseComponent } from './workout-plan/exercise/exercise.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent, title: 'Login' },
@@ -33,6 +34,12 @@ const routes: Routes = [
     title: 'Workout plan details',
     canActivate: [loginGuard],
     component: WorkoutPlanDetailsComponent,
+  },
+  {
+    path: 'workout-plans/:id/add',
+    title: 'Add exercise',
+    canActivate: [loginGuard],
+    component: ExerciseComponent,
   },
 ];
 

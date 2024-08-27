@@ -9,14 +9,17 @@
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let exercise of workoutPlanDetails.exercises">
+        <tr *ngFor="let exercise of workoutPlanDetails.exercises;let i = index;">
             <td>{{exercise.name}}</td>
             <td>{{exercise.description}}</td>
             <td>{{exercise.category}}</td>
             <td>{{exercise.equipment}}</td>
-            <td (click)="deleteExercise(exercise.name)"></td>
+            <td (click)="deleteExercise(exercise,i)">Remove exercise</td>
         </tr>
     </tbody>
 </table>
-<p *ngIf="note">{{note}}</p>
+<p *ngIf=" note">{{note}}</p>
+<button *ngIf="workoutPlanDetails !== undefined" type="button" (click)="deleteWorkout(workoutPlanDetails.id)">Delete
+    workout plan</button>
+<button *ngIf="workoutPlanDetails" type="button" (click)="navigateToSearch()">Add exercise</button>
 <app-clock></app-clock>

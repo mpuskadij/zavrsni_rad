@@ -10,12 +10,14 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CreateWorkoutPlanComponent } from './create-workout-plan/create-workout-plan.component';
 import { RouterOutlet } from '@angular/router';
 import { WorkoutPlanDetailsComponent } from './workout-plan-details/workout-plan-details.component';
+import { ExerciseComponent } from './exercise/exercise.component';
 
 @NgModule({
   declarations: [
     WorkoutPlansComponent,
     CreateWorkoutPlanComponent,
     WorkoutPlanDetailsComponent,
+    ExerciseComponent,
   ],
   imports: [
     CommonModule,
@@ -28,6 +30,7 @@ import { WorkoutPlanDetailsComponent } from './workout-plan-details/workout-plan
     WorkoutPlansComponent,
     CreateWorkoutPlanComponent,
     WorkoutPlanDetailsComponent,
+    ExerciseComponent,
   ],
   providers: [provideHttpClient(withFetch()), WorkoutPlanService],
 })

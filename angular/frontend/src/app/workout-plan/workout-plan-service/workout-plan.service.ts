@@ -2,6 +2,7 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { IAddExercise } from 'src/interfaces/iadd-exercise';
 import { ICreateWorkoutPlan } from 'src/interfaces/icreate-workout-plan';
 import { IDeleteExercise } from 'src/interfaces/idelete-exercise';
 import { IDeleteWorkoutPlan } from 'src/interfaces/idelete-workout-plan';
@@ -33,6 +34,8 @@ export class WorkoutPlanService {
     return this.httpClient.delete<HttpResponse<object>>(`${this.endpoint}`, {
       body: JSON.stringify(deleteWorkoutPlanData),
       withCredentials: true,
+      observe: 'response',
+      headers: { 'Content-Type': 'application/json' },
     });
   }
   deleteExercise(workoutPlanId: number, deleteExercise: IDeleteExercise) {
@@ -57,6 +60,20 @@ export class WorkoutPlanService {
         responseType: 'json',
         withCredentials: true,
         headers: { 'Content-Type': 'application/json' },
+      }
+    );
+  }
+
+  addExercise(workoutPlanId: number, exercise: IAddExercise) {
+    return this.httpClient.post<HttpResponse<object>>(
+      `${this.endpoint}/${workoutPlanId}`,
+      JSON.stringify(exercise),
+      {
+        withCredentials: true,
+        observe: 'response',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       }
     );
   }
