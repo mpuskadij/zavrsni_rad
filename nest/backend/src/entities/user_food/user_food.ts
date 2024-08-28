@@ -32,6 +32,6 @@ export class UserFood {
   @JoinColumn({ referencedColumnName: 'username', name: 'username' })
   user: User;
 
-  @Column()
+  @Column('decimal', { scale: 1, precision: 3, nullable: true })
   quantity: number;
 }

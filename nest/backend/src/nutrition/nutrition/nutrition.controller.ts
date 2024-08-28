@@ -59,7 +59,6 @@ export class NutritionController {
 
     const foods = new Array<Food>();
     userFood.forEach((usrf) => foods.push(usrf.food));
-
     const foodToReturn = plainToInstance(GetFoodDto, foods);
     foodToReturn.forEach((fd) => {
       const foodWithQuantity = userFood.find((usrf) => usrf.foodId == fd.id);
@@ -201,6 +200,9 @@ export class NutritionController {
       );
     }
     const userFoods = await this.usersService.getFoodOfUser(user);
+    if (!userFoods.length) {
+      throw new InternalServerErrorException('User has 0 foods in nutrition!');
+    }
     await this.usersService.updateFoodQuantity(
       userFoods,
       updateFoodQuantityBody.foods,

@@ -12,34 +12,34 @@ export class Food {
   @Column({ nullable: true })
   nixId: string;
 
-  @Column({ nullable: true })
+  @Column('decimal', { scale: 1, precision: 5, nullable: true })
   calories?: number;
 
-  @Column({ nullable: true })
+  @Column('decimal', { scale: 1, precision: 5, nullable: true })
   total_fat?: number;
 
-  @Column({ nullable: true })
+  @Column('decimal', { scale: 1, precision: 5, nullable: true })
   saturated_fat?: number;
 
-  @Column({ nullable: true })
+  @Column('decimal', { scale: 1, precision: 5, nullable: true })
   cholesterol?: number;
 
-  @Column({ nullable: true })
+  @Column('decimal', { scale: 1, precision: 5, nullable: true })
   sodium?: number;
 
-  @Column({ nullable: true })
+  @Column('decimal', { scale: 1, precision: 5, nullable: true })
   total_carbohydrate?: number;
 
-  @Column({ nullable: true })
+  @Column('decimal', { scale: 1, precision: 5, nullable: true })
   dietery_fiber?: number;
 
-  @Column({ nullable: true })
+  @Column('decimal', { scale: 1, precision: 5, nullable: true })
   sugars?: number;
 
-  @Column({ nullable: true })
+  @Column('decimal', { scale: 1, precision: 5, nullable: true })
   protein?: number;
 
-  @Column({ nullable: true })
+  @Column('decimal', { scale: 1, precision: 5, nullable: true })
   potassium?: number;
 
   @OneToMany(() => UserFood, (userFood) => userFood.food, {

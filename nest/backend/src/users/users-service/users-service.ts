@@ -75,7 +75,6 @@ export class UsersService {
         'Server had trouble updating food item!',
       );
     }
-    const changedFood: UserFood[] = [];
     foodToUpdate.forEach(async (food) => {
       if (food.quantity <= 0) {
         return;
@@ -87,13 +86,11 @@ export class UsersService {
       }
 
       if (foundFood.quantity != food.quantity) {
-        changedFood.push(foundFood);
+        foundFood.quantity = food.quantity;
       }
     });
 
-    if (changedFood.length > 0) {
-      await this.userFoodRepository.save(changedFood);
-    }
+    await this.userFoodRepository.save(userFood);
   }
   async checkIfUserHasFoodWithNameAlreadyInNutrition(
     currentUserFoods: UserFood[],

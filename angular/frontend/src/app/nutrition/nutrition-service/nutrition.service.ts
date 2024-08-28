@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { IAddFoodToNutrition } from 'src/interfaces/iadd-food-to-nutrition';
 import { INutritionFood } from 'src/interfaces/inutrition-food';
+import { IUpdateFoodsBody } from 'src/interfaces/iupdate-foods-body';
 
 @Injectable({
   providedIn: 'root',
@@ -37,7 +38,10 @@ export class NutritionService {
     );
   }
 
-  updateQuantity(body: INutritionFood[]) {
+  updateQuantity(body: IUpdateFoodsBody) {
+    if (!body.foods.length) {
+      throw new Error('No foods to update!');
+    }
     return this.httpClient.put<HttpResponse<object>>(`${this.endpoint}`, body, {
       observe: 'response',
     });

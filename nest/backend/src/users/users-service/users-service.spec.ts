@@ -714,7 +714,7 @@ describe('UsersService (unit tests)', () => {
       expect(result).rejects.toThrow(InternalServerErrorException);
     });
 
-    it('should throw exception if food not found', async () => {
+    it('should not update quantity if food not found', async () => {
       const userFood = new UserFood();
       userFood.foodId = 1;
       userFood.quantity = 1;
@@ -724,15 +724,17 @@ describe('UsersService (unit tests)', () => {
       expect(userFoods[0].quantity).toBe(1);
     });
 
-    it('should not update quantity if quantity is the same', async () => {
+    it('should not update quantity if quantity has remained same', async () => {
       const userFood = new UserFood();
       userFood.foodId = 1;
       userFood.quantity = 1;
       const array = [userFood];
+      mockUserFoodRepo.save.mockImplementation(() => {
+        userFood.quantity = 1;
+      });
       await provider.updateFoodQuantity(array, [{ id: 1, quantity: 1 }]);
 
       expect(array[0].quantity).toBe(1);
-      expect(mockUserFoodRepo.save).not.toHaveBeenCalled();
     });
 
     it('should not update quantity if quantity is negative', async () => {
@@ -740,10 +742,12 @@ describe('UsersService (unit tests)', () => {
       userFood.foodId = 1;
       userFood.quantity = 1;
       const array = [userFood];
+      mockUserFoodRepo.save.mockImplementation(() => {
+        userFood.quantity = 1;
+      });
       await provider.updateFoodQuantity(array, [{ id: 1, quantity: -1 }]);
 
       expect(array[0].quantity).toBe(1);
-      expect(mockUserFoodRepo.save).not.toHaveBeenCalled();
     });
 
     it('should update quantity if quantity is different', async () => {

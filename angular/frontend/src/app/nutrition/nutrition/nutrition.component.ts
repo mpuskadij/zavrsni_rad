@@ -3,6 +3,8 @@ import { INutritionFood } from 'src/interfaces/inutrition-food';
 import { NutritionService } from '../nutrition-service/nutrition.service';
 import { HttpStatusCode } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { IUpdateFoodsBody } from 'src/interfaces/iupdate-foods-body';
+import { IUpdateFoodDetails } from 'src/interfaces/iupdate-food-details';
 
 @Component({
   selector: 'app-nutrition',
@@ -68,21 +70,35 @@ export class NutritionComponent implements OnInit {
     this.sumOfCalories = 0;
     this.foods.forEach((food) => {
       if (food.calories) {
-        this.sumOfCalories += food.calories;
+        this.sumOfCalories += food.calories * food.quantity;
       }
     });
   }
 
   updateQuantity() {
-    this.nutritionService.updateQuantity(this.changedFoods).subscribe({
-      next: () => {
-        this.calculateSum();
-      },
-      error: () => {
-        this.note =
-          'Something went wrong while trying to update food quantity!';
-      },
-    });
+    try {
+      if (!this.changedFoods.length) {
+        throw new Error('No foods to update!');
+      }
+      const foods: IUpdateFoodDetails[] = this.changedFoods.map(
+        (changedFood) => {
+          return { id: changedFood.id, quantity: changedFood.quantity };
+        }
+      );
+      const body: IUpdateFoodsBody = { foods: foods };
+      this.nutritionService.updateQuantity(body).subscribe({
+        next: () => {
+          this.calculateSum();
+          this.changedFoods = [];
+        },
+        error: () => {
+          this.note =
+            'Something went wrong while trying to update food quantity!';
+        },
+      });
+    } catch (error: any) {
+      this.note = error.message;
+    }
   }
   navigateToFoodSearch() {
     this.router.navigate(['/nutrition/add']);
