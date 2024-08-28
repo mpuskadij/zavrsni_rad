@@ -25,11 +25,13 @@ import { FoodService } from '../food-service/food-service';
 import { UsersService } from '../../users/users-service/users-service';
 import { Payload } from '../../decorators/payload/payload.decorator';
 import { User } from '../../entities/user/user';
-import { instanceToInstance, plainToInstance } from 'class-transformer';
-import { Food } from 'src/entities/food/food';
+import { Type, instanceToInstance, plainToInstance } from 'class-transformer';
+import { Food } from '../../entities/food/food';
 import { UpdateDescription } from 'typeorm';
 import { UpdateFoodQuantityDto } from '../../dtos/update-food-quantity-dto/update-food-quantity-dto';
 import { GetFoodDto } from '../../dtos/get-food-dto/get-food-dto';
+import { ValidateNested } from 'class-validator';
+import { UpdateFoodQuantityBodyDto } from '../../dtos/update-food-quantity-body-dto/update-food-quantity-body-dto';
 
 @Controller('nutrition')
 export class NutritionController {
@@ -177,17 +179,18 @@ export class NutritionController {
     return;
   }
 
-  @Put('/:id')
+  @Put('')
   @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async updateQuantity(
-    @Param(
-      'id',
-      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST }),
+    @Body(
+      new ValidationPipe({
+        always: true,
+        errorHttpStatusCode: HttpStatus.BAD_REQUEST,
+        transform: true,
+      }),
     )
-    id: number,
-    @Body(new ValidationPipe({ transform: true }))
-    updateFoodQuantityDto: UpdateFoodQuantityDto,
+    updateFoodQuantityBody: UpdateFoodQuantityBodyDto,
     @Payload('username') username: string,
   ): Promise<any> {
     const user = await this.usersService.getUser(username);
@@ -200,8 +203,7 @@ export class NutritionController {
     const userFoods = await this.usersService.getFoodOfUser(user);
     await this.usersService.updateFoodQuantity(
       userFoods,
-      id,
-      updateFoodQuantityDto.quantity,
+      updateFoodQuantityBody.foods,
     );
 
     return;

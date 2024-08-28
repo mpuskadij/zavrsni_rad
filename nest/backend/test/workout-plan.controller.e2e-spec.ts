@@ -136,7 +136,12 @@ describe('WorkoutPlanController (e2e)', () => {
     if ((await userRepo.existsBy({ username })) == true) {
       const user = await userRepo.findOne({
         where: { username: username },
-        relations: ['bmiEntries', 'journalEntries', 'workoutPlans'],
+        relations: [
+          'bmiEntries',
+          'journalEntries',
+          'workoutPlans',
+          'userFoods',
+        ],
       });
       await userRepo.remove(user);
     }
@@ -191,11 +196,14 @@ describe('WorkoutPlanController (e2e)', () => {
       const registrationResponse = await request(app.getHttpServer())
         .post(registrationPath)
         .send({ username: username, password: password });
+
       expect(registrationResponse.status).toBe(HttpStatus.CREATED);
+
       const response = await request(app.getHttpServer())
         .post(path)
         .set('jwtPayload', JSON.stringify(payload))
         .send({ title: 'My first workout!' });
+
       expect(response.status).toBe(HttpStatus.CREATED);
     });
   });

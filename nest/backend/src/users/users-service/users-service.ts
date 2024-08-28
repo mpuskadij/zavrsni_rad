@@ -15,6 +15,7 @@ import { JournalEntry } from '../../entities/journal-entry/journal-entry';
 import { WorkoutPlan } from '../../entities/workout-plan/workout-plan';
 import { UserFood } from '../../entities/user_food/user_food';
 import { Food } from 'src/entities/food/food';
+import { UpdateFoodQuantityDto } from 'src/dtos/update-food-quantity-dto/update-food-quantity-dto';
 
 @Injectable()
 export class UsersService {
@@ -67,35 +68,32 @@ export class UsersService {
   }
   async updateFoodQuantity(
     userFood: UserFood[],
-    id: number,
-    quantity: number,
+    foodToUpdate: UpdateFoodQuantityDto[],
   ): Promise<void> {
-    if (!userFood?.length || !id || !quantity) {
+    if (!userFood?.length || !foodToUpdate?.length) {
       throw new InternalServerErrorException(
         'Server had trouble updating food item!',
       );
     }
+    const changedFood: UserFood[] = [];
+    foodToUpdate.forEach(async (food) => {
+      if (food.quantity <= 0) {
+        return;
+      }
+      const foundFood = userFood.find((usrf) => usrf.foodId == food.id);
 
-    if (quantity < 0) {
-      throw new BadRequestException('Quantity cannot be negative!');
+      if (!foundFood) {
+        return;
+      }
+
+      if (foundFood.quantity != food.quantity) {
+        changedFood.push(foundFood);
+      }
+    });
+
+    if (changedFood.length > 0) {
+      await this.userFoodRepository.save(changedFood);
     }
-
-    const foundFood = userFood.find((usrf) => usrf.foodId == id);
-
-    if (!foundFood) {
-      throw new InternalServerErrorException(
-        'Server had trouble updating food item!',
-      );
-    }
-
-    if (foundFood.quantity == quantity) {
-      throw new BadRequestException(
-        'Server cannot update quantity because it remained the same!',
-      );
-    }
-
-    foundFood.quantity = quantity;
-    await this.userFoodRepository.save(foundFood);
   }
   async checkIfUserHasFoodWithNameAlreadyInNutrition(
     currentUserFoods: UserFood[],

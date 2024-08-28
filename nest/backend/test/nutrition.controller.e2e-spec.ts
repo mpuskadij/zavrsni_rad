@@ -38,7 +38,7 @@ import { UserFood } from '../src/entities/user_food/user_food';
 import { Food } from '../src/entities/food/food';
 import { JwtPayload } from '../src/authentication/jwt-payload/jwt-payload';
 import { plainToInstance } from 'class-transformer';
-import { GetFoodDto } from 'src/dtos/get-food-dto/get-food-dto';
+import { GetFoodDto } from '../src/dtos/get-food-dto/get-food-dto';
 
 describe('Nutrition Controller (e2e tests)', () => {
   let app: INestApplication;
@@ -322,7 +322,7 @@ describe('Nutrition Controller (e2e tests)', () => {
     });
   });
 
-  describe('PUT ' + nutritionPath + '/:id', () => {
+  describe('PUT ' + nutritionPath, () => {
     it('should return 400 BAD REQUEST is no body passed', async () => {
       const registerResponse = await request(app.getHttpServer())
         .post(registrationPath)
@@ -331,8 +331,22 @@ describe('Nutrition Controller (e2e tests)', () => {
       expect(registerResponse.status).toBe(HttpStatus.CREATED);
 
       const response = await request(app.getHttpServer())
-        .put(nutritionPath + '/-1')
+        .put(nutritionPath)
         .set('jwtPayload', JSON.stringify(payload));
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+    });
+
+    it('should return 400 BAD REQUEST is foods array is empty', async () => {
+      const registerResponse = await request(app.getHttpServer())
+        .post(registrationPath)
+        .send(registrationRequestBody);
+
+      expect(registerResponse.status).toBe(HttpStatus.CREATED);
+
+      const response = await request(app.getHttpServer())
+        .put(nutritionPath)
+        .set('jwtPayload', JSON.stringify(payload))
+        .send({ foods: [] });
       expect(response.status).toBe(HttpStatus.BAD_REQUEST);
     });
 
@@ -344,9 +358,23 @@ describe('Nutrition Controller (e2e tests)', () => {
       expect(registerResponse.status).toBe(HttpStatus.CREATED);
 
       const response = await request(app.getHttpServer())
-        .put(nutritionPath + '/-1')
+        .put(nutritionPath)
         .set('jwtPayload', JSON.stringify(payload))
-        .send({ quantity: -2 });
+        .send({ foods: [{ quantity: -2, id: 1 }] });
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+    });
+
+    it('should return 400 BAD REQUEST if id is a negative number', async () => {
+      const registerResponse = await request(app.getHttpServer())
+        .post(registrationPath)
+        .send(registrationRequestBody);
+
+      expect(registerResponse.status).toBe(HttpStatus.CREATED);
+
+      const response = await request(app.getHttpServer())
+        .put(nutritionPath)
+        .set('jwtPayload', JSON.stringify(payload))
+        .send({ foods: [{ quantity: 2, id: -1 }] });
       expect(response.status).toBe(HttpStatus.BAD_REQUEST);
     });
 
@@ -358,9 +386,9 @@ describe('Nutrition Controller (e2e tests)', () => {
       expect(registerResponse.status).toBe(HttpStatus.CREATED);
 
       const response = await request(app.getHttpServer())
-        .put(nutritionPath + '/-1')
+        .put(nutritionPath)
         .set('jwtPayload', JSON.stringify(payload))
-        .send({ quantity: 0 });
+        .send({ foods: [{ quantity: 0, id: -1 }] });
       expect(response.status).toBe(HttpStatus.BAD_REQUEST);
     });
 
@@ -372,13 +400,14 @@ describe('Nutrition Controller (e2e tests)', () => {
       expect(registerResponse.status).toBe(HttpStatus.CREATED);
 
       const response = await request(app.getHttpServer())
-        .put(nutritionPath + '/-1')
+        .put(nutritionPath)
         .set('jwtPayload', JSON.stringify(payload))
-        .send({ quantity: 1 });
+        .send({ foods: [{ quantity: 1, id: 1 }] });
+
       expect(response.status).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
     });
 
-    it.skip('should return 400 BAD REQUEST if quantity has remained the same', async () => {
+    it.skip('should return 204 NO CONTENT if quantity has remained the same', async () => {
       const registerResponse = await request(app.getHttpServer())
         .post(registrationPath)
         .send(registrationRequestBody);
@@ -399,10 +428,10 @@ describe('Nutrition Controller (e2e tests)', () => {
       const foods = plainToInstance(Array<GetFoodDto>, getFoodResponse.body);
 
       const response = await request(app.getHttpServer())
-        .put(nutritionPath + '/' + foods[0].id)
+        .put(nutritionPath)
         .set('jwtPayload', JSON.stringify(payload))
-        .send({ quantity: 1 });
-      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+        .send({ foods: [{ quantity: 1, id: foods[0].id }] });
+      expect(response.status).toBe(HttpStatus.NO_CONTENT);
     });
 
     it.skip('should return 204 NO CONTENT quantity is different from original quantitiy', async () => {
@@ -426,9 +455,9 @@ describe('Nutrition Controller (e2e tests)', () => {
       const foods = plainToInstance(Array<GetFoodDto>, getFoodResponse.body);
 
       const response = await request(app.getHttpServer())
-        .put(nutritionPath + '/' + foods[0].id)
+        .put(nutritionPath)
         .set('jwtPayload', JSON.stringify(payload))
-        .send({ quantity: 2 });
+        .send({ foods: [{ quantity: 2, id: foods[0].id }] });
       expect(response.status).toBe(HttpStatus.NO_CONTENT);
     });
   });
