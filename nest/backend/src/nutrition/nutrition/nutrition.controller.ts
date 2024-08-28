@@ -111,8 +111,8 @@ export class NutritionController {
           user.username,
           1,
         );
-        await this.usersService.assignFood(user, userFood);
-        await this.foodService.assignUser(food, userFood);
+        //await this.usersService.assignFood(user, userFood);
+        //await this.foodService.assignUser(food, userFood);
         return;
       }
     }
@@ -133,8 +133,9 @@ export class NutritionController {
         user.username,
         1,
       );
-      await this.usersService.assignFood(user, userFood);
-      await this.foodService.assignUser(food, userFood);
+
+      //await this.usersService.assignFood(user, userFood);
+
       return;
     }
     const foodExistsInDatabase = await this.foodService.getFoodByName(
@@ -150,8 +151,8 @@ export class NutritionController {
         user.username,
         1,
       );
-      await this.usersService.assignFood(user, userFood);
-      await this.foodService.assignUser(food, userFood);
+      //await this.usersService.assignFood(user, userFood);
+      //await this.foodService.assignUser(food, userFood);
       return;
     }
 
@@ -170,8 +171,8 @@ export class NutritionController {
       user.username,
       1,
     );
-    await this.usersService.assignFood(user, userFood);
-    await this.foodService.assignUser(foodExistsInDatabase, userFood);
+    //await this.usersService.assignFood(user, userFood);
+    //await this.foodService.assignUser(foodExistsInDatabase, userFood);
 
     return;
   }
@@ -227,8 +228,6 @@ export class NutritionController {
     }
     const userFoods = await this.usersService.getFoodOfUser(user);
     await this.usersService.deleteFoodFromUser(userFoods, id);
-
-    await this.usersService.saveUserData(user);
 
     return;
   }

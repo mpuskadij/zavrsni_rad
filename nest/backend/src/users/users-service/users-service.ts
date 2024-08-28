@@ -59,9 +59,9 @@ export class UsersService {
       throw new BadRequestException('Food to delete with given id not found!');
     }
 
-    await this.userFoodRepository.remove(userFoods[foundFood]);
-
-    userFoods.splice(foundFood, 1);
+    const removedFood = await this.userFoodRepository.remove(
+      userFoods[foundFood],
+    );
 
     return;
   }
@@ -132,10 +132,10 @@ export class UsersService {
       );
     }
     const userFood = new UserFood();
-    userFood.username = username;
     userFood.quantity = quantity;
     userFood.foodId = foodId;
-    return userFood;
+    userFood.username = username;
+    return this.userFoodRepository.save(userFood);
   }
   async checkIfUserHasFoodInNutrition(
     usersFood: UserFood[],

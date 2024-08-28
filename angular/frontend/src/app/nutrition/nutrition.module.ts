@@ -14,10 +14,17 @@ import { FoodService } from './food-service/food.service';
 import { AppRoutingModule } from '../app-routing.module';
 import { FoodDetailsComponent } from './food-details/food-details.component';
 import { unauthorizedInterceptor } from '../unauthorized-interceptor/unauthorized.interceptor';
+import { FormsModule, NgModel } from '@angular/forms';
 
 @NgModule({
   declarations: [NutritionComponent, FoodSearchComponent, FoodDetailsComponent],
-  imports: [TimeModule, CommonModule, NavigationComponent, AppRoutingModule],
+  imports: [
+    TimeModule,
+    CommonModule,
+    NavigationComponent,
+    AppRoutingModule,
+    FormsModule,
+  ],
   providers: [NutritionService, FoodService],
   exports: [NutritionComponent, FoodSearchComponent, FoodDetailsComponent],
 })

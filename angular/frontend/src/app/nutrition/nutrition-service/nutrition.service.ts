@@ -28,13 +28,6 @@ export class NutritionService {
   }
 
   addToNutrition(body: IAddFoodToNutrition) {
-    if (body.id && body.name) {
-      throw new Error('Can only send id or name, not both!');
-    }
-
-    if (!body.id && !body.name) {
-      throw new Error('Id or name need to be provided!');
-    }
     return this.httpClient.post<HttpResponse<object>>(
       `${this.endpoint}`,
       body,
@@ -42,5 +35,11 @@ export class NutritionService {
         observe: 'response',
       }
     );
+  }
+
+  updateQuantity(body: INutritionFood[]) {
+    return this.httpClient.put<HttpResponse<object>>(`${this.endpoint}`, body, {
+      observe: 'response',
+    });
   }
 }

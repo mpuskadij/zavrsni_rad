@@ -14,7 +14,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let commonFood of foods.common">
+            <tr *ngFor="let commonFood of foods.common" (click)="navigateToDetailsOfCommonFood(commonFood)">
                 <td>{{commonFood.food_name}}</td>
                 <td>{{commonFood.serving_unit}}</td>
                 <td>{{commonFood.serving_qty}}</td>
@@ -34,7 +34,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let brandedFood of foods.branded">
+            <tr *ngFor="let brandedFood of foods.branded" (click)="navigateToDetailsOfBrandedFood(brandedFood)">
                 <td>{{brandedFood.brand_name_item_name}}</td>
                 <td>{{brandedFood.serving_unit}}</td>
                 <td>{{brandedFood.serving_qty}}</td>

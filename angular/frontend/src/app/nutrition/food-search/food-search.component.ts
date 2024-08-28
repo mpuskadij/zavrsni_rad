@@ -2,6 +2,9 @@ import { Component } from '@angular/core';
 import { IFoodSearchQuery } from 'src/interfaces/ifood-search-query';
 import { FoodService } from '../food-service/food.service';
 import { IFoodSearchResponseBody } from 'src/interfaces/ifood-search-response-body';
+import { ICommonFood } from 'src/interfaces/icommon-food';
+import { IBrandedFood } from 'src/interfaces/ibranded-food';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-food-search',
@@ -9,9 +12,26 @@ import { IFoodSearchResponseBody } from 'src/interfaces/ifood-search-response-bo
   styleUrl: './food-search.component.scss',
 })
 export class FoodSearchComponent {
+  navigateToDetailsOfCommonFood(commonFood: ICommonFood) {
+    return this.navigateToDetails('common', commonFood.food_name);
+  }
+
+  navigateToDetailsOfBrandedFood(brandedFood: IBrandedFood) {
+    return this.navigateToDetails('branded', brandedFood.nix_item_id);
+  }
+
+  private navigateToDetails(type: string, id: string) {
+    if (!type || !id) {
+      this.note =
+        'Something went wrong while trying to navigate to food details!';
+      return;
+    }
+    this.router.navigate([`/nutrition/add/${type}/${id}`]);
+  }
+
   foods?: IFoodSearchResponseBody;
   note = '';
-  constructor(private foodService: FoodService) {}
+  constructor(private foodService: FoodService, private router: Router) {}
   search(searchTerm: string) {
     try {
       if (!searchTerm) {

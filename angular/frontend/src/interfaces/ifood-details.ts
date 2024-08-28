@@ -28,5 +28,7 @@ export interface IFoodDetails {
 
   tag_id?: string;
 
+  nix_item_id?: string;
+
   nf_ingredient_statement?: string;
 }

@@ -13,7 +13,5 @@ export const contentTypeInterceptor: HttpInterceptorFn = (req, next) => {
     body: body,
   });
 
-  console.log(clonedReq);
-
   return next(clonedReq);
 };

@@ -2,6 +2,9 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FoodService } from '../food-service/food.service';
 import { IFoodDetails } from 'src/interfaces/ifood-details';
 import { NutritionService } from '../nutrition-service/nutrition.service';
+import { IAddFoodToNutrition } from 'src/interfaces/iadd-food-to-nutrition';
+import { HttpStatusCode } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-food-details',
@@ -17,7 +20,8 @@ export class FoodDetailsComponent implements OnInit {
 
   constructor(
     private foodService: FoodService,
-    private nutritionService: NutritionService
+    private nutritionService: NutritionService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -36,5 +40,24 @@ export class FoodDetailsComponent implements OnInit {
     }
   }
 
-  addFood() {}
+  addFood() {
+    let body: IAddFoodToNutrition;
+    if (this.type == 'branded') {
+      body = { id: this.id };
+    } else if (this.type == 'common') {
+      body = { name: this.id };
+    } else {
+      this.note = 'Invalid food type';
+      return;
+    }
+    this.nutritionService.addToNutrition(body).subscribe({
+      next: () => {
+        this.router.navigate(['/nutrition']);
+      },
+      error: () => {
+        this.note =
+          'Something went wrong while trying to add food to nutrition!';
+      },
+    });
+  }
 }
