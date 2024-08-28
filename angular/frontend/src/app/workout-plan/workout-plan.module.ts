@@ -1,7 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WorkoutPlansComponent } from './workout-plans/workout-plans.component';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withFetch,
+  withInterceptors,
+} from '@angular/common/http';
 import { WorkoutPlanService } from './workout-plan-service/workout-plan.service';
 import { NavigationComponent } from '../navigation/navigation.component';
 import { TimeModule } from '../time/time.module';
@@ -11,6 +15,7 @@ import { CreateWorkoutPlanComponent } from './create-workout-plan/create-workout
 import { RouterOutlet } from '@angular/router';
 import { WorkoutPlanDetailsComponent } from './workout-plan-details/workout-plan-details.component';
 import { ExerciseComponent } from './exercise/exercise.component';
+import { unauthorizedInterceptor } from '../unauthorized-interceptor/unauthorized.interceptor';
 
 @NgModule({
   declarations: [
@@ -32,6 +37,6 @@ import { ExerciseComponent } from './exercise/exercise.component';
     WorkoutPlanDetailsComponent,
     ExerciseComponent,
   ],
-  providers: [provideHttpClient(withFetch()), WorkoutPlanService],
+  providers: [WorkoutPlanService],
 })
 export class WorkoutPlanModule {}

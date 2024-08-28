@@ -13,17 +13,21 @@ export class FoodSearchComponent {
   note = '';
   constructor(private foodService: FoodService) {}
   search(searchTerm: string) {
-    if (!searchTerm) {
-      this.note = 'Search term is empty!';
+    try {
+      if (!searchTerm) {
+        throw new Error('Search term is empty!');
+      }
+      const query: IFoodSearchQuery = { searchTerm: searchTerm };
+      this.foodService.searchFood(query).subscribe({
+        next: (foodFromServer) => {
+          this.foods = foodFromServer;
+        },
+        error: () => {
+          this.note = 'No food found matching the search term!';
+        },
+      });
+    } catch (error: any) {
+      this.note = error.message;
     }
-    const query: IFoodSearchQuery = { searchTerm: searchTerm };
-    this.foodService.searchFood(query).subscribe({
-      next: (foodFromServer) => {
-        this.foods = foodFromServer;
-      },
-      error: () => {
-        this.note = 'No food found matching the search term!';
-      },
-    });
   }
 }

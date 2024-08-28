@@ -14,7 +14,6 @@ export class TimeService {
     return this.httpClient.get<IServerTime>(this.timeApiEndpoint, {
       observe: 'body',
       responseType: 'json',
-      withCredentials: true,
     });
   }
 }

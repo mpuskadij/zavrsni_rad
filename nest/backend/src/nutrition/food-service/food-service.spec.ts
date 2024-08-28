@@ -75,7 +75,7 @@ describe('FoodService (unit tests)', () => {
       details.nf_calories = 0.3;
       details.nf_potassium = 0.1;
       details.nf_cholesterol = 0.2;
-      details.nf_dietery_fiber = 0.1;
+      details.nf_dietary_fiber = 0.1;
       details.nf_protein = 0.1;
       details.nf_saturated_fat = 0.1;
       details.nf_sodium = 0.1;
@@ -88,7 +88,7 @@ describe('FoodService (unit tests)', () => {
       dbResult.calories = details.nf_calories;
       dbResult.potassium = details.nf_potassium;
       dbResult.cholesterol = details.nf_cholesterol;
-      dbResult.dietery_fiber = details.nf_dietery_fiber;
+      dbResult.dietery_fiber = details.nf_dietary_fiber;
       dbResult.protein = details.nf_protein;
       dbResult.saturated_fat = details.nf_saturated_fat;
       dbResult.sodium = details.nf_sodium;
@@ -103,7 +103,7 @@ describe('FoodService (unit tests)', () => {
       expect(result.calories).toStrictEqual(details.nf_calories);
       expect(result.potassium).toStrictEqual(details.nf_potassium);
       expect(result.cholesterol).toStrictEqual(details.nf_cholesterol);
-      expect(result.dietery_fiber).toStrictEqual(details.nf_dietery_fiber);
+      expect(result.dietery_fiber).toStrictEqual(details.nf_dietary_fiber);
       expect(result.protein).toStrictEqual(details.nf_protein);
       expect(result.saturated_fat).toStrictEqual(details.nf_saturated_fat);
       expect(result.sodium).toStrictEqual(details.nf_sodium);
@@ -121,7 +121,7 @@ describe('FoodService (unit tests)', () => {
       details.nf_calories = 0.3;
       details.nf_potassium = 0.1;
       details.nf_cholesterol = 0.2;
-      details.nf_dietery_fiber = 0.1;
+      details.nf_dietary_fiber = 0.1;
       details.nf_protein = 0.1;
       details.nf_saturated_fat = 0.1;
       details.nf_sodium = 0.1;
@@ -133,7 +133,7 @@ describe('FoodService (unit tests)', () => {
       dbResult.calories = details.nf_calories;
       dbResult.potassium = details.nf_potassium;
       dbResult.cholesterol = details.nf_cholesterol;
-      dbResult.dietery_fiber = details.nf_dietery_fiber;
+      dbResult.dietery_fiber = details.nf_dietary_fiber;
       dbResult.protein = details.nf_protein;
       dbResult.saturated_fat = details.nf_saturated_fat;
       dbResult.sodium = details.nf_sodium;
@@ -147,7 +147,7 @@ describe('FoodService (unit tests)', () => {
       expect(result.calories).toStrictEqual(details.nf_calories);
       expect(result.potassium).toStrictEqual(details.nf_potassium);
       expect(result.cholesterol).toStrictEqual(details.nf_cholesterol);
-      expect(result.dietery_fiber).toStrictEqual(details.nf_dietery_fiber);
+      expect(result.dietery_fiber).toStrictEqual(details.nf_dietary_fiber);
       expect(result.protein).toStrictEqual(details.nf_protein);
       expect(result.saturated_fat).toStrictEqual(details.nf_saturated_fat);
       expect(result.sodium).toStrictEqual(details.nf_sodium);

@@ -9,6 +9,8 @@ import { WorkoutPlanDetailsComponent } from './workout-plan/workout-plan-details
 import { ExerciseComponent } from './workout-plan/exercise/exercise.component';
 import { NutritionComponent } from './nutrition/nutrition/nutrition.component';
 import { FoodSearchComponent } from './nutrition/food-search/food-search.component';
+import { FoodDetailsComponent } from './nutrition/food-details/food-details.component';
+import { foodTypeGuard } from './food-type/food-type.guard';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent, title: 'Login' },
@@ -39,7 +41,7 @@ const routes: Routes = [
   },
   {
     path: 'workout-plans/:id/add',
-    title: 'Add exercise',
+    title: 'Search for exercise',
     canActivate: [loginGuard],
     component: ExerciseComponent,
   },
@@ -54,6 +56,13 @@ const routes: Routes = [
     title: 'Search for food',
     canActivate: [loginGuard],
     component: FoodSearchComponent,
+  },
+
+  {
+    path: 'nutrition/add/:type/:id',
+    title: 'Food details',
+    canActivate: [loginGuard, foodTypeGuard],
+    component: FoodDetailsComponent,
   },
 ];
 

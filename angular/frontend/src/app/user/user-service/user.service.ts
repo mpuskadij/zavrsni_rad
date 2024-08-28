@@ -16,11 +16,13 @@ export class UserService {
     }
     return this.httpClient.post<HttpResponse<object>>(
       `${environment.apiUrl}${this.endpoint}register`,
-      JSON.stringify(user),
+      user,
       {
         observe: 'response',
-        headers: { recaptcha: token, 'Content-Type': 'application/json' },
-        withCredentials: true,
+        responseType: 'json',
+        headers: {
+          recaptcha: token,
+        },
       }
     );
   }
@@ -31,12 +33,13 @@ export class UserService {
     }
     return this.httpClient.post<ILoginData>(
       `${environment.apiUrl}${this.endpoint}login`,
-      JSON.stringify(user),
+      user,
       {
         observe: 'body',
         responseType: 'json',
-        headers: { recaptcha: token, 'Content-Type': 'application/json' },
-        withCredentials: true,
+        headers: {
+          recaptcha: token,
+        },
       }
     );
   }

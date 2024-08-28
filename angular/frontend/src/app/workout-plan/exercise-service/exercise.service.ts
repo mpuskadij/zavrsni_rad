@@ -28,7 +28,6 @@ export class ExerciseService {
     }
     return this.httpClient.get<IExercise[]>(this.endPoint, {
       observe: 'body',
-      withCredentials: true,
       responseType: 'json',
       params: params,
     });

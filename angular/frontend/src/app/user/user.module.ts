@@ -13,7 +13,6 @@ import { environment } from 'src/environments/environment';
   declarations: [LoginComponent],
   providers: [
     UserService,
-    provideHttpClient(withFetch()),
     { provide: RECAPTCHA_V3_SITE_KEY, useValue: environment.site_key },
   ],
   imports: [

@@ -18,7 +18,6 @@ export class WorkoutPlanService {
     return this.httpClient.get<IWorkoutPlan[]>(this.endpoint, {
       observe: 'body',
       responseType: 'json',
-      withCredentials: true,
     });
   }
 
@@ -26,25 +25,20 @@ export class WorkoutPlanService {
     return this.httpClient.get<IWorkoutPlanDetails>(`${this.endpoint}/${id}`, {
       observe: 'body',
       responseType: 'json',
-      withCredentials: true,
     });
   }
 
   deleteWorkoutPlan(deleteWorkoutPlanData: IDeleteWorkoutPlan) {
     return this.httpClient.delete<HttpResponse<object>>(`${this.endpoint}`, {
-      body: JSON.stringify(deleteWorkoutPlanData),
-      withCredentials: true,
+      body: deleteWorkoutPlanData,
       observe: 'response',
-      headers: { 'Content-Type': 'application/json' },
     });
   }
   deleteExercise(workoutPlanId: number, deleteExercise: IDeleteExercise) {
     return this.httpClient.delete<HttpResponse<object>>(
       `${this.endpoint}/${workoutPlanId}`,
       {
-        body: JSON.stringify(deleteExercise),
-        withCredentials: true,
-        headers: { 'Content-Type': 'application/json' },
+        body: deleteExercise,
       }
     );
   }
@@ -52,28 +46,18 @@ export class WorkoutPlanService {
   createWorkoutPlan(
     workoutPlanData: ICreateWorkoutPlan
   ): Observable<HttpResponse<object>> {
-    return this.httpClient.post(
-      this.endpoint,
-      JSON.stringify(workoutPlanData),
-      {
-        observe: 'response',
-        responseType: 'json',
-        withCredentials: true,
-        headers: { 'Content-Type': 'application/json' },
-      }
-    );
+    return this.httpClient.post(this.endpoint, workoutPlanData, {
+      observe: 'response',
+      responseType: 'json',
+    });
   }
 
   addExercise(workoutPlanId: number, exercise: IAddExercise) {
     return this.httpClient.post<HttpResponse<object>>(
       `${this.endpoint}/${workoutPlanId}`,
-      JSON.stringify(exercise),
+      exercise,
       {
-        withCredentials: true,
         observe: 'response',
-        headers: {
-          'Content-Type': 'application/json',
-        },
       }
     );
   }

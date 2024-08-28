@@ -46,26 +46,6 @@ describe('UserService', () => {
       expect(result).toThrowError();
     });
 
-    it('should send credentials when executing HTTP request', () => {
-      const user: IUser = { username: 'marin', password: 'asjfa9s9asS' };
-
-      service.register(user, 'asdasd').subscribe();
-
-      const request = httpTestingController.expectOne(registerUrl);
-
-      expect(request.request.withCredentials).toBe(true);
-    });
-
-    it('should send Content-Type to application/json', () => {
-      const user: IUser = { username: 'marin', password: 'asjfa9s9asS' };
-
-      service.register(user, 'asdasd').subscribe();
-
-      const request = httpTestingController.expectOne(registerUrl);
-
-      expect(request.request.headers.has('Content-Type')).toBe(true);
-    });
-
     it('should execute HTTP request when subscribed', () => {
       const user: IUser = { username: 'marin', password: 'asjfa9s9asS' };
 
@@ -102,26 +82,6 @@ describe('UserService', () => {
       const result = () => service.login(user, '');
 
       expect(result).toThrowError();
-    });
-
-    it('should send credentials when executing HTTP request', () => {
-      const user: IUser = { username: 'marin', password: 'asjfa9s9asS' };
-
-      service.login(user, 'asdasd').subscribe();
-
-      const request = httpTestingController.expectOne(loginUrl);
-
-      expect(request.request.headers.has('recaptcha')).toBe(true);
-    });
-
-    it('should set Content-Type to application/json when executing HTTP request', () => {
-      const user: IUser = { username: 'marin', password: 'asjfa9s9asS' };
-
-      service.login(user, 'asdasd').subscribe();
-
-      const request = httpTestingController.expectOne(loginUrl);
-
-      expect(request.request.headers.has('Content-Type')).toBe(true);
     });
 
     it('should execute HTTP request when subscribed', () => {

@@ -1,0 +1,43 @@
+<app-navigation></app-navigation>
+<p *ngIf="invalidType">Invalid URL parameters!</p>
+<div *ngIf="details !== undefined">
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th *ngIf="type == 'branded'" scope="col">Brand name</th>
+                <th *ngIf="type == 'branded'" scope="col">Ingredient statement</th>
+                <th scope="col">Serving unit</th>
+                <th scope="col">Calories</th>
+                <th scope="col">Total Fat</th>
+                <th scope="col">Saturated Fat</th>
+                <th scope="col">Cholesterol</th>
+                <th scope="col">Sodium</th>
+                <th scope="col">Total Carbohydrate</th>
+                <th scope="col">Dietary fiber</th>
+                <th scope="col">Sugars</th>
+                <th scope="col">Proteins</th>
+                <th scope="col">Potassium</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{details.food_name}}</td>
+                <td *ngIf="type == 'branded'">{{details.brand_name}}</td>
+                <td *ngIf="type == 'branded'">{{details.nf_ingredient_statement}}</td>
+                <td>{{details.nf_calories}}</td>
+                <td>{{details.nf_total_fat}}</td>
+                <td>{{details.nf_saturated_fat}}</td>
+                <td>{{details.nf_cholesterol}}</td>
+                <td>{{details.nf_sodium}}</td>
+                <td>{{details.nf_total_carbohydrate}}</td>
+                <td>{{details.nf_dietary_fiber}}</td>
+                <td>{{details.nf_sugars}}</td>
+                <td>{{details.nf_protein}}</td>
+                <td>{{details.nf_potassium}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <button type="button" (click)="addFood()">Add to nutrition</button>
+</div>
+<p *ngIf="note">{{note}}</p>

@@ -26,7 +26,7 @@ export class FoodService {
     food.name = details.food_name;
     food.calories = details.nf_calories ?? null;
     food.cholesterol = details.nf_cholesterol ?? null;
-    food.dietery_fiber = details.nf_dietery_fiber ?? null;
+    food.dietery_fiber = details.nf_dietary_fiber ?? null;
     food.nixId = details.nix_item_id ?? null;
     food.potassium = details.nf_potassium ?? null;
     food.protein = details.nf_protein ?? null;
