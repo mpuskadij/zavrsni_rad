@@ -69,7 +69,7 @@ describe('WorkoutPlanController (e2e)', () => {
         UsersModule,
         CrpytoModule,
         WorkoutPlanModule,
-        ConfigModule.forRoot({ envFilePath: '.test.ev' }),
+        ConfigModule.forRoot(),
         TypeOrmModule.forRoot({
           type: 'sqlite',
           database: './database/test.sqlite',
@@ -95,7 +95,11 @@ describe('WorkoutPlanController (e2e)', () => {
           UserFood,
         ]),
         AuthenticationModule,
-        JwtModule.register({ secret: process.env.JWT_SECRET }),
+        JwtModule.register({
+          secret: process.env.JWT_SECRET,
+          global: true,
+          signOptions: { expiresIn: '15m' },
+        }),
       ],
       controllers: [UsersController, WorkoutPlanController],
       providers: [

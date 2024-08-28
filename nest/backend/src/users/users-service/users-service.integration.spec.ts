@@ -60,10 +60,14 @@ describe('UsersService (integration tests)', () => {
           Food,
           UserFood,
         ]),
-        ConfigModule.forRoot(),
+        ConfigModule.forRoot({ envFilePath: '.test.env' }),
         AdminModule,
         AuthenticationModule,
-        JwtModule.register({ secret: process.env.JWT_SECRET }),
+        JwtModule.register({
+          secret: process.env.JWT_SECRET,
+          global: true,
+          signOptions: { expiresIn: '15m' },
+        }),
       ],
       providers: [
         UsersService,

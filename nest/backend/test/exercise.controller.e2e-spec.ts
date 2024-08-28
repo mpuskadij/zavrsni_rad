@@ -11,6 +11,8 @@ import { WgerExerciseDto } from '../src/dtos/wger-exercise-dto/wger-exercise-dto
 import { DtosModule } from '../src/dtos/dtos.module';
 import { WgerService } from '../src/workout-plan/wger-service/wger-service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule } from '@nestjs/config';
 
 describe('Exercise controller (e2e)', () => {
   let app: INestApplication;
@@ -19,7 +21,17 @@ describe('Exercise controller (e2e)', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [AuthenticationModule, GuardsModule, DtosModule],
+      imports: [
+        AuthenticationModule,
+        ConfigModule.forRoot(),
+        JwtModule.register({
+          secret: process.env.JWT_SECRET,
+          global: true,
+          signOptions: { expiresIn: '15m' },
+        }),
+        GuardsModule,
+        DtosModule,
+      ],
       controllers: [ExerciseController],
       providers: [WgerService],
     })

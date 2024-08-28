@@ -32,7 +32,11 @@ describe('Admin Guard (e2e)', () => {
         ConfigModule.forRoot({ envFilePath: '.test.env' }),
         BmiModule,
         AdminModule,
-        JwtModule.register({ secret: process.env.JWT_SECRET }),
+        JwtModule.register({
+          secret: process.env.JWT_SECRET,
+          global: true,
+          signOptions: { expiresIn: '15m' },
+        }),
         TypeOrmModule.forRoot({
           type: 'sqlite',
           database: './database/test.sqlite',

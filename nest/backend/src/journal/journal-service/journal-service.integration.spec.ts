@@ -12,7 +12,7 @@ import { UsersService } from '../../users/users-service/users-service';
 import { CryptoService } from '../../crpyto/crypto-service/crypto-service';
 import { AuthenticationService } from '../../authentication/authentication-service/authentication-service';
 import { CrpytoModule } from '../../crpyto/crpyto.module';
-import { JwtService } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DeleteJournalEntryDto } from '../../dtos/journal-entry-dto/delete-journal-entry-dto';
 import { WorkoutPlan } from '../../entities/workout-plan/workout-plan';
@@ -82,7 +82,12 @@ describe('JournalService (integration tests)', () => {
           ],
         }),
         AdminModule,
-        ConfigModule.forRoot(),
+        ConfigModule.forRoot({ envFilePath: '.test.env' }),
+        JwtModule.register({
+          secret: process.env.JWT_SECRET,
+          global: true,
+          signOptions: { expiresIn: '15m' },
+        }),
         CrpytoModule,
         TypeOrmModule.forFeature([
           JournalEntry,
@@ -98,7 +103,6 @@ describe('JournalService (integration tests)', () => {
         JournalService,
         UsersService,
         AuthenticationService,
-        JwtService,
         ConfigService,
         VirtualTimeService,
       ],

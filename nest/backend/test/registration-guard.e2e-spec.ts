@@ -24,6 +24,7 @@ import { WorkoutPlan } from '../src/entities/workout-plan/workout-plan';
 import { Exercise } from '../src/entities/exercise/exercise';
 import { Food } from '../src/entities/food/food';
 import { UserFood } from '../src/entities/user_food/user_food';
+import { JwtModule } from '@nestjs/jwt';
 
 describe('RegistrationGuard (e2e)', () => {
   let app: INestApplication;
@@ -48,6 +49,12 @@ describe('RegistrationGuard (e2e)', () => {
           ],
         }),
         AuthenticationModule,
+        ConfigModule.forRoot(),
+        JwtModule.register({
+          secret: process.env.JWT_SECRET,
+          global: true,
+          signOptions: { expiresIn: '15m' },
+        }),
       ],
       controllers: [UsersController],
       providers: [

@@ -18,6 +18,8 @@ import { WorkoutPlan } from '../src/entities/workout-plan/workout-plan';
 import { Exercise } from '../src/entities/exercise/exercise';
 import { Food } from '../src/entities/food/food';
 import { UserFood } from '../src/entities/user_food/user_food';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule } from '@nestjs/config';
 
 describe('NewBmiEntryGuard (e2e)', () => {
   let app: INestApplication;
@@ -27,6 +29,12 @@ describe('NewBmiEntryGuard (e2e)', () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
         AuthenticationModule,
+        ConfigModule.forRoot({ envFilePath: '.test.env' }),
+        JwtModule.register({
+          secret: process.env.JWT_SECRET,
+          global: true,
+          signOptions: { expiresIn: '15m' },
+        }),
         GuardsModule,
         BmiModule,
         TypeOrmModule.forRoot({

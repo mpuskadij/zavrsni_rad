@@ -20,6 +20,7 @@ import { Exercise } from '../src/entities/exercise/exercise';
 import { Food } from '../src/entities/food/food';
 import { UserFood } from '../src/entities/user_food/user_food';
 import { AuthenticationModule } from '../src/authentication/authentication.module';
+import { JwtModule } from '@nestjs/jwt';
 
 describe('GoogleRecaptchaGuard (e2e)', () => {
   let app: INestApplication;
@@ -34,6 +35,11 @@ describe('GoogleRecaptchaGuard (e2e)', () => {
           secretKey: process.env.GOOGLE_RECAPTCHA_SECRET_KEY,
           response: (req) => req.headers.recaptcha,
           score: 0.5,
+        }),
+        JwtModule.register({
+          secret: process.env.JWT_SECRET,
+          global: true,
+          signOptions: { expiresIn: '15m' },
         }),
         UsersModule,
         TypeOrmModule.forRoot({

@@ -87,7 +87,11 @@ describe('Nutrition Controller (e2e tests)', () => {
           Food,
         ]),
         AuthenticationModule,
-        JwtModule.register({ secret: process.env.JWT_SECRET }),
+        JwtModule.register({
+          secret: process.env.JWT_SECRET,
+          global: true,
+          signOptions: { expiresIn: '15m' },
+        }),
       ],
       controllers: [FoodController],
       providers: [

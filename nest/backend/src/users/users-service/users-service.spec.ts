@@ -32,6 +32,7 @@ describe('UsersService (unit tests)', () => {
     hashPassword: jest.fn(),
     compareIfPasswordsMatch: jest.fn(),
   };
+  const mockUserFoodRepo = { save: jest.fn(), remove: jest.fn() };
 
   const mockAuthenticationService = {
     generateJWT: jest.fn(),
@@ -42,16 +43,19 @@ describe('UsersService (unit tests)', () => {
       imports: [
         CrpytoModule,
         AuthenticationModule,
-        ConfigModule.forRoot(),
-        JwtModule.register({ secret: process.env.JWT_SECRET }),
+        ConfigModule.forRoot({ envFilePath: '.test.env' }),
+        JwtModule.register({
+          secret: process.env.JWT_SECRET,
+          global: true,
+          signOptions: { expiresIn: '15m' },
+        }),
       ],
       providers: [
         UsersService,
         { provide: getRepositoryToken(User), useClass: Repository },
-        { provide: getRepositoryToken(UserFood), useClass: Repository },
+        { provide: getRepositoryToken(UserFood), useValue: mockUserFoodRepo },
         { provide: CryptoService, useValue: mockCryptoService },
         { provide: AuthenticationService, useValue: mockAuthenticationService },
-        JwtService,
         ConfigService,
         HashGenerator,
         SaltGenerator,
@@ -622,8 +626,10 @@ describe('UsersService (unit tests)', () => {
 
     it('should create user food if quantity is a number', async () => {
       const quantity = 1;
+      const usrFood: UserFood = new UserFood();
+      usrFood.quantity = quantity;
+      mockUserFoodRepo.save.mockResolvedValue(usrFood);
       const result = await provider.createUserFood(1, username, quantity);
-
       expect(result).toBeDefined();
       expect(result.quantity).toStrictEqual(quantity);
     });
@@ -775,8 +781,11 @@ describe('UsersService (unit tests)', () => {
     it('should remove entry that has been deleted', async () => {
       const userFood = new UserFood();
       userFood.foodId = 1;
-      const userFoods = [userFood];
-      jest.spyOn(userFoodRepository, 'remove').mockResolvedValue(userFood);
+      let userFoods = [userFood];
+      const emptyUserFood = [];
+      mockUserFoodRepo.remove.mockImplementation(() => {
+        userFoods = [];
+      });
       await provider.deleteFoodFromUser(userFoods, 1);
 
       expect(userFoods).toHaveLength(0);

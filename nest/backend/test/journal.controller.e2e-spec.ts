@@ -16,7 +16,7 @@ import { UsersService } from '../src/users/users-service/users-service';
 import { CrpytoModule } from '../src/crpyto/crpyto.module';
 import { AuthenticationModule } from '../src/authentication/authentication.module';
 import { AuthenticationService } from '../src/authentication/authentication-service/authentication-service';
-import { JwtService } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GoogleRecaptchaGuard } from '@nestlab/google-recaptcha';
 import { Repository } from 'typeorm';
@@ -60,7 +60,7 @@ describe('Journal Controller (e2e)', () => {
             UserFood,
           ],
         }),
-        ConfigModule.forRoot({ envFilePath: '.test.env' }),
+        ConfigModule.forRoot(),
         TypeOrmModule.forFeature([
           JournalEntry,
           User,
@@ -70,12 +70,16 @@ describe('Journal Controller (e2e)', () => {
           Food,
           UserFood,
         ]),
+        JwtModule.register({
+          secret: process.env.JWT_SECRET,
+          global: true,
+          signOptions: { expiresIn: '15m' },
+        }),
       ],
       controllers: [JournalController],
       providers: [
         UsersService,
         AuthenticationService,
-        JwtService,
         ConfigService,
         VirtualTimeService,
       ],

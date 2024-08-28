@@ -1,95 +1,94 @@
 name: CI
 
 on:
-    push:
-    workflow_dispatch:
+  push:
+  workflow_dispatch:
 
 jobs:
-    build_test_backend:
-        runs-on: ubuntu-latest
-    
-        steps:
-        - name: Checkout
-          uses: actions/checkout@v4.1.6
-        
-        - name: Install Node
-          uses: actions/setup-node@v4
-          with:
-            node-version: 18
-        
-        - name: Install Nest
-          run: npm i -g @nestjs/cli
-        
-        - name: Install dependencies
-          working-directory: ./nest/backend/
-          run: npm install
-        
-        - name: Create .env file
-          uses: SpicyPizza/create-envfile@v2.0.3
-          with:
-            envkey_GOOGLE_RECAPTCHA_SECRET_KEY: ${{ secrets.GOOGLE_RECAPTCHA_SECRET_KEY }}
-            envkey_JWT_SECRET: ${{secrets.JWT_SECRET}}
-            envkey_NUTRITIONIX_APP_ID: $${{secrets.NUTRITIONIX_APP_ID}}
-            envkey_NUTRITIONIX_APP_KEY: $${{secrets.NUTRITIONIX_APP_KEY}}
-            envkey_TIME_OFFSET: 0
-            directory: ./nest/backend
-            file_name: .env
-            fail_on_empty: false
-            sort_keys: false
-            
-        - name: Create .test.env file
-          uses: SpicyPizza/create-envfile@v2.0.3
-          with:
-            envkey_TIME_OFFSET: 0
-            directory: ./nest/backend
-            file_name: .test.env
-            fail_on_empty: false
-            sort_keys: false
+  build_test_backend:
+    runs-on: ubuntu-latest
 
-        - name: Build NestJS project
-          working-directory: ./nest/backend/
-          run: npm run build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.6
 
-        - name: Perform unit tests with Jest
-          working-directory: ./nest/backend/
-          run: npm test
-        
-        - name: Perform E2E tests with SuperTest
-          working-directory: ./nest/backend/
-          run: npm run test:e2e
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
 
-    build_test_frontend:
-      runs-on: ubuntu-latest
+      - name: Install Nest
+        run: npm i -g @nestjs/cli
 
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4.1.6
-        
-        - name: Install Node
-          uses: actions/setup-node@v4
-          with:
-            node-version: 18
+      - name: Install dependencies
+        working-directory: ./nest/backend/
+        run: npm install
 
-        - name: Install Angular CLI
-          working-directory: ./angular
-          run: npm i -g @angular/cli
-          
-        - name: Install dependencies for Angular project
-          working-directory: ./angular/frontend/
-          run: npm install
+      - name: Create .env file
+        uses: SpicyPizza/create-envfile@v2.0.3
+        with:
+          envkey_GOOGLE_RECAPTCHA_SECRET_KEY: ${{ secrets.GOOGLE_RECAPTCHA_SECRET_KEY }}
+          envkey_JWT_SECRET: ${{secrets.JWT_SECRET}}
+          envkey_NUTRITIONIX_APP_ID: $${{secrets.NUTRITIONIX_APP_ID}}
+          envkey_NUTRITIONIX_APP_KEY: $${{secrets.NUTRITIONIX_APP_KEY}}
+          envkey_TIME_OFFSET: 0
+          directory: ./nest/backend
+          file_name: .env
+          fail_on_empty: false
+          sort_keys: false
 
-        - name: Build Angular project
-          working-directory: ./angular/frontend/
-          run: npm run build
+      - name: Create .test.env file
+        uses: SpicyPizza/create-envfile@v2.0.3
+        with:
+          envkey_TIME_OFFSET: 0
+          envkey_JWT_SECRET: ${{secrets.JWT_SECRET}}
+          directory: ./nest/backend
+          file_name: .test.env
+          fail_on_empty: false
+          sort_keys: false
 
-        - name: Setup chrome
-          uses: browser-actions/setup-chrome@v1
+      - name: Build NestJS project
+        working-directory: ./nest/backend/
+        run: npm run build
 
-        - name: Install latest Chrome version
-          run: chrome --version
+      - name: Perform unit tests with Jest
+        working-directory: ./nest/backend/
+        run: npm test
 
-        - name: Test Angular project
-          working-directory: ./angular/frontend/
-          run: npm run test:ci
+      - name: Perform E2E tests with SuperTest
+        working-directory: ./nest/backend/
+        run: npm run test:e2e
 
-        
+  build_test_frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.6
+
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Angular CLI
+        working-directory: ./angular
+        run: npm i -g @angular/cli
+
+      - name: Install dependencies for Angular project
+        working-directory: ./angular/frontend/
+        run: npm install
+
+      - name: Build Angular project
+        working-directory: ./angular/frontend/
+        run: npm run build
+
+      - name: Setup chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Install latest Chrome version
+        run: chrome --version
+
+      - name: Test Angular project
+        working-directory: ./angular/frontend/
+        run: npm run test:ci

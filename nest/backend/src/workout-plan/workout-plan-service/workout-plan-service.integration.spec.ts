@@ -23,6 +23,9 @@ import { UserFood } from '../../entities/user_food/user_food';
 import { AdminModule } from '../../admin/admin.module';
 import { VirtualTimeService } from '../../admin/virtual-time-service/virtual-time-service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { AppModule } from '../../app.module';
+import { AuthenticationService } from '../../authentication/authentication-service/authentication-service';
 
 describe('WorkoutPlanService (integration tests)', () => {
   let provider: WorkoutPlanService;
@@ -42,7 +45,11 @@ describe('WorkoutPlanService (integration tests)', () => {
         EntitiesModule,
         CrpytoModule,
         ConfigModule.forRoot({ envFilePath: '.test.env' }),
-        AuthenticationModule,
+        JwtModule.register({
+          secret: process.env.JWT_SECRET,
+          global: true,
+          signOptions: { expiresIn: '15m' },
+        }),
         TypeOrmModule.forRoot({
           type: 'sqlite',
           database: './database/test.sqlite',
@@ -77,6 +84,7 @@ describe('WorkoutPlanService (integration tests)', () => {
         ExerciseService,
         VirtualTimeService,
         ConfigService,
+        AuthenticationService,
       ],
     }).compile();
     userRepo = module.get<Repository<User>>(getRepositoryToken(User));

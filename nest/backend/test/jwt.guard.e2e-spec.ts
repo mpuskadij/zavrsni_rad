@@ -25,11 +25,15 @@ describe('JWTGuard (e2e)', () => {
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
-        ConfigModule,
+        ConfigModule.forRoot({ envFilePath: '.test.env' }),
         AuthenticationModule,
         BmiModule,
         UsersModule,
-        JwtModule.register({ secret: process.env.JWT_SECRET }),
+        JwtModule.register({
+          secret: process.env.JWT_SECRET,
+          global: true,
+          signOptions: { expiresIn: '15m' },
+        }),
         TypeOrmModule.forRoot({
           type: 'sqlite',
           database: './database/test.sqlite',

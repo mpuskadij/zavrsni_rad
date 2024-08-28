@@ -42,7 +42,7 @@ describe('UserController (e2e)', () => {
       imports: [
         UsersModule,
         CrpytoModule,
-        ConfigModule.forRoot(),
+        ConfigModule.forRoot({ envFilePath: '.test.env' }),
         TypeOrmModule.forRoot({
           type: 'sqlite',
           database: './database/test.sqlite',
@@ -59,7 +59,11 @@ describe('UserController (e2e)', () => {
           ],
         }),
         AuthenticationModule,
-        JwtModule.register({ secret: process.env.JWT_SECRET }),
+        JwtModule.register({
+          secret: process.env.JWT_SECRET,
+          global: true,
+          signOptions: { expiresIn: '15m' },
+        }),
       ],
       controllers: [UsersController],
       providers: [

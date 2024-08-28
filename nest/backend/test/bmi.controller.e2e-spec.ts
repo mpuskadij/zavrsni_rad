@@ -48,7 +48,7 @@ describe('BmiController (e2e)', () => {
         DtosModule,
         UsersModule,
         CrpytoModule,
-        ConfigModule.forRoot(),
+        ConfigModule.forRoot({ envFilePath: '.test.env' }),
         TypeOrmModule.forRoot({
           type: 'sqlite',
           database: './database/test.sqlite',
@@ -65,7 +65,11 @@ describe('BmiController (e2e)', () => {
           ],
         }),
         AuthenticationModule,
-        JwtModule.register({ secret: process.env.JWT_SECRET }),
+        JwtModule.register({
+          secret: process.env.JWT_SECRET,
+          global: true,
+          signOptions: { expiresIn: '15m' },
+        }),
       ],
       controllers: [BmiController, UsersController],
       providers: [
