@@ -2,10 +2,11 @@ import { TestBed } from '@angular/core/testing';
 
 import { UserService } from './user.service';
 import { IUser } from 'src/interfaces/iuser';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withFetch } from '@angular/common/http';
 import {
   HttpClientTestingModule,
   HttpTestingController,
+  provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { IBackendError } from 'src/interfaces/ibackend-error';
 import { environment } from 'src/environments/environment';
@@ -19,9 +20,11 @@ describe('UserService', () => {
   const loginUrl = `${environment.apiUrl}users/login`;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({ imports: [HttpClientTestingModule] });
+    TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
+      providers: [UserService],
+    });
     service = TestBed.inject(UserService);
-    httpClient = TestBed.inject(HttpClient);
     httpTestingController = TestBed.inject(HttpTestingController);
   });
 

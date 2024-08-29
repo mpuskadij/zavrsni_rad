@@ -28,6 +28,11 @@ import { contentTypeInterceptor } from './content-type-interceptor/content-type.
 import { JournalModule } from './journal/journal.module';
 import { UsersComponent } from './admin/users/users.component';
 import { AdminModule } from './admin/admin.module';
+import { AdminService } from './admin/admin-service/admin.service';
+import { TimeService } from './time/time-service/time.service';
+import { ExerciseService } from './workout-plan/exercise-service/exercise.service';
+import { JournalService } from './journal/journal-service/journal.service';
+import { TimeModule } from './time/time.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -42,6 +47,7 @@ import { AdminModule } from './admin/admin.module';
     NutritionModule,
     JournalModule,
     AdminModule,
+    TimeModule,
   ],
   providers: [
     provideHttpClient(
@@ -55,6 +61,10 @@ import { AdminModule } from './admin/admin.module';
     WorkoutPlanService,
     FoodService,
     NutritionService,
+    AdminService,
+    TimeService,
+    ExerciseService,
+    JournalService,
   ],
   bootstrap: [AppComponent],
 })

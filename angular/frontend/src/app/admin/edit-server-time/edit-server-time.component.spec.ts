@@ -1,29 +1,31 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UsersComponent } from './users.component';
+import { EditServerTimeComponent } from './edit-server-time.component';
 import { NavigationComponent } from 'src/app/navigation/navigation.component';
-import { TimeModule } from 'src/app/time/time.module';
 import { AppRoutingModule } from 'src/app/app-routing.module';
-import { AdminService } from '../admin-service/admin.service';
+import { TimeModule } from 'src/app/time/time.module';
+import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { AdminService } from '../admin-service/admin.service';
 
-describe('UsersComponent', () => {
-  let component: UsersComponent;
-  let fixture: ComponentFixture<UsersComponent>;
+describe('EditServerTimeComponent', () => {
+  let component: EditServerTimeComponent;
+  let fixture: ComponentFixture<EditServerTimeComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [UsersComponent],
+      declarations: [EditServerTimeComponent],
       imports: [
         NavigationComponent,
-        TimeModule,
         AppRoutingModule,
+        TimeModule,
+        ReactiveFormsModule,
         HttpClientTestingModule,
       ],
       providers: [AdminService],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(UsersComponent);
+    fixture = TestBed.createComponent(EditServerTimeComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

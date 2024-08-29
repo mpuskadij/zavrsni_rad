@@ -5,6 +5,7 @@ import { NavigationComponent } from 'src/app/navigation/navigation.component';
 import { TimeModule } from 'src/app/time/time.module';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { AppRoutingModule } from 'src/app/app-routing.module';
+import { ExerciseService } from '../exercise-service/exercise.service';
 
 describe('ExerciseComponent', () => {
   let component: ExerciseComponent;
@@ -13,7 +14,13 @@ describe('ExerciseComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ExerciseComponent],
-      imports: [NavigationComponent, TimeModule, AppRoutingModule],
+      imports: [
+        NavigationComponent,
+        TimeModule,
+        AppRoutingModule,
+        HttpClientTestingModule,
+      ],
+      providers: [ExerciseService],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ExerciseComponent);

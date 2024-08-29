@@ -4,8 +4,10 @@ import { WorkoutPlanService } from './workout-plan.service';
 import {
   HttpClientTestingModule,
   HttpTestingController,
+  provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { environment } from 'src/environments/environment';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 
 describe('WorkoutPlanService', () => {
   let service: WorkoutPlanService;
@@ -13,7 +15,10 @@ describe('WorkoutPlanService', () => {
   let httpTestingController: HttpTestingController;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({ imports: [HttpClientTestingModule] });
+    TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
+      providers: [WorkoutPlanService],
+    });
     service = TestBed.inject(WorkoutPlanService);
     httpTestingController = TestBed.inject(HttpTestingController);
   });

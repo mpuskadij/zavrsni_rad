@@ -11,10 +11,7 @@ import { environment } from 'src/environments/environment';
 
 @NgModule({
   declarations: [LoginComponent],
-  providers: [
-    UserService,
-    { provide: RECAPTCHA_V3_SITE_KEY, useValue: environment.site_key },
-  ],
+  providers: [],
   imports: [
     CommonModule,
     ReactiveFormsModule,

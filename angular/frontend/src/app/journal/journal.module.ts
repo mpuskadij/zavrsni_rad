@@ -10,7 +10,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 @NgModule({
   declarations: [JournalComponent, CreateJournalEntryComponent],
   imports: [NavigationComponent, TimeModule, CommonModule, ReactiveFormsModule],
-  providers: [JournalService],
+  providers: [],
   exports: [JournalComponent, CreateJournalEntryComponent],
 })
 export class JournalModule {}

@@ -1,13 +1,20 @@
 import { TestBed } from '@angular/core/testing';
 
 import { JournalService } from './journal.service';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import {
+  HttpClientTestingModule,
+  provideHttpClientTesting,
+} from '@angular/common/http/testing';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 
 describe('JournalService', () => {
   let service: JournalService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({ imports: [HttpClientTestingModule] });
+    TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
+      providers: [JournalService],
+    });
     service = TestBed.inject(JournalService);
   });
 

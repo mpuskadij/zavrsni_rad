@@ -37,6 +37,6 @@ import { unauthorizedInterceptor } from '../unauthorized-interceptor/unauthorize
     WorkoutPlanDetailsComponent,
     ExerciseComponent,
   ],
-  providers: [WorkoutPlanService],
+  providers: [],
 })
 export class WorkoutPlanModule {}

@@ -25,7 +25,7 @@ import { FormsModule, NgModel } from '@angular/forms';
     AppRoutingModule,
     FormsModule,
   ],
-  providers: [NutritionService, FoodService],
+  providers: [],
   exports: [NutritionComponent, FoodSearchComponent, FoodDetailsComponent],
 })
 export class NutritionModule {}

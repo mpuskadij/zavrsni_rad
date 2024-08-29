@@ -7,7 +7,7 @@ import { ClockComponent } from './clock/clock.component';
 @NgModule({
   declarations: [ClockComponent],
   imports: [CommonModule],
-  providers: [TimeService, provideHttpClient(withFetch())],
+  providers: [],
   exports: [ClockComponent],
 })
 export class TimeModule {}

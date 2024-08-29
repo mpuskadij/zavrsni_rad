@@ -5,8 +5,9 @@ import { IBmi } from 'src/interfaces/ibmi';
 import {
   HttpClientTestingModule,
   HttpTestingController,
+  provideHttpClientTesting,
 } from '@angular/common/http/testing';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withFetch } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 
 describe('BmiService', () => {
@@ -14,9 +15,11 @@ describe('BmiService', () => {
   let httpClient: HttpClient;
   let httpTestingController: HttpTestingController;
   beforeEach(() => {
-    TestBed.configureTestingModule({ imports: [HttpClientTestingModule] });
+    TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
+      providers: [BmiService],
+    });
     service = TestBed.inject(BmiService);
-    httpClient = TestBed.inject(HttpClient);
     httpTestingController = TestBed.inject(HttpTestingController);
   });
 
