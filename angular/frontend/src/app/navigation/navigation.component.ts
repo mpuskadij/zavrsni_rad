@@ -17,12 +17,14 @@ import { environment } from 'src/environments/environment';
 })
 export class NavigationComponent implements OnInit {
   isLoggedIn: boolean = false;
+  isAdmin: boolean = false;
 
   constructor(private router: Router, private ngZone: NgZone) {}
   ngOnInit(): void {
     const sessionStorageData = sessionStorage.getItem('isAdmin');
     if (sessionStorageData === 'true' || sessionStorageData === 'false') {
       this.isLoggedIn = true;
+      this.isAdmin = sessionStorageData === 'true' ? true : false;
     } else {
       this.isLoggedIn = false;
     }

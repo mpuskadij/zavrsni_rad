@@ -13,6 +13,8 @@ import { FoodDetailsComponent } from './nutrition/food-details/food-details.comp
 import { foodTypeGuard } from './food-type/food-type.guard';
 import { JournalComponent } from './journal/journal/journal.component';
 import { CreateJournalEntryComponent } from './journal/create-journal-entry/create-journal-entry.component';
+import { adminGuard } from './admin.guard';
+import { UsersComponent } from './admin/users/users.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent, title: 'Login' },
@@ -79,6 +81,12 @@ const routes: Routes = [
     title: 'Create a new entry',
     canActivate: [loginGuard],
     component: CreateJournalEntryComponent,
+  },
+  {
+    path: 'users',
+    title: 'Users',
+    canActivate: [loginGuard, adminGuard],
+    component: UsersComponent,
   },
 ];
 
