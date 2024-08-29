@@ -42,7 +42,6 @@ import { APP_GUARD } from '@nestjs/core';
         JWT_SECRET: Joi.string().min(1).required(),
         NUTRITIONIX_APP_ID: Joi.string().min(1).required(),
         NUTRITIONIX_APP_KEY: Joi.string().min(1).required(),
-        TIME_OFFSET: Joi.number().integer().required(),
       }),
     }),
     TypeOrmModule.forRoot({

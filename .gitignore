@@ -132,3 +132,4 @@ nest/backend/database/test.sqlite
 nest/backend/database/database.sqlite
 nest/backend/.test.env
 angular/frontend/.angular
+nest/backend/time.json

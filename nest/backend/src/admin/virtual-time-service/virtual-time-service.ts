@@ -1,9 +1,13 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import * as fs from 'fs/promises';
+import { boolean } from 'joi';
+import * as path from 'path';
 
 @Injectable()
 export class VirtualTimeService {
-  constructor(private configService: ConfigService) {}
+  private filePath = path.resolve(__dirname, '../../../time.json');
+  constructor() {}
 
   async setTime(offset: number): Promise<void> {
     if (isNaN(offset) || offset === undefined || offset === null) {
@@ -11,22 +15,31 @@ export class VirtualTimeService {
         'Server had trouble setting virtual time!',
       );
     }
-    process.env.TIME_OFFSET = offset.toString();
-
-    return;
+    const fileData = { offset };
+    try {
+      await fs.writeFile(this.filePath, JSON.stringify(fileData), {
+        encoding: 'utf8',
+      });
+    } catch {
+      throw new InternalServerErrorException(
+        'Server had trouble updating offset!',
+      );
+    }
   }
 
   async getTime(): Promise<Date> {
-    await ConfigModule.envVariablesLoaded;
-    const offset: number = parseInt(
-      this.configService.getOrThrow('TIME_OFFSET'),
-      10,
-    );
+    try {
+      const rawData = await fs.readFile(this.filePath, { encoding: 'utf8' });
+      const jsonData = JSON.parse(rawData);
+      const serverTime = new Date();
 
-    const serverTime = new Date();
+      serverTime.setHours(serverTime.getHours() + jsonData.offset);
 
-    serverTime.setHours(serverTime.getHours() + offset);
-
-    return serverTime;
+      return serverTime;
+    } catch {
+      throw new InternalServerErrorException(
+        'Server had trouble getting time!',
+      );
+    }
   }
 }

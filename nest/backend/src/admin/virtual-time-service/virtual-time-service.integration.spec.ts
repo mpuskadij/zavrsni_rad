@@ -2,28 +2,51 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { VirtualTimeService } from './virtual-time-service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { InternalServerErrorException } from '@nestjs/common';
+import * as fs from 'fs/promises';
+import * as path from 'path';
 
 describe('VirtualTimeService (integration with env file)', () => {
   let provider: VirtualTimeService;
   let configService: ConfigService;
+  const filePath = path.resolve(__dirname, '../../../time.json');
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [ConfigModule.forRoot({ envFilePath: '.test.env' })],
-      providers: [VirtualTimeService, ConfigService],
+      imports: [],
+      providers: [VirtualTimeService],
     }).compile();
 
     provider = module.get<VirtualTimeService>(VirtualTimeService);
-    configService = module.get<ConfigService>(ConfigService);
   });
 
   describe('setTime', () => {
-    it('should set env variable', async () => {
+    it('should set JSON file variable if positive', async () => {
       const newOffset = 1;
       await provider.setTime(newOffset);
 
-      const offset = parseInt(configService.get('TIME_OFFSET'), 10);
-      expect(offset).toEqual(newOffset);
+      const data = await fs.readFile(filePath, { encoding: 'utf8' });
+      const object = JSON.parse(data);
+
+      expect(object.offset).toBe(newOffset);
+    });
+
+    it('should set JSON file variable if negative', async () => {
+      const newOffset = -1;
+      await provider.setTime(newOffset);
+
+      const data = await fs.readFile(filePath, { encoding: 'utf8' });
+      const object = JSON.parse(data);
+
+      expect(object.offset).toBe(newOffset);
+    });
+    it('should set JSON file variable if 0', async () => {
+      const newOffset = 0;
+      await provider.setTime(newOffset);
+
+      const data = await fs.readFile(filePath, { encoding: 'utf8' });
+      const object = JSON.parse(data);
+
+      expect(object.offset).toBe(newOffset);
     });
   });
 

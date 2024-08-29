@@ -2,18 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { VirtualTimeService } from './virtual-time-service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { InternalServerErrorException } from '@nestjs/common';
-
 describe('VirtualTimeService (unit tests)', () => {
   let provider: VirtualTimeService;
-  const mockConfigService = { set: jest.fn(), getOrThrow: jest.fn() };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [ConfigModule],
-      providers: [
-        VirtualTimeService,
-        { provide: ConfigService, useValue: mockConfigService },
-      ],
+      providers: [VirtualTimeService],
     }).compile();
 
     provider = module.get<VirtualTimeService>(VirtualTimeService);
@@ -24,11 +19,6 @@ describe('VirtualTimeService (unit tests)', () => {
       const result = () => provider.setTime(NaN);
 
       expect(result).rejects.toThrow(InternalServerErrorException);
-    });
-    it('should set offset on current time based on given parameter', async () => {
-      await provider.setTime(1);
-
-      expect(mockConfigService.set).toHaveBeenCalled();
     });
   });
 });
