@@ -49,7 +49,7 @@ jobs:
         uses: devops-actions/json-to-file@v1.0.0
         with:
           json: '{"offset": 0}'
-          filename: './nest/backend/time.json'
+          filename: "./nest/backend/time.json"
 
       - name: Build NestJS project
         working-directory: ./nest/backend/
@@ -57,7 +57,7 @@ jobs:
 
       - name: Perform unit tests with Jest
         working-directory: ./nest/backend/
-        run: npm test
+        run: npm run test
 
       - name: Perform E2E tests with SuperTest
         working-directory: ./nest/backend/
