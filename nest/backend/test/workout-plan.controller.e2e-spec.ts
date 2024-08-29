@@ -176,11 +176,12 @@ describe('WorkoutPlanController (e2e)', () => {
     it('should return 500 INTERNAL SERVER ERROR if username doesnt exist', async () => {
       const response = await request(app.getHttpServer())
         .post(path)
+        .set('jwtPayload', JSON.stringify(payload))
         .send({ title: 'FIrst entry!' });
       expect(response.status).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
     });
 
-    it('should return 400 BAD REQUEST if emptry title sent', async () => {
+    it('should return 400 BAD REQUEST if empty title sent', async () => {
       const registrationResponse = await request(app.getHttpServer())
         .post(registrationPath)
         .send({ username: username, password: password });
