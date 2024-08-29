@@ -11,6 +11,8 @@ import { NutritionComponent } from './nutrition/nutrition/nutrition.component';
 import { FoodSearchComponent } from './nutrition/food-search/food-search.component';
 import { FoodDetailsComponent } from './nutrition/food-details/food-details.component';
 import { foodTypeGuard } from './food-type/food-type.guard';
+import { JournalComponent } from './journal/journal/journal.component';
+import { CreateJournalEntryComponent } from './journal/create-journal-entry/create-journal-entry.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent, title: 'Login' },
@@ -63,6 +65,20 @@ const routes: Routes = [
     title: 'Food details',
     canActivate: [loginGuard, foodTypeGuard],
     component: FoodDetailsComponent,
+  },
+
+  {
+    path: 'journal',
+    title: 'Journal',
+    canActivate: [loginGuard],
+    component: JournalComponent,
+  },
+
+  {
+    path: 'journal/add',
+    title: 'Create a new entry',
+    canActivate: [loginGuard],
+    component: CreateJournalEntryComponent,
   },
 ];
 

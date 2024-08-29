@@ -111,6 +111,9 @@ export class JournalService {
     journalEntry.dateAdded = await this.virtualTimeService.getTime();
     journalEntry.description = description;
     journalEntry.title = title;
+    journalEntry.username = user.username;
+
+    await this.journalEntryRepository.save(journalEntry);
 
     return journalEntry;
   }

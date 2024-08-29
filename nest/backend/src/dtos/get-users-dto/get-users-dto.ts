@@ -6,7 +6,9 @@ export class GetUsersDto {
   @Exclude()
   password: string;
 
-  isAdmin: number;
+  isAdmin: boolean;
+
+  isActive: boolean;
 
   @Exclude()
   bmiEntries: [];

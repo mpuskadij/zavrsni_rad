@@ -79,11 +79,9 @@ export class WorkoutPlanDetailsComponent implements OnInit {
       this.workoutPlanService
         .deleteExercise(this.workoutPlanDetails.id, body)
         .subscribe({
-          next: (response) => {
+          next: () => {
             this.note = 'Successfully deleted exercise!';
-            if (response.status == HttpStatusCode.NoContent) {
-              this.workoutPlanDetails?.exercises.splice(index, 1);
-            }
+            this.workoutPlanDetails!.exercises.splice(index, 1);
           },
           error: () => {
             this.note = 'Something went wrong while trying to delete exercise!';

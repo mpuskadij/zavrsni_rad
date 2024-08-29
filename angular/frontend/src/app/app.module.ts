@@ -25,6 +25,9 @@ import { FoodService } from './nutrition/food-service/food.service';
 import { NutritionService } from './nutrition/nutrition-service/nutrition.service';
 import { unauthorizedInterceptor } from './unauthorized-interceptor/unauthorized.interceptor';
 import { contentTypeInterceptor } from './content-type-interceptor/content-type.interceptor';
+import { JournalModule } from './journal/journal.module';
+import { UsersComponent } from './admin/users/users.component';
+import { AdminModule } from './admin/admin.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -37,6 +40,8 @@ import { contentTypeInterceptor } from './content-type-interceptor/content-type.
     RecaptchaV3Module,
     WorkoutPlanModule,
     NutritionModule,
+    JournalModule,
+    AdminModule,
   ],
   providers: [
     provideHttpClient(

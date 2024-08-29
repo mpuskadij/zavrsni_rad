@@ -67,7 +67,6 @@ export class JournalController {
         title,
         description,
       );
-    await this.usersService.assignJournalEntry(user, journalEntry);
 
     return;
   }
