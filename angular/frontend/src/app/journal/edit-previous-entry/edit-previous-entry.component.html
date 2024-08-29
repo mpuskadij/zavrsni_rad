@@ -1,0 +1,13 @@
+<app-navigation></app-navigation>
+<form *ngIf="entry" [formGroup]="this.form">
+    <label for="title">Title:</label>
+    <input formControlName="title" type="text" id="title" maxlength="50">
+
+    <label for="description">Description:</label>
+    <textarea formControlName="description" type="text" [rows]="rows" [cols]="cols" id="description"></textarea>
+
+    <button type="button" *ngIf="form.valid" (click)="updateEntry()">Update entry</button>
+    <button type="button" (click)="deleteEntry()">Delete entry</button>
+</form>
+<p *ngIf="note">{{note}}</p>
+<app-clock></app-clock>

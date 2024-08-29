@@ -32,28 +32,14 @@ export class JournalComponent implements OnInit {
           this.previousJournalEntries = previousEntriesFromServer;
         },
         error: () => {
-          this.note =
-            'Something went wrong while trying to get previous entries!';
+          this.note = 'No entries yet!';
         },
       });
   }
-  /*
-  deleteEntry(previousEntryToDelete: IPreviousJournalEntry, index: number) {
-    const body: IDeleteJournalEntry = {
-      dateAdded: previousEntryToDelete.dateAdded,
-    };
 
-    this.journalService.deletePreviousJournalEntry(body).subscribe({
-      next: () => {
-        this.previousJournalEntries.splice(index, 1);
-      },
-      error: () => {
-        this.note =
-          'Something went wrong while trying to delete the journal entry!';
-      },
-    });
+  editEntry(entry: IPreviousJournalEntry) {
+    this.router.navigate([`/journal/edit/${entry.id}`]);
   }
-  */
 
   navigateToForm() {
     this.router.navigate(['/journal/add']);

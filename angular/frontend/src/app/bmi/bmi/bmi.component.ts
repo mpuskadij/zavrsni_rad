@@ -56,7 +56,7 @@ export class BmiComponent implements OnInit {
         this.canShow = false;
         this.errorMessage = 'Your BMI is: ' + body.bmi;
       },
-      error: (error) => {
+      error: () => {
         this.errorMessage =
           'Something went wrong while sending your height and weight to the server!';
       },

@@ -6,11 +6,20 @@ import { TimeModule } from '../time/time.module';
 import { JournalService } from './journal-service/journal.service';
 import { CreateJournalEntryComponent } from './create-journal-entry/create-journal-entry.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { EditPreviousEntryComponent } from './edit-previous-entry/edit-previous-entry.component';
 
 @NgModule({
-  declarations: [JournalComponent, CreateJournalEntryComponent],
+  declarations: [
+    JournalComponent,
+    CreateJournalEntryComponent,
+    EditPreviousEntryComponent,
+  ],
   imports: [NavigationComponent, TimeModule, CommonModule, ReactiveFormsModule],
   providers: [],
-  exports: [JournalComponent, CreateJournalEntryComponent],
+  exports: [
+    JournalComponent,
+    CreateJournalEntryComponent,
+    EditPreviousEntryComponent,
+  ],
 })
 export class JournalModule {}

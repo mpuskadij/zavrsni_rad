@@ -6,6 +6,7 @@ import { Router, UrlTree } from '@angular/router';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ReCaptchaV3Service } from 'ng-recaptcha';
 import { environment } from 'src/environments/environment';
+import { HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -32,24 +33,6 @@ export class LoginComponent implements OnInit {
   ) {}
   ngOnInit(): void {
     sessionStorage.removeItem('isAdmin');
-  }
-  sendRegistrationCredentials(user: IUser, token: string) {
-    try {
-      if (!user.password.length || !user.username.length || !token) {
-        throw new Error('Username and/or password are required!');
-      }
-      this.userService.register(user, token).subscribe({
-        next: () => {
-          this.errorMessage = 'Registration was a success!';
-        },
-        error: () => {
-          this.errorMessage =
-            'Something went wrong while trying to register your account!';
-        },
-      });
-    } catch (error: any) {
-      this.errorMessage = error.message;
-    }
   }
 
   private validateForm(): IUser {
@@ -93,7 +76,15 @@ export class LoginComponent implements OnInit {
       const user = this.validateForm();
       this.recaptchaService.execute('register').subscribe({
         next: (token) => {
-          this.sendRegistrationCredentials(user, token);
+          this.userService.register(user, token).subscribe({
+            next: () => {
+              this.errorMessage = 'Registration was a success!';
+            },
+            error: () => {
+              this.errorMessage =
+                'Something went wrong while trying to register your account!';
+            },
+          });
         },
         error: () => {
           this.errorMessage = 'Something went wrong with recaptcha!';
@@ -109,7 +100,21 @@ export class LoginComponent implements OnInit {
       const user = this.validateForm();
       this.recaptchaService.execute('login').subscribe({
         next: (token) => {
-          this.sendLoginCredentials(user, token);
+          this.userService.login(user, token).subscribe({
+            next: (loginData) => {
+              sessionStorage.setItem('isAdmin', loginData.isAdmin.toString());
+              this.ngZone.run(() => {
+                this.router.navigateByUrl('/bmi');
+              });
+            },
+            error: (response) => {
+              if (response instanceof HttpErrorResponse) {
+                if (response.status == HttpStatusCode.Unauthorized) {
+                  this.errorMessage = 'Username and/or password are invalid!';
+                }
+              }
+            },
+          });
         },
         error: () => {
           this.errorMessage = 'Recaptcha encountered an error!';
@@ -117,30 +122,6 @@ export class LoginComponent implements OnInit {
       });
     } catch (error: any) {
       this.errorMessage = error.message;
-    }
-  }
-
-  sendLoginCredentials(user: IUser, token: string) {
-    try {
-      if (!user.password.length || !user.username.length || !token) {
-        throw new Error('Username and/or password are required!');
-      }
-      this.userService.login(user, token).subscribe({
-        next: (loginData) => {
-          sessionStorage.setItem('isAdmin', loginData.isAdmin.toString());
-          this.ngZone.run(() => {
-            this.router.navigateByUrl('/bmi').catch(() => {
-              this.errorMessage =
-                'Something went wrong while navigating to your bmi page!';
-            });
-          });
-        },
-        error: () => {
-          this.errorMessage = 'Something went wrong while trying to login!';
-        },
-      });
-    } catch (error: any) {
-      this.errorMessage = 'Something went wrong while trying to login!';
     }
   }
 }

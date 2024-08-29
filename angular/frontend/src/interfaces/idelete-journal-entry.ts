@@ -1,3 +1,3 @@
 export interface IDeleteJournalEntry {
-  dateAdded: Date;
+  id: number;
 }

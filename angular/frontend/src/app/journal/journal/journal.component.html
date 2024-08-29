@@ -10,7 +10,7 @@
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let entry of previousJournalEntries; let i = index">
+        <tr *ngFor="let entry of previousJournalEntries; let i = index" (click)="editEntry(entry)">
             <td>{{entry.title}}</td>
             <td>{{entry.description}}</td>
             <td>{{entry.dateAdded.toLocaleDateString()}}</td>

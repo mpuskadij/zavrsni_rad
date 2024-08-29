@@ -19,13 +19,9 @@ export class BmiService {
       throw new Error('Height and weight must be > 0');
     }
 
-    return this.httpClient.post<IResponseBmi>(
-      this.endPoint,
-      JSON.stringify(bmi),
-      {
-        observe: 'body',
-      }
-    );
+    return this.httpClient.post<IResponseBmi>(this.endPoint, bmi, {
+      observe: 'body',
+    });
   }
 
   getPreviousBmiEntries(): Observable<IBmiGraphData[]> {
