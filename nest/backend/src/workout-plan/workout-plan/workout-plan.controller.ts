@@ -62,11 +62,10 @@ export class WorkoutPlanController {
     if (!user) {
       throw new InternalServerErrorException('User not found!');
     }
-    const workoutPlan: WorkoutPlan =
-      await this.workoutPlanService.createWorkoutPlan(
-        createWorkoutPlanData.title,
-      );
-    await this.usersService.assignWorkoutPlan(user, workoutPlan);
+    await this.workoutPlanService.createWorkoutPlan(
+      user.username,
+      createWorkoutPlanData.title,
+    );
     return;
   }
 
@@ -95,7 +94,6 @@ export class WorkoutPlanController {
       workoutPlans,
       id,
     );
-    await this.usersService.unassignWorkoutPlan(user, deletedWorkoutPlan);
     return;
   }
 

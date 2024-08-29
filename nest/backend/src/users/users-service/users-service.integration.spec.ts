@@ -367,10 +367,11 @@ describe('UsersService (integration tests)', () => {
       }
 
       await provider.addUser(username, password);
-      const workoutPlan =
-        await workoutPlanService.createWorkoutPlan('Get moving!');
+      const workoutPlan = await workoutPlanService.createWorkoutPlan(
+        username,
+        'Get moving!',
+      );
       const user = await provider.getUser(username);
-      await provider.assignWorkoutPlan(user, workoutPlan);
       expect(user.workoutPlans).toHaveLength(1);
     });
 
@@ -384,13 +385,15 @@ describe('UsersService (integration tests)', () => {
       }
 
       await provider.addUser(username, password);
-      const workoutPlan =
-        await workoutPlanService.createWorkoutPlan('Get moving!');
+      const workoutPlan = await workoutPlanService.createWorkoutPlan(
+        username,
+        'Get moving!',
+      );
+      const secondWorkoutPlan = await workoutPlanService.createWorkoutPlan(
+        username,
+        'Daily',
+      );
       const user = await provider.getUser(username);
-      await provider.assignWorkoutPlan(user, workoutPlan);
-      const secondWorkoutPlan =
-        await workoutPlanService.createWorkoutPlan('Daily');
-      await provider.assignWorkoutPlan(user, secondWorkoutPlan);
       expect(user.workoutPlans).toHaveLength(2);
     });
 
@@ -399,18 +402,20 @@ describe('UsersService (integration tests)', () => {
         where: { username: username },
         relations: ['bmiEntries', 'journalEntries', 'workoutPlans'],
       });
-      if (usernameInDatabase != null) {
+      if (usernameInDatabase) {
         await repository.remove(usernameInDatabase);
       }
 
       await provider.addUser(username, password);
-      const workoutPlan =
-        await workoutPlanService.createWorkoutPlan('Get moving!');
+      const workoutPlan = await workoutPlanService.createWorkoutPlan(
+        username,
+        'Get moving!',
+      );
+      const secondWorkoutPlan = await workoutPlanService.createWorkoutPlan(
+        username,
+        'Daily',
+      );
       const user = await provider.getUser(username);
-      await provider.assignWorkoutPlan(user, workoutPlan);
-      const secondWorkoutPlan =
-        await workoutPlanService.createWorkoutPlan('Daily');
-      await provider.assignWorkoutPlan(user, workoutPlan);
       expect(user.workoutPlans).toHaveLength(2);
     });
 
@@ -424,10 +429,11 @@ describe('UsersService (integration tests)', () => {
       }
 
       await provider.addUser(username, password);
-      const workoutPlan =
-        await workoutPlanService.createWorkoutPlan('Get moving!');
+      const workoutPlan = await workoutPlanService.createWorkoutPlan(
+        username,
+        'Get moving!',
+      );
       const user = await provider.getUser(username);
-      await provider.assignWorkoutPlan(user, workoutPlan);
       expect(user.workoutPlans).toHaveLength(1);
       const result = await workoutPlanService.getWorkoutPlanByID(
         user.workoutPlans[0].id,
@@ -447,10 +453,11 @@ describe('UsersService (integration tests)', () => {
       }
 
       await provider.addUser(username, password);
-      const workoutPlan =
-        await workoutPlanService.createWorkoutPlan('Get moving!');
+      const workoutPlan = await workoutPlanService.createWorkoutPlan(
+        username,
+        'Get moving!',
+      );
       const user = await provider.getUser(username);
-      await provider.assignWorkoutPlan(user, workoutPlan);
       expect(user.workoutPlans).toHaveLength(1);
       const resultPlan = await workoutPlanService.getWorkoutPlanByID(
         user.workoutPlans[0].id,
@@ -473,7 +480,10 @@ describe('UsersService (integration tests)', () => {
       }
       await provider.addUser(username, password);
       const user = await provider.getUser(username);
-      const workoutPlan = await workoutPlanService.createWorkoutPlan(title);
+      const workoutPlan = await workoutPlanService.createWorkoutPlan(
+        username,
+        title,
+      );
       await provider.assignWorkoutPlan(user, workoutPlan);
       expect(user.workoutPlans).toHaveLength(1);
       await workoutPlanService.deleteWorkoutPlan(

@@ -130,7 +130,8 @@ export class UsersService {
     userFood.quantity = quantity;
     userFood.foodId = foodId;
     userFood.username = username;
-    return this.userFoodRepository.save(userFood);
+    const updatedFood = await this.userFoodRepository.save(userFood);
+    return updatedFood;
   }
   async checkIfUserHasFoodInNutrition(
     usersFood: UserFood[],

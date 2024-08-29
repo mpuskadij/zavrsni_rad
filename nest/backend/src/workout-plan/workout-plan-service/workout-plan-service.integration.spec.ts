@@ -127,7 +127,7 @@ describe('WorkoutPlanService (integration tests)', () => {
 
     it('should return the workout that matches the id', async () => {
       await usersService.addUser(username, password);
-      const workoutPlan = await provider.createWorkoutPlan(title);
+      const workoutPlan = await provider.createWorkoutPlan(username, title);
       const exercise = await exerciseService.createExercise(
         exerciseName,
         'Bench press',
@@ -149,7 +149,8 @@ describe('WorkoutPlanService (integration tests)', () => {
 
   describe('checkIfExerciseAlreadyInWorkoutPlan', () => {
     it('should return false if user has no exercises', async () => {
-      const workoutPlan = await provider.createWorkoutPlan(title);
+      await usersService.addUser(username, password);
+      const workoutPlan = await provider.createWorkoutPlan(username, title);
       const result = await provider.checkIfExerciseAlreadyInWorkoutPlan(
         workoutPlan,
         exerciseName,
@@ -159,7 +160,7 @@ describe('WorkoutPlanService (integration tests)', () => {
 
     it('should return true if exercise with name not found', async () => {
       await usersService.addUser(username, password);
-      const workoutPlan = await provider.createWorkoutPlan(title);
+      const workoutPlan = await provider.createWorkoutPlan(username, title);
       const exercise = await exerciseService.createExercise(
         exerciseName,
         'Bench press',
@@ -178,7 +179,7 @@ describe('WorkoutPlanService (integration tests)', () => {
 
     it('should return false if exercise with name not found', async () => {
       await usersService.addUser(username, password);
-      const workoutPlan = await provider.createWorkoutPlan(title);
+      const workoutPlan = await provider.createWorkoutPlan(username, title);
       const exercise = await exerciseService.createExercise(
         exerciseName,
         'Bench press',
@@ -199,16 +200,15 @@ describe('WorkoutPlanService (integration tests)', () => {
   describe('addExercise', () => {
     it('should add exercise into existing workout plan', async () => {
       await usersService.addUser(username, password);
-      const workoutPlan = await provider.createWorkoutPlan(title);
+      const workoutPlan = await provider.createWorkoutPlan(username, title);
       const exercise = await exerciseService.createExercise(
         exerciseName,
         'Bench press',
         'Chest',
         'Bench',
       );
-      const user = await usersService.getUser(username);
-      await usersService.assignWorkoutPlan(user, workoutPlan);
       await provider.addExercise(workoutPlan, exercise);
+      const user = await usersService.getUser(username);
       expect(user.workoutPlans[0].exercises).toHaveLength(1);
     });
   });
@@ -217,28 +217,15 @@ describe('WorkoutPlanService (integration tests)', () => {
     it('should throw BadRequestException if user is not the owner of the workout plan', async () => {
       await usersService.addUser(username, password);
       await usersService.addUser(differentUsername, password);
-      const workoutPlan = await provider.createWorkoutPlan(title);
+      const workoutPlan = await provider.createWorkoutPlan(username, title);
       const user = await usersService.getUser(username);
-      await usersService.assignWorkoutPlan(user, workoutPlan);
 
       const result = () =>
         provider.checkIfWorkoutPlanBelongsToUser(
           differentUsername,
-          workoutPlan,
+          new WorkoutPlan(),
         );
       expect(result).rejects.toThrow(BadRequestException);
-    });
-
-    it('should finish if workout plan belongs to user', async () => {
-      await usersService.addUser(username, password);
-      await usersService.addUser(differentUsername, password);
-      const workoutPlan = await provider.createWorkoutPlan(title);
-      const user = await usersService.getUser(username);
-      await usersService.assignWorkoutPlan(user, workoutPlan);
-
-      const result = () =>
-        provider.checkIfWorkoutPlanBelongsToUser(username, workoutPlan);
-      expect(result).resolves;
     });
   });
 });

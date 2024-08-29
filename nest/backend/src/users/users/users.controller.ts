@@ -97,5 +97,7 @@ export class UsersController {
     await this.userService.changeStatus(userToUpdate);
 
     await this.userService.saveUserData(userToUpdate);
+
+    return;
   }
 }

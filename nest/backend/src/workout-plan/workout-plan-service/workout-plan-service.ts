@@ -152,8 +152,11 @@ export class WorkoutPlanService {
     }
     return workoutPlan;
   }
-  async createWorkoutPlan(title: string): Promise<WorkoutPlan> {
-    if (!title) {
+  async createWorkoutPlan(
+    username: string,
+    title: string,
+  ): Promise<WorkoutPlan> {
+    if (!title || !username) {
       throw new BadRequestException(
         'Please provide a valid title for the workout plan!',
       );
@@ -162,7 +165,8 @@ export class WorkoutPlanService {
     workoutPlan.title = title;
     workoutPlan.exercises = [];
     workoutPlan.dateAdded = await this.virtualTimeService.getTime();
+    workoutPlan.username = username;
 
-    return workoutPlan;
+    return await this.workoutPlanRepostitory.save(workoutPlan);
   }
 }

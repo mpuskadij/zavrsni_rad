@@ -41,16 +41,22 @@ describe('WorkoutPlanService (unit tests)', () => {
     const title: string = 'Get up and going!';
 
     it('should throw BadRequestException if title null,undefined or empty', async () => {
-      await expect(provider.createWorkoutPlan('')).rejects.toThrow(
+      await expect(provider.createWorkoutPlan('sdasdas', '')).rejects.toThrow(
         BadRequestException,
       );
     });
 
-    it('should return new workout plan if title passed', async () => {
-      const workoutPlan = await provider.createWorkoutPlan(title);
+    it('should throw BadRequestException if username null,undefined or empty', async () => {
+      await expect(
+        provider.createWorkoutPlan('', 'asdasdasdas'),
+      ).rejects.toThrow(BadRequestException);
+    });
 
-      expect(workoutPlan).toBeInstanceOf(WorkoutPlan);
-      expect(workoutPlan.title).toEqual(title);
+    it('should return new workout plan if title passed', async () => {
+      mockWorkoutPlanRepository.save.mockResolvedValue(new WorkoutPlan());
+      await provider.createWorkoutPlan('username', title);
+
+      expect(mockWorkoutPlanRepository.save).toHaveBeenCalled();
     });
   });
 
