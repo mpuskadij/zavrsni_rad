@@ -31,7 +31,6 @@ jobs:
           envkey_JWT_SECRET: ${{secrets.JWT_SECRET}}
           envkey_NUTRITIONIX_APP_ID: $${{secrets.NUTRITIONIX_APP_ID}}
           envkey_NUTRITIONIX_APP_KEY: $${{secrets.NUTRITIONIX_APP_KEY}}
-          envkey_TIME_OFFSET: 0
           directory: ./nest/backend
           file_name: .env
           fail_on_empty: false
@@ -40,12 +39,17 @@ jobs:
       - name: Create .test.env file
         uses: SpicyPizza/create-envfile@v2.0.3
         with:
-          envkey_TIME_OFFSET: 0
           envkey_JWT_SECRET: ${{secrets.JWT_SECRET}}
           directory: ./nest/backend
           file_name: .test.env
           fail_on_empty: false
           sort_keys: false
+
+      - name: Create .json file
+        uses: devops-actions/json-to-file@v1.0.0
+        with:
+          json: '{"offset": 0}'
+          filename: './nest/backend/time.json'
 
       - name: Build NestJS project
         working-directory: ./nest/backend/
