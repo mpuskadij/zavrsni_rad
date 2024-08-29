@@ -46,6 +46,34 @@ export class JournalController {
     return plainToInstance(JournalEntryDto, journalEntries);
   }
 
+  @Get('/:id')
+  @UseGuards(JwtGuard)
+  async getOneEntry(
+    @Param(
+      'id',
+      new ParseIntPipe({
+        errorHttpStatusCode: HttpStatus.BAD_REQUEST,
+        optional: false,
+      }),
+    )
+    id: number,
+    @Payload('username') username: string,
+  ): Promise<any> {
+    const user = await this.usersService.getUser(username);
+    if (!user) {
+      throw new InternalServerErrorException('User not found in database!');
+    }
+    const journalEntries =
+      await this.journalEntryService.getJournalEntries(user);
+
+    const entry = await this.journalEntryService.getJournalEntryById(
+      journalEntries,
+      id,
+    );
+
+    return plainToInstance(JournalEntryDto, entry);
+  }
+
   @Post()
   @UseGuards(JwtGuard)
   async createJournalEntry(

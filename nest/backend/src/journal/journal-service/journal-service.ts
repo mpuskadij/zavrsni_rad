@@ -87,6 +87,24 @@ export class JournalService {
 
     return user.journalEntries;
   }
+
+  async getJournalEntryById(
+    journalEntries: JournalEntry[],
+    id: number,
+  ): Promise<JournalEntry> {
+    if (!journalEntries?.length || !id) {
+      throw new InternalServerErrorException('Journal entry not found');
+    }
+
+    const foundEntry = journalEntries.find((en) => en.id == id);
+
+    if (!foundEntry) {
+      throw new InternalServerErrorException('Journal entry not found!');
+    }
+
+    return foundEntry;
+  }
+
   constructor(
     @InjectRepository(JournalEntry)
     private journalEntryRepository: Repository<JournalEntry>,
