@@ -37,6 +37,7 @@ describe('JournalService (integration tests)', () => {
   user.journalEntries = [];
 
   const journalEntry: JournalEntry = {
+    id: 1,
     dateAdded: new Date(),
     description: description,
     title: title,
@@ -44,6 +45,7 @@ describe('JournalService (integration tests)', () => {
     username: username,
   };
   const journalEntryPreviousDay: JournalEntry = {
+    id: 1,
     dateAdded: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
     description: description,
     title: title,
@@ -117,7 +119,7 @@ describe('JournalService (integration tests)', () => {
 
     let userInDatabase = await userRepo.findOne({
       where: { username: username },
-      relations: ['journalEntries', 'bmiEntries'],
+      relations: ['journalEntries', 'bmiEntries', 'userFoods', 'workoutPlans'],
     });
     if (userInDatabase) {
       await userRepo.remove(userInDatabase);
@@ -133,6 +135,7 @@ describe('JournalService (integration tests)', () => {
   describe('createJournalEntry', () => {
     it('should create journal entry with parameters when no previous entries', async () => {
       const currentDate = new Date();
+      await userRepo.save(user);
       const result = await provider.createJournalEntry(
         user,
         title,
@@ -154,6 +157,7 @@ describe('JournalService (integration tests)', () => {
 
     it('should return journal entry if entry with previous day exists', async () => {
       const currentDate = new Date();
+      await userRepo.save(user);
       const result = await provider.createJournalEntry(
         userWithJournalEntryPreviousDay,
         title,
@@ -191,7 +195,7 @@ describe('JournalService (integration tests)', () => {
       ).rejects.toBeInstanceOf(ForbiddenException);
     });
 
-    it('should throw BadRequestException if user has journal entries, but the date that is passed is incorrect', async () => {
+    it('should throw BadRequestException if user has journal entries, but the id that is passed is incorrect', async () => {
       const userWithEntry = new User();
       userWithEntry.username = username;
       userWithEntry.password = password;
@@ -204,6 +208,7 @@ describe('JournalService (integration tests)', () => {
       userWithEntry.journalEntries.push(entry);
       const dbUser = await userRepo.save(userWithEntry);
       const sentData: JournalEntryDto = {
+        id: dbUser.journalEntries[0].id + 1,
         dateAdded: new Date(),
         description: 'a',
         title: 'as',
@@ -213,7 +218,7 @@ describe('JournalService (integration tests)', () => {
       ).rejects.toBeInstanceOf(BadRequestException);
     });
 
-    it('should throw BadRequestException if user has journal entries, but the title and description passed are the same', async () => {
+    it('should not update if user has journal entries, but the title and description passed are the same', async () => {
       const userWithEntry = new User();
       userWithEntry.username = username;
       userWithEntry.password = password;
@@ -226,18 +231,20 @@ describe('JournalService (integration tests)', () => {
       userWithEntry.journalEntries.push(entry);
       const dbUser = await userRepo.save(userWithEntry);
       const sentData: JournalEntryDto = {
+        id: dbUser.journalEntries[0].id,
         dateAdded: new Date(),
         description: entry.description,
         title: entry.title,
       };
-      await expect(
-        provider.updateEntry(dbUser.journalEntries, sentData),
-      ).rejects.toBeInstanceOf(BadRequestException);
+      await provider.updateEntry(dbUser.journalEntries, sentData);
+      expect(dbUser.journalEntries[0].description).toBe('Boring...');
+      expect(dbUser.journalEntries[0].title).toBe('First day!');
     });
   });
 
   describe('deleteEntry', () => {
     const incorrectlySentDto: JournalEntryDto = {
+      id: 1,
       dateAdded: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
       description: description,
       title: title,
@@ -267,7 +274,7 @@ describe('JournalService (integration tests)', () => {
       ).rejects.toBeInstanceOf(BadRequestException);
     });
 
-    it('should return deleted entry if correct date sent', async () => {
+    it('should return deleted entry if correct id', async () => {
       await usersService.addUser(username, password);
 
       const userInDatabase = await usersService.getUser(username);
@@ -275,7 +282,7 @@ describe('JournalService (integration tests)', () => {
       const entry = await provider.createJournalEntry(user, title, description);
 
       const userSentData: DeleteJournalEntryDto = {
-        dateAdded: entry.dateAdded,
+        id: entry.id,
       };
 
       await usersService.assignJournalEntry(userInDatabase, entry);

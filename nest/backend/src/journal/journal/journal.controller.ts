@@ -8,6 +8,8 @@ import {
   HttpCode,
   HttpStatus,
   InternalServerErrorException,
+  Param,
+  ParseIntPipe,
   Post,
   Put,
   UseGuards,
@@ -89,7 +91,6 @@ export class JournalController {
       journalEntries,
       journalEntryToUpdate,
     );
-    await this.usersService.saveUserData(user);
     return;
   }
 

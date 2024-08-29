@@ -3,7 +3,10 @@ import {
   Allow,
   IsDate,
   IsDateString,
+  IsIn,
+  IsInt,
   IsOptional,
+  IsPositive,
   IsString,
   Max,
   MaxDate,
@@ -31,10 +34,12 @@ export class JournalEntryDto {
   description: string;
 
   @Expose()
-  @IsDate()
-  @MaxDate(new Date(), {
-    message: 'Journal entry date cannot be in the future!',
-  })
+  @IsInt({ message: 'ID is not a number' })
+  @IsPositive({ message: 'ID is not positive' })
+  id: number;
+
+  @Expose()
+  @IsOptional()
   @Type(() => Date)
-  dateAdded: Date;
+  dateAdded?: Date;
 }

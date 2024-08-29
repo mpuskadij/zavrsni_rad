@@ -28,6 +28,7 @@ import { Food } from '../src/entities/food/food';
 import { UserFood } from '../src/entities/user_food/user_food';
 import { AdminModule } from '../src/admin/admin.module';
 import { VirtualTimeService } from '../src/admin/virtual-time-service/virtual-time-service';
+import { plainToInstance } from 'class-transformer';
 
 describe('Journal Controller (e2e)', () => {
   let app: INestApplication;
@@ -198,7 +199,7 @@ describe('Journal Controller (e2e)', () => {
     return await request(app.getHttpServer())
       .put('/api/journal')
       .set('jwtPayload', JSON.stringify(payload))
-      .send({ description: 'Boring', dateAdded: new Date() })
+      .send({ description: 'Boring', id: 2 })
       .expect(HttpStatus.BAD_REQUEST);
   });
 
@@ -209,7 +210,7 @@ describe('Journal Controller (e2e)', () => {
       .send({
         title: '',
         description: 'Boring',
-        dateAdded: new Date().toDateString(),
+        id: 2,
       })
       .expect(HttpStatus.BAD_REQUEST);
   });
@@ -249,28 +250,15 @@ describe('Journal Controller (e2e)', () => {
       .expect(HttpStatus.BAD_REQUEST);
   });
 
-  it('/api/journal (PUT) should throw BAD REQUEST if date not passed', async () => {
+  it('/api/journal (PUT) should throw BAD REQUEST if id not passed', async () => {
     return await request(app.getHttpServer())
       .put('/api/journal')
       .set('jwtPayload', JSON.stringify(payload))
       .send({
         title: 'Bad day',
+        description: 'dasdasda',
       })
       .expect(HttpStatus.BAD_REQUEST);
-  });
-
-  it('/api/journal (PUT) should throw BAD REQUEST if date is in the future', async () => {
-    const response = await request(app.getHttpServer())
-      .put('/api/journal')
-      .set('jwtPayload', JSON.stringify(payload))
-      .send({
-        title: 'Bad day',
-        description: 'It was bad...',
-        dateAdded: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
-      });
-    expect(response.text).toContain(
-      'Journal entry date cannot be in the future!',
-    );
   });
 
   it('/api/journal (PUT) should return INTERNAL SERVER ERROR if user not found', async () => {
@@ -278,7 +266,7 @@ describe('Journal Controller (e2e)', () => {
       .put('/api/journal')
       .set('jwtPayload', JSON.stringify(payload))
       .send({
-        dateAdded: new Date().toDateString(),
+        id: 1,
         title: 'First day',
         description: 'Boring D:',
       });
@@ -295,14 +283,14 @@ describe('Journal Controller (e2e)', () => {
       .put('/api/journal')
       .set('jwtPayload', JSON.stringify(payload))
       .send({
-        dateAdded: new Date().toDateString(),
+        id: 2,
         title: 'First day',
         description: 'Boring D:',
       })
       .expect(HttpStatus.FORBIDDEN);
   });
 
-  it('/api/journal (PUT) should return BAD REQUEST if entry with sent date doesnt exist', async () => {
+  it('/api/journal (PUT) should return BAD REQUEST if entry with sent id doesnt exist', async () => {
     const user: User = new User();
     user.password = password;
     user.isAdmin = false;
@@ -314,14 +302,12 @@ describe('Journal Controller (e2e)', () => {
     journalEntry.description = 'Boring...';
     journalEntry.title = 'First day!';
     user.journalEntries.push(journalEntry);
-    await userRepo.save(user);
+    const updatedUser = await userRepo.save(user);
     return await request(app.getHttpServer())
       .put('/api/journal')
       .set('jwtPayload', JSON.stringify(payload))
       .send({
-        dateAdded: new Date(
-          Date.now() - 1 * 24 * 60 * 60 * 1000,
-        ).toDateString(),
+        id: updatedUser.journalEntries[0].id + 1,
         title: 'First day',
         description: 'Boring D:',
       })
@@ -339,24 +325,12 @@ describe('Journal Controller (e2e)', () => {
       expect(response.status).toEqual(HttpStatus.BAD_REQUEST);
     });
 
-    it('should return 400 BAD REQUEST if date in the future', async () => {
-      const response = await request(app.getHttpServer())
-        .delete('/api/journal')
-        .set('jwtPayload', JSON.stringify(payload))
-        .send({
-          dateAdded: new Date(
-            Date.now() + 1 * 24 * 60 * 60 * 1000,
-          ).toDateString(),
-        });
-      expect(response.status).toEqual(HttpStatus.BAD_REQUEST);
-    });
-
     it('should return 500 INTERNAL SERVER ERROR if user not found', async () => {
       const response = await request(app.getHttpServer())
         .delete('/api/journal')
         .set('jwtPayload', JSON.stringify(payload))
         .send({
-          dateAdded: new Date().toDateString(),
+          id: 1,
         });
       expect(response.status).toEqual(HttpStatus.INTERNAL_SERVER_ERROR);
     });
@@ -370,12 +344,12 @@ describe('Journal Controller (e2e)', () => {
         .delete('/api/journal')
         .set('jwtPayload', JSON.stringify(payload))
         .send({
-          dateAdded: new Date().toDateString(),
+          id: 3,
         });
       expect(response.status).toEqual(HttpStatus.FORBIDDEN);
     });
 
-    it('should return 400 BAD REQUEST if entry exists, but wrong date was sent', async () => {
+    it('should return 400 BAD REQUEST if user has entries, but wrong id was sent', async () => {
       const register = await request(app.getHttpServer())
         .post('/api/users/register')
         .send({ username: username, password: password });
@@ -384,12 +358,16 @@ describe('Journal Controller (e2e)', () => {
         .post('/api/journal')
         .set('jwtPayload', JSON.stringify(payload))
         .send({ title: title, description: description });
+
+      const getResponse = await request(app.getHttpServer())
+        .get('/api/journal')
+        .set('jwtPayload', JSON.stringify(payload));
+
+      const entries = plainToInstance(Array<JournalEntryDto>, getResponse.body);
       const response = await request(app.getHttpServer())
         .delete('/api/journal')
         .send({
-          dateAdded: new Date(
-            Date.now() - 1 * 24 * 60 * 60 * 1000,
-          ).toDateString(),
+          id: entries[0].id + 1,
         });
       expect(response.status).toEqual(HttpStatus.BAD_REQUEST);
     });
@@ -408,11 +386,15 @@ describe('Journal Controller (e2e)', () => {
 
       expect(createEntry.status).toEqual(HttpStatus.CREATED);
 
+      const getResponse = await request(app.getHttpServer())
+        .get('/api/journal')
+        .set('jwtPayload', JSON.stringify(payload));
+
+      const entries = plainToInstance(Array<JournalEntryDto>, getResponse.body);
       const response = await request(app.getHttpServer())
         .delete('/api/journal')
-        .set('jwtPayload', JSON.stringify(payload))
         .send({
-          dateAdded: new Date().toDateString(),
+          id: entries[0].id,
         });
       expect(response.status).toEqual(HttpStatus.NO_CONTENT);
     });

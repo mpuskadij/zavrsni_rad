@@ -112,8 +112,6 @@ export class NutritionController {
           user.username,
           1,
         );
-        //await this.usersService.assignFood(user, userFood);
-        //await this.foodService.assignUser(food, userFood);
         return;
       }
     }
@@ -135,8 +133,6 @@ export class NutritionController {
         1,
       );
 
-      //await this.usersService.assignFood(user, userFood);
-
       return;
     }
     const foodExistsInDatabase = await this.foodService.getFoodByName(
@@ -152,8 +148,6 @@ export class NutritionController {
         user.username,
         1,
       );
-      //await this.usersService.assignFood(user, userFood);
-      //await this.foodService.assignUser(food, userFood);
       return;
     }
 
@@ -172,13 +166,11 @@ export class NutritionController {
       user.username,
       1,
     );
-    //await this.usersService.assignFood(user, userFood);
-    //await this.foodService.assignUser(foodExistsInDatabase, userFood);
 
     return;
   }
 
-  @Put('')
+  @Put()
   @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async updateQuantity(

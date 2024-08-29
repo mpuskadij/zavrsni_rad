@@ -308,6 +308,7 @@ describe('UsersService (unit tests)', () => {
     user.isAdmin = false;
     user.journalEntries = [];
     const journalEntry: JournalEntry = {
+      id: 1,
       dateAdded: new Date(),
       description: 'sda',
       title: 'asda',
@@ -350,6 +351,7 @@ describe('UsersService (unit tests)', () => {
     userWithEntry.journalEntries = [];
 
     const journalEntry: JournalEntry = {
+      id: 1,
       dateAdded: new Date(),
       description: 'sda',
       title: 'asda',
@@ -372,6 +374,7 @@ describe('UsersService (unit tests)', () => {
 
     it('should throw InternalServerException if entry passed doesnt exist in the array', async () => {
       const wrongJournalEntry: JournalEntry = {
+        id: 1,
         dateAdded: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
         description: 'Fun',
         title: 'Boring',

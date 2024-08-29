@@ -41,12 +41,12 @@ export class JournalService {
       foundJournalEntry.title == journalEntryToUpdate.title &&
       foundJournalEntry.description == journalEntryToUpdate.description
     ) {
-      throw new BadRequestException(
-        'Server requires different title and/or description to update entry!',
-      );
+      return;
     }
     foundJournalEntry.title = journalEntryToUpdate.title;
     foundJournalEntry.description = journalEntryToUpdate.description;
+
+    await this.journalEntryRepository.save(foundJournalEntry);
 
     return;
   }
@@ -60,19 +60,10 @@ export class JournalService {
     allJournalEntries: JournalEntry[],
     journalEntryToUpdate: DeleteJournalEntryDto,
   ) {
-    const foundJournalEntry = await this.compareDates(
-      allJournalEntries,
-      journalEntryToUpdate.dateAdded,
+    const foundJournalEntry = allJournalEntries.find(
+      (je) => je.id == journalEntryToUpdate.id,
     );
-    if (!foundJournalEntry)
-      throw new BadRequestException(
-        "You don't have a journal entry on the date: " +
-          journalEntryToUpdate.dateAdded.getDate() +
-          '.' +
-          journalEntryToUpdate.dateAdded.getMonth() +
-          '.' +
-          journalEntryToUpdate.dateAdded.getFullYear(),
-      );
+    if (!foundJournalEntry) throw new BadRequestException('Invalid ID!');
     return foundJournalEntry;
   }
 

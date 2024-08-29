@@ -10,10 +10,13 @@ import { User } from '../user/user';
 
 @Entity()
 export class JournalEntry {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
   username: string;
 
-  @PrimaryColumn()
+  @Column()
   dateAdded: Date;
 
   @Column()

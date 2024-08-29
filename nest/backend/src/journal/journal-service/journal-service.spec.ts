@@ -24,9 +24,10 @@ describe('JournalService (unit tests)', () => {
   user.password = password;
   user.journalEntries = [];
 
-  const mockJournalRepository = { remove: jest.fn() };
+  const mockJournalRepository = { save: jest.fn(), remove: jest.fn() };
   const mockVirtualTimeService = { getTime: jest.fn() };
   const journalEntry: JournalEntry = {
+    id: 1,
     dateAdded: new Date(),
     description: description,
     title: title,
@@ -35,6 +36,7 @@ describe('JournalService (unit tests)', () => {
   };
 
   const journalEntryPreviousDay: JournalEntry = {
+    id: 1,
     dateAdded: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
     description: description,
     title: title,
@@ -55,6 +57,7 @@ describe('JournalService (unit tests)', () => {
   user.isAdmin = false;
 
   const journalDTOPreviousDay: JournalEntryDto = {
+    id: 1,
     dateAdded: userWithJournalEntryPreviousDay.journalEntries[0].dateAdded,
     description: userWithJournalEntryPreviousDay.journalEntries[0].description,
     title: userWithJournalEntryPreviousDay.journalEntries[0].title,
@@ -62,6 +65,7 @@ describe('JournalService (unit tests)', () => {
   };
 
   const journalDTOPreviousDayDifferent: JournalEntryDto = {
+    id: 1,
     dateAdded: userWithJournalEntryPreviousDay.journalEntries[0].dateAdded,
     description: userWithJournalEntryPreviousDay.journalEntries[0].description,
     title:
@@ -70,6 +74,7 @@ describe('JournalService (unit tests)', () => {
   };
 
   const journalDTOPreviousDayDifferentTitleAndDescription: JournalEntryDto = {
+    id: 1,
     dateAdded: userWithJournalEntryPreviousDay.journalEntries[0].dateAdded,
     description:
       userWithJournalEntryPreviousDay.journalEntries[0].description + ' Cool.',
@@ -79,6 +84,7 @@ describe('JournalService (unit tests)', () => {
   };
 
   const journalDTOPreviousDayDifferentDescription: JournalEntryDto = {
+    id: 1,
     dateAdded: userWithJournalEntryPreviousDay.journalEntries[0].dateAdded,
     description:
       userWithJournalEntryPreviousDay.journalEntries[0].description +
@@ -87,6 +93,7 @@ describe('JournalService (unit tests)', () => {
     username: userWithJournalEntryPreviousDay.username,
   };
   const journalDTONow: JournalEntryDto = {
+    id: 1,
     dateAdded: userWithJournalEntry.journalEntries[0].dateAdded,
     description: userWithJournalEntry.journalEntries[0].description,
     title: userWithJournalEntry.journalEntries[0].title,
@@ -134,6 +141,9 @@ describe('JournalService (unit tests)', () => {
 
     it('should create new journal entry if journal entry with different date date exists', async () => {
       mockVirtualTimeService.getTime.mockResolvedValue(new Date());
+      mockJournalRepository.save.mockResolvedValue(
+        userWithJournalEntryPreviousDay,
+      );
       const result = await provider.createJournalEntry(
         userWithJournalEntryPreviousDay,
         title,
@@ -171,24 +181,29 @@ describe('JournalService (unit tests)', () => {
       ).rejects.toBeInstanceOf(ForbiddenException);
     });
 
-    it('should throw BadRequestException if user doesnt have any entry with matching date', async () => {
+    it('should throw BadRequestException if user doesnt have any entry with matching id', async () => {
       const currentDate = new Date();
       await expect(
-        provider.updateEntry(
-          userWithJournalEntry.journalEntries,
-          journalDTONow,
-        ),
+        provider.updateEntry(userWithJournalEntry.journalEntries, {
+          id: userWithJournalEntry.journalEntries[0].id + 1,
+          title: '',
+          description: '',
+        }),
       ).rejects.toBeInstanceOf(BadRequestException);
     });
 
-    it('should throw BadRequestException if title and description have not changed', async () => {
+    it('should not update entry if title and description remained the same', async () => {
       const currentDate = new Date();
-      await expect(
-        provider.updateEntry(
-          userWithJournalEntryPreviousDay.journalEntries,
-          journalDTOPreviousDay,
-        ),
-      ).rejects.toBeInstanceOf(BadRequestException);
+      await provider.updateEntry(
+        userWithJournalEntryPreviousDay.journalEntries,
+        journalDTOPreviousDay,
+      );
+      expect(userWithJournalEntry.journalEntries[0].title).toBe(
+        journalDTOPreviousDay.title,
+      );
+      expect(userWithJournalEntry.journalEntries[0].description).toBe(
+        journalDTOPreviousDay.description,
+      );
     });
 
     it('should update journal entry when title different', async () => {
@@ -235,12 +250,11 @@ describe('JournalService (unit tests)', () => {
       ).rejects.toBeInstanceOf(ForbiddenException);
     });
 
-    it('should throw BadRequestException if user has journal entry, but the date sent is incorrect', async () => {
+    it('should throw BadRequestException if user has journal entry, but the id sent is incorrect', async () => {
       await expect(
-        provider.deleteEntry(
-          userWithJournalEntry.journalEntries,
-          journalDTOPreviousDay,
-        ),
+        provider.deleteEntry(userWithJournalEntry.journalEntries, {
+          id: userWithJournalEntry.journalEntries[0].id + 1,
+        }),
       ).rejects.toBeInstanceOf(BadRequestException);
     });
 
