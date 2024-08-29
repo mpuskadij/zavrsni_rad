@@ -41,7 +41,8 @@ export class TimeController {
 
     try {
       const serverTime = await this.virtualTimeService.getTime();
-      return serverTime;
+      const timeDto: TimeDto = { time: serverTime };
+      return timeDto;
     } catch (error) {
       throw new InternalServerErrorException(
         'Server had trouble getting time!',

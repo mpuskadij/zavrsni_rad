@@ -5,6 +5,7 @@
     <a routerLink="/nutrition" routerLinkActive="active" *ngIf="isLoggedIn">Nutrition</a>
     <a routerLink="/journal" routerLinkActive="active" *ngIf="isLoggedIn">Journal</a>
     <a routerLink="/users" routerLinkActive="active" *ngIf="isLoggedIn && isAdmin">Users</a>
+    <a routerLink="/time" routerLinkActive="active" *ngIf="isLoggedIn && isAdmin">Server time</a>
 
 
     <a *ngIf="isLoggedIn" (click)="logout()">Logout</a>

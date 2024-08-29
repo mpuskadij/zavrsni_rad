@@ -11,7 +11,7 @@ export class VirtualTimeService {
         'Server had trouble setting virtual time!',
       );
     }
-    this.configService.set('TIME_OFFSET', offset);
+    process.env.TIME_OFFSET = offset.toString();
 
     return;
   }

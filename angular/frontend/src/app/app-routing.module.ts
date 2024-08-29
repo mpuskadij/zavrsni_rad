@@ -16,6 +16,7 @@ import { CreateJournalEntryComponent } from './journal/create-journal-entry/crea
 import { adminGuard } from './admin.guard';
 import { UsersComponent } from './admin/users/users.component';
 import { EditPreviousEntryComponent } from './journal/edit-previous-entry/edit-previous-entry.component';
+import { EditServerTimeComponent } from './admin/edit-server-time/edit-server-time.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent, title: 'Login' },
@@ -95,6 +96,12 @@ const routes: Routes = [
     title: 'Users',
     canActivate: [loginGuard, adminGuard],
     component: UsersComponent,
+  },
+  {
+    path: 'time',
+    title: 'Edit server time',
+    canActivate: [loginGuard, adminGuard],
+    component: EditServerTimeComponent,
   },
 ];
 

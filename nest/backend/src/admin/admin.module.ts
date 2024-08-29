@@ -8,7 +8,7 @@ import { AuthenticationModule } from '../authentication/authentication.module';
 @Module({
   imports: [GuardsModule, AuthenticationModule],
   exports: [VirtualTimeService],
-  providers: [VirtualTimeService, ConfigService],
+  providers: [VirtualTimeService],
   controllers: [TimeController],
 })
 export class AdminModule {}
