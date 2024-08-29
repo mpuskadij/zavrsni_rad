@@ -133,33 +133,25 @@ describe('WorkoutPlanController (e2e)', () => {
       getRepositoryToken(Exercise),
     );
 
-    if ((await userRepo.existsBy({ username })) == true) {
-      const user = await userRepo.findOne({
-        where: { username: username },
-        relations: [
-          'bmiEntries',
-          'journalEntries',
-          'workoutPlans',
-          'userFoods',
-        ],
-      });
+    const user = await userRepo.findOne({
+      where: { username: username },
+      relations: ['bmiEntries', 'journalEntries', 'workoutPlans', 'userFoods'],
+    });
+    if (user) {
       await userRepo.remove(user);
     }
 
-    if ((await userRepo.existsBy({ username: differentUsername })) == true) {
-      const user = await userRepo.findOne({
-        where: { username: differentUsername },
-        relations: ['bmiEntries', 'journalEntries', 'workoutPlans'],
-      });
-      await userRepo.remove(user);
-    }
+    const differentUser = await userRepo.findOne({
+      where: { username: differentUsername },
+      relations: ['bmiEntries', 'journalEntries', 'workoutPlans', 'userFoods'],
+    });
+    if (differentUser) await userRepo.remove(differentUser);
 
-    if ((await exerciseRepo.existsBy({ name: validExerciseName })) == true) {
-      const exercise = await exerciseRepo.findOne({
-        where: { name: validExerciseName },
-      });
-      await exerciseRepo.remove(exercise);
-    }
+    const exercise = await exerciseRepo.findOne({
+      where: { name: validExerciseName },
+    });
+    if (exercise) await exerciseRepo.remove(exercise);
+
     app.use(cookieParser());
     app.setGlobalPrefix('api');
     await app.init();

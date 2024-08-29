@@ -87,7 +87,7 @@ describe('UserController (e2e)', () => {
     usersService = moduleFixture.get<UsersService>(UsersService);
     let userInDatabase = await repo.findOne({
       where: { username: username },
-      relations: ['bmiEntries', 'journalEntries'],
+      relations: ['bmiEntries', 'journalEntries', 'workoutPlans', 'userFoods'],
     });
     if (userInDatabase) {
       await repo.remove(userInDatabase);

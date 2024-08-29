@@ -29,6 +29,7 @@ import { UserFood } from '../src/entities/user_food/user_food';
 import { AdminModule } from '../src/admin/admin.module';
 import { VirtualTimeService } from '../src/admin/virtual-time-service/virtual-time-service';
 import { plainToInstance } from 'class-transformer';
+import * as cookieParser from 'cookie-parser';
 
 describe('Journal Controller (e2e)', () => {
   let app: INestApplication;
@@ -96,11 +97,12 @@ describe('Journal Controller (e2e)', () => {
 
     const userInDatabase: User = await userRepo.findOne({
       where: { username: username },
-      relations: ['journalEntries', 'bmiEntries'],
+      relations: ['journalEntries', 'bmiEntries', 'workoutPlans', 'userFoods'],
     });
     if (userInDatabase != null) {
       await userRepo.remove(userInDatabase);
     }
+    app.use(cookieParser());
     app.setGlobalPrefix('api');
     await app.init();
   });

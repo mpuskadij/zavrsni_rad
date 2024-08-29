@@ -37,6 +37,7 @@ describe('BmiService (integration tests)', () => {
   let provider: BmiService;
   let userRepo: Repository<User>;
   const username: string = 'marin';
+  let virtualTimeService: VirtualTimeService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -76,6 +77,7 @@ describe('BmiService (integration tests)', () => {
     }).compile();
 
     provider = module.get<BmiService>(BmiService);
+    virtualTimeService = module.get<VirtualTimeService>(VirtualTimeService);
     userRepo = module.get<Repository<User>>(getRepositoryToken(User));
   });
 
@@ -143,7 +145,9 @@ describe('BmiService (integration tests)', () => {
       user.password = 'sdasd';
       user.isAdmin = false;
       user.bmiEntries = [];
-      const sixDaysAgo = Date.now() - 6 * 24 * 60 * 60 * 1000;
+      const sixDaysAgo =
+        (await virtualTimeService.getTime()).getTime() -
+        6 * 24 * 60 * 60 * 1000;
 
       const bmiEntry: Bmientry = {
         bmi: 20.5,

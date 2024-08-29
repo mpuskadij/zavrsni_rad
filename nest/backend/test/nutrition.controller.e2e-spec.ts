@@ -39,6 +39,7 @@ import { Food } from '../src/entities/food/food';
 import { JwtPayload } from '../src/authentication/jwt-payload/jwt-payload';
 import { plainToInstance } from 'class-transformer';
 import { GetFoodDto } from '../src/dtos/get-food-dto/get-food-dto';
+import * as cookieParser from 'cookie-parser';
 
 describe('Nutrition Controller (e2e tests)', () => {
   let app: INestApplication;
@@ -127,7 +128,7 @@ describe('Nutrition Controller (e2e tests)', () => {
       where: { username: username },
       relations: ['bmiEntries', 'journalEntries', 'workoutPlans', 'userFoods'],
     });
-    if (user != null) {
+    if (user) {
       await userRepository.remove(user);
     }
 
@@ -148,6 +149,7 @@ describe('Nutrition Controller (e2e tests)', () => {
     if (foodCommon) {
       await foodRepository.remove(foodCommon);
     }
+    app.use(cookieParser());
     await app.init();
   });
 

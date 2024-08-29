@@ -27,6 +27,7 @@ describe('JournalService (integration tests)', () => {
   let repo: Repository<JournalEntry>;
   let userRepo: Repository<User>;
   let usersService: UsersService;
+  let virtualTimeService: VirtualTimeService;
   const password = 'ajskfnU7';
   const username = 'marin';
   const title = 'My first entry';
@@ -109,6 +110,7 @@ describe('JournalService (integration tests)', () => {
         VirtualTimeService,
       ],
     }).compile();
+    virtualTimeService = module.get<VirtualTimeService>(VirtualTimeService);
 
     provider = module.get<JournalService>(JournalService);
     repo = module.get<Repository<JournalEntry>>(
@@ -134,7 +136,6 @@ describe('JournalService (integration tests)', () => {
 
   describe('createJournalEntry', () => {
     it('should create journal entry with parameters when no previous entries', async () => {
-      const currentDate = new Date();
       await userRepo.save(user);
       const result = await provider.createJournalEntry(
         user,
@@ -144,19 +145,24 @@ describe('JournalService (integration tests)', () => {
       expect(result).not.toBeNull();
       expect(result.description).toEqual(description);
       expect(result.title).toEqual(title);
-      expect(result.dateAdded.getDay()).toEqual(currentDate.getDay());
-      expect(result.dateAdded.getFullYear()).toEqual(currentDate.getFullYear());
-      expect(result.dateAdded.getMonth()).toEqual(currentDate.getMonth());
+      const vTime = await virtualTimeService.getTime();
+      expect(result.dateAdded.getDay()).toEqual(vTime.getDay());
+      expect(result.dateAdded.getFullYear()).toEqual(vTime.getFullYear());
+      expect(result.dateAdded.getMonth()).toEqual(vTime.getMonth());
     });
 
     it('should throw error if entry with same date already exists', async () => {
+      journalEntry.dateAdded = await virtualTimeService.getTime();
       await expect(
         provider.createJournalEntry(userWithJournalEntry, title, description),
       ).rejects.toBeInstanceOf(ForbiddenException);
     });
 
     it('should return journal entry if entry with previous day exists', async () => {
-      const currentDate = new Date();
+      const vTime = await virtualTimeService.getTime();
+      journalEntryPreviousDay.dateAdded = new Date(
+        vTime.getTime() - 1 * 24 * 60 * 60 * 1000,
+      );
       await userRepo.save(user);
       const result = await provider.createJournalEntry(
         userWithJournalEntryPreviousDay,
@@ -166,9 +172,9 @@ describe('JournalService (integration tests)', () => {
       expect(result).not.toBeNull();
       expect(result.description).toEqual(description);
       expect(result.title).toEqual(title);
-      expect(result.dateAdded.getDay()).toEqual(currentDate.getDay());
-      expect(result.dateAdded.getFullYear()).toEqual(currentDate.getFullYear());
-      expect(result.dateAdded.getMonth()).toEqual(currentDate.getMonth());
+      expect(result.dateAdded.getDay()).toEqual(vTime.getDay());
+      expect(result.dateAdded.getFullYear()).toEqual(vTime.getFullYear());
+      expect(result.dateAdded.getMonth()).toEqual(vTime.getMonth());
     });
   });
 
