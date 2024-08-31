@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "@angular/cli": "^18.2.0"
+    "@angular/cli": "^18.2.0",
+    "pa11y": "^8.0.0"
   }
 }

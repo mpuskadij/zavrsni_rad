@@ -26,11 +26,16 @@ import { AdminModule } from './admin/admin.module';
 import * as Joi from 'joi';
 import { ThrottlerModule, seconds, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
     UsersModule,
     GuardsModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '../frontend/'),
+    }),
     ThrottlerModule.forRoot([
       { ttl: seconds(60), limit: 60 },
       { name: 'nutritionix', ttl: seconds(60), limit: 10 },
