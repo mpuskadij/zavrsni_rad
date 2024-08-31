@@ -1,5 +1,7 @@
 <app-navigation></app-navigation>
-<app-new-bmi-entry-form *ngIf="canShow" (onSubmit)="sendBmi($event)"></app-new-bmi-entry-form>
-<app-graph *ngIf="previousBmiEntries.length" [graphData]="previousBmiEntries"></app-graph>
-<p *ngIf="errorMessage">{{errorMessage}}</p>
+<div id="bmiPageContainer">
+    <app-new-bmi-entry-form *ngIf="canShow" (onSubmit)="sendBmi($event)"></app-new-bmi-entry-form>
+    <app-graph *ngIf="previousBmiEntries.length" [graphData]="previousBmiEntries"></app-graph>
+    <p *ngIf="errorMessage">{{errorMessage}}</p>
+</div>
 <app-clock (onTimeSet)="checkIfFormCanBeShown($event)"></app-clock>

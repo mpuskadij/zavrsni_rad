@@ -1,0 +1,22 @@
+@import "../../../styles.scss";
+input {
+  width: 100%;
+  @include setBackgroundImage("/assets/images/search-icon.svg");
+  background-position: 4% center;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+button {
+  @include setButtonToBottomOfPage();
+}
+table {
+  tbody {
+    td {
+      width: 25%;
+    }
+    img {
+      width: 100px;
+      height: 150px;
+    }
+  }
+}

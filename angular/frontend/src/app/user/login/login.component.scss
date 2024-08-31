@@ -1,0 +1,49 @@
+@import "../../../styles.scss";
+$radius: 5px;
+$margin: 10px;
+$inputWidth: 100%;
+label {
+  margin: $margin;
+  display: inherit;
+}
+input {
+  background-color: $gray;
+  margin: $margin;
+  margin-bottom: 20px;
+  display: inherit;
+  width: $inputWidth;
+  padding: 10px;
+  box-sizing: border-box;
+  border: 2px solid;
+  border-radius: $radius;
+  border-color: $white;
+}
+input#username {
+  @include setBackgroundImage("/assets/images/user-icon.svg");
+  background-position: 32% center;
+}
+div {
+  display: inline-flex;
+  gap: 10px;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+input#password {
+  @include setBackgroundImage("/assets/images/password-icon.svg");
+  background-position: 32% center;
+}
+
+button {
+  text-align: center;
+  background-color: $buttonGreen;
+  color: $black;
+  cursor: $buttonCursor;
+  display: inherit;
+  width: $inputWidth;
+  padding: 10px 100px;
+  margin: 30px $margin;
+  border: 2px solid;
+  border-color: $buttonGreen;
+  border-radius: $radius;
+}

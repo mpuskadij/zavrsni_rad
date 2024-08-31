@@ -1,1 +1,89 @@
-/* You can add global styles to this file, and also import other style files */
+$white: #ffffff;
+$gray: #d9d9d9;
+$navigationGreen: #a4c547;
+$buttonGreen: #98ce00;
+$red: #d11717;
+$black: #000000;
+$buttonCursor: pointer;
+$buttonPadding: 10px;
+@mixin setBackgroundImage($path) {
+  background-image: url($path);
+  background-repeat: no-repeat;
+}
+@mixin setContainerToBottomOfPage() {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+@mixin setButtonToBottomOfPage() {
+  @include setWideButton();
+  position: fixed;
+  bottom: 0;
+}
+@mixin setWideButton() {
+  width: 100%;
+  padding: 20px;
+  background-color: $buttonGreen;
+}
+@keyframes borderChange {
+  from {
+    border-color: $gray;
+  }
+  to {
+    border-color: $black;
+  }
+}
+body {
+  background-color: $white;
+}
+
+.invalidInput {
+  background-color: $red;
+}
+
+table {
+  text-align: center;
+  td,
+  th {
+    padding: 15px;
+    border: 1px solid;
+  }
+  th {
+    background-color: $buttonGreen;
+  }
+  tbody {
+    tr:hover {
+      cursor: $buttonCursor;
+      background-color: $buttonGreen;
+    }
+  }
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 50px;
+}
+button {
+  background-color: $buttonGreen;
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+  opacity: 50%;
+}
+input,
+textarea {
+  border-radius: 5px;
+  outline: none;
+  background-color: $gray;
+}
+input:focus,
+textarea:focus {
+  animation: borderChange 1s;
+  border-color: $black;
+  background-image: none;
+  &::placeholder {
+    display: none;
+  }
+}
+select {
+  border-radius: 5px;
+}

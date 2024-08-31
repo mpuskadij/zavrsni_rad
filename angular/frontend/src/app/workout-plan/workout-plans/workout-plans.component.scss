@@ -1,0 +1,4 @@
+@import "../../../styles.scss";
+button {
+  @include setButtonToBottomOfPage();
+}

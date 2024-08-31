@@ -1,7 +1,5 @@
 <app-navigation></app-navigation>
-<label for="food">Food name:</label>
-<input type="text" #input>
-
+<input type="text" placeholder="Search..." #input>
 <button type="button" (click)="search(input.value)">Search</button>
 <div *ngIf="foods !== undefined">
     <table *ngIf="foods.common.length > 0">

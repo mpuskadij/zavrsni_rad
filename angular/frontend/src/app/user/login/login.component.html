@@ -1,13 +1,17 @@
-<app-navigation></app-navigation>
-<form [formGroup]="form">
-    <label for="username">Username:</label>
-    <input id="username" type="text" formControlName="username" required minlength="5" maxlength="25">
+<div>
+    <p id="welcome">Welcome</p>
+    <form [formGroup]="form">
+        <label for="username">Username</label>
+        <input placeholder="Username" id="username" type="text" formControlName="username" required minlength="5"
+            maxlength="25">
 
-    <label for="password">Password:</label>
-    <input id="password" type="password" formControlName="password" required minlength="8">
+        <label for="password">Password</label>
+        <input placeholder="Password" id="password" type="password" formControlName="password" required minlength="8">
 
-    <button type="button" id="btnLogin" [disabled]="form.status !== 'VALID'" (click)="login()">Login</button>
+        <button type="button" id="btnLogin" [disabled]="form.status !== 'VALID'" (click)="login()">Login</button>
 
-    <button type="button" id="btnRegister" [disabled]="form.status !== 'VALID'" (click)="register()">Register</button>
-</form>
-<p *ngIf="errorMessage">{{errorMessage}}</p>
+        <button type="button" id="btnRegister" [disabled]="form.status !== 'VALID'"
+            (click)="register()">Register</button>
+    </form>
+    <p *ngIf="errorMessage">{{errorMessage}}</p>
+</div>

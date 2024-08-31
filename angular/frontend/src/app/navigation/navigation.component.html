@@ -8,6 +8,6 @@
     <a routerLink="/time" routerLinkActive="active" *ngIf="isLoggedIn && isAdmin">Server time</a>
 
 
-    <a *ngIf="isLoggedIn" (click)="logout()">Logout</a>
+    <a id="logout" *ngIf="isLoggedIn" (click)="logout()">Logout</a>
 </nav>
 <router-outlet></router-outlet>

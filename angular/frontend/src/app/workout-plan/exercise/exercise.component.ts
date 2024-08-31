@@ -106,9 +106,11 @@ export class ExerciseComponent {
         next: (foundExercises) => {
           this.exercises = foundExercises;
           this.fetched = true;
+          this.note = '';
         },
         error: () => {
           this.note = 'No exercises found!';
+          this.exercises = [];
           this.fetched = false;
         },
       });

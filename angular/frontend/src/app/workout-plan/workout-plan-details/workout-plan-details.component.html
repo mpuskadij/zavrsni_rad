@@ -6,6 +6,7 @@
             <th scope="col">Exercise description</th>
             <th scope="col">Exercise category</th>
             <th scope="col">Exercise equipment</th>
+            <th scope="col">Action</th>
         </tr>
     </thead>
     <tbody>
@@ -19,7 +20,10 @@
     </tbody>
 </table>
 <p *ngIf=" note">{{note}}</p>
-<button *ngIf="workoutPlanDetails !== undefined" type="button" (click)="deleteWorkout(workoutPlanDetails.id)">Delete
-    workout plan</button>
-<button *ngIf="workoutPlanDetails" type="button" (click)="navigateToSearch()">Add exercise</button>
 <app-clock></app-clock>
+<div>
+    <button *ngIf="workoutPlanDetails" type="button" (click)="navigateToSearch()">Add exercise</button>
+    <button id="deleteButton" *ngIf="workoutPlanDetails !== undefined" type="button"
+        (click)="deleteWorkout(workoutPlanDetails.id)">Delete
+        workout plan</button>
+</div>

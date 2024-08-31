@@ -7,7 +7,7 @@
     <textarea formControlName="description" type="text" [rows]="rows" [cols]="cols" id="description"></textarea>
 
     <button type="button" *ngIf="form.valid" (click)="updateEntry()">Update entry</button>
-    <button type="button" (click)="deleteEntry()">Delete entry</button>
+    <button id="delete" type="button" (click)="deleteEntry()">Delete entry</button>
 </form>
 <p *ngIf="note">{{note}}</p>
 <app-clock></app-clock>

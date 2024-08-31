@@ -42,9 +42,13 @@
             </tr>
         </tbody>
     </table>
-    <p>Calories eaten: {{sumOfCalories}}</p>
-    <button type="submit" *ngIf="changedFoods.length > 0" (click)="updateQuantity()">Save</button>
+    <div>
+        <p>Calories eaten: {{sumOfCalories}}</p>
+    </div>
 </div>
-<button type="button" (click)="navigateToFoodSearch()">Add food</button>
 <p *ngIf="note">{{note}}</p>
 <app-clock></app-clock>
+<div id="actions">
+    <button type="submit" *ngIf="changedFoods.length > 0" (click)="updateQuantity()">Save</button>
+    <button type="button" (click)="navigateToFoodSearch()">Add food</button>
+</div>

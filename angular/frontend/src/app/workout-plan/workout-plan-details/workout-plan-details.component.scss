@@ -1,0 +1,12 @@
+@import "../../../styles.scss";
+div {
+  bottom: 0;
+  position: fixed;
+  width: 100%;
+  button {
+    @include setWideButton();
+  }
+}
+button#deleteButton {
+  background-color: $red;
+}

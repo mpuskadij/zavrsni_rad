@@ -1,0 +1,17 @@
+@import "../../../styles.scss";
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  input {
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  textarea {
+    padding: 10px;
+    resize: none;
+  }
+  button {
+    @include setWideButton();
+  }
+}

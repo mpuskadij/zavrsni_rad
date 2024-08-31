@@ -140,7 +140,6 @@ export class JournalController {
       journalEntries,
       journalEntryToDelete,
     );
-    await this.usersService.unassignJournalEntry(user, deletedJournalEntry);
     return;
   }
 }

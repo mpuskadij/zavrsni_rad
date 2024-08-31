@@ -1,56 +1,55 @@
 <app-navigation></app-navigation>
-<label for="exercise">Exercise name:</label>
-<input type="text" #input>
-<label for="category">Category:</label>
-<select id="category" #category>
-    <option [value]="noCategoryId" selected></option>
-    <option [value]="absId">Abs</option>
-    <option [value]="armsId">Arms</option>
-    <option [value]="backId">Back</option>
-    <option [value]="calvesId">Calves</option>
-    <option [value]="cardioId">Cardio</option>
-    <option [value]="chestId">Chest</option>
-    <option [value]="legsId">Legs</option>
-    <option [value]="shouldersId">Shoulders</option>
-</select>
-
-<label for="equipment">Equipment:</label>
-<select id="equipment" #equipment>
-    <option [value]="noCategoryId" selected></option>
-    <option [value]="barbellId">Barbell</option>
-    <option [value]="benchId">Bench</option>
-    <option [value]="dumbbellId">Dumbbell</option>
-    <option [value]="gymMatID">Gym mat</option>
-    <option [value]="inclineBenchId">Incline bench</option>
-    <option [value]="kettlebellId">Kettlebell</option>
-    <option [value]="pullupBarId">Pull-up bar</option>
-    <option [value]="szBarId">SZ-bar</option>
-    <option [value]="swissBallId">Swiss ball</option>
-    <option [value]="bodyweightId">None (bodyweight)</option>
-</select>
-<button type="button" (click)="search(page = 1,input.value, category.value, equipment.value)">Search</button>
-
-<table *ngIf="exercises.length > 0">
-    <thead>
-        <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Description</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let exercise of exercises">
-            <td>{{exercise.name}}</td>
-            <td>{{exercise.description}}</td>
-            <td (click)="add(exercise.name)">Add to workout plan</td>
-        </tr>
-    </tbody>
-</table>
-<div *ngIf="fetched">
-    <button *ngIf="page > 1" type="button"
-        (click)="search(page = page - 1,input.value,category.value,equipment.value)">Previous
-        page</button>
-    <p>Page {{page}}</p>
-    <button *ngIf="exercises.length == 20" (click)="search(page = page + 1,input.value,category.value,equipment.value)"
-        type="button">Next page</button>
+<div>
+    <form>
+        <input placeholder="Search..." type="text" #input>
+        <select id="category" #category>
+            <option [value]="noCategoryId" selected>Category</option>
+            <option [value]="absId">Abs</option>
+            <option [value]="armsId">Arms</option>
+            <option [value]="backId">Back</option>
+            <option [value]="calvesId">Calves</option>
+            <option [value]="cardioId">Cardio</option>
+            <option [value]="chestId">Chest</option>
+            <option [value]="legsId">Legs</option>
+            <option [value]="shouldersId">Shoulders</option>
+        </select>
+        <select id="equipment" #equipment>
+            <option [value]="noCategoryId" selected>Equipment</option>
+            <option [value]="barbellId">Barbell</option>
+            <option [value]="benchId">Bench</option>
+            <option [value]="dumbbellId">Dumbbell</option>
+            <option [value]="gymMatID">Gym mat</option>
+            <option [value]="inclineBenchId">Incline bench</option>
+            <option [value]="kettlebellId">Kettlebell</option>
+            <option [value]="pullupBarId">Pull-up bar</option>
+            <option [value]="szBarId">SZ-bar</option>
+            <option [value]="swissBallId">Swiss ball</option>
+            <option [value]="bodyweightId">None (bodyweight)</option>
+        </select>
+        <button type="button" (click)="search(page = 1,input.value, category.value, equipment.value)">Search</button>
+    </form>
+    <table *ngIf="exercises.length > 0">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let exercise of exercises">
+                <td>{{exercise.name}}</td>
+                <td>{{exercise.description}}</td>
+                <td (click)="add(exercise.name)">Add to workout plan</td>
+            </tr>
+        </tbody>
+    </table>
+    <div id="pagination" *ngIf="fetched">
+        <button *ngIf="page > 1" type="button"
+            (click)="search(page = page - 1,input.value,category.value,equipment.value)">&lt;</button>
+        <p>Page {{page}}</p>
+        <button *ngIf="exercises.length == 20"
+            (click)="search(page = page + 1,input.value,category.value,equipment.value)" type="button">&gt;</button>
+    </div>
 </div>
 <p *ngIf="note">{{note}}</p>

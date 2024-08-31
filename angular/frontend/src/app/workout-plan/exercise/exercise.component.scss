@@ -1,0 +1,37 @@
+@import "../../../styles.scss";
+div {
+  display: flex;
+  flex-direction: column;
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 30px;
+    input {
+      width: 100%;
+      @include setBackgroundImage("/assets/images/search-icon.svg");
+      background-position: 4% center;
+      padding: 10px;
+    }
+    select {
+      background-color: $gray;
+      box-sizing: border-box;
+      border: none;
+      width: 100%;
+      padding: 10px;
+    }
+    button {
+      @include setWideButton();
+    }
+  }
+  div#pagination {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 50px;
+
+    button {
+      flex-basis: 20%;
+    }
+  }
+}

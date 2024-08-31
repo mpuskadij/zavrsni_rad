@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 })
 export class CreateJournalEntryComponent {
   public form = this.formBuilder.group({
-    title: ['', [Validators.required]],
+    title: ['', [Validators.required, Validators.maxLength(50)]],
     description: ['', [Validators.required]],
   });
   public note = '';
