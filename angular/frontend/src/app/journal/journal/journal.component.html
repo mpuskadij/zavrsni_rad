@@ -1,21 +1,22 @@
 <app-navigation></app-navigation>
-
-<table *ngIf="previousJournalEntries.length > 0">
-    <thead>
-        <tr>
-            <th scope="col">Title</th>
-            <th scope="col">Description</th>
-            <th scope="col">Date</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let entry of previousJournalEntries; let i = index" (click)="editEntry(entry)">
-            <td>{{entry.title}}</td>
-            <td>{{entry.description}}</td>
-            <td>{{entry.dateAdded.toLocaleDateString()}}</td>
-        </tr>
-    </tbody>
-</table>
+<div>
+    <table *ngIf="previousJournalEntries.length > 0">
+        <thead>
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Description</th>
+                <th scope="col">Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let entry of previousJournalEntries; let i = index" (click)="editEntry(entry)">
+                <td>{{entry.title}}</td>
+                <td>{{entry.description}}</td>
+                <td>{{entry.dateAdded.toLocaleDateString()}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 <p *ngIf="note">{{note}}</p>
 <app-clock></app-clock>
 <button type="button" (click)="navigateToForm()">Add a entry for today</button>

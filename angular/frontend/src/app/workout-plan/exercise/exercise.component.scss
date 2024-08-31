@@ -8,7 +8,7 @@ div {
     gap: 10px;
     margin-bottom: 30px;
     input {
-      width: 100%;
+      flex-basis: 100%;
       @include setBackgroundImage("/assets/images/search-icon.svg");
       background-position: 4% center;
       padding: 10px;
@@ -32,6 +32,17 @@ div {
 
     button {
       flex-basis: 20%;
+    }
+  }
+}
+@media only screen and (max-width: 600px) {
+  div#form {
+    overflow-x: none;
+
+    form {
+      input {
+        background-position: 13% center;
+      }
     }
   }
 }

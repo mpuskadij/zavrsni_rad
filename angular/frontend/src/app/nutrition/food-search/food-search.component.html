@@ -1,6 +1,5 @@
 <app-navigation></app-navigation>
 <input type="text" placeholder="Search..." #input>
-<button type="button" (click)="search(input.value)">Search</button>
 <div *ngIf="foods !== undefined">
     <table *ngIf="foods.common.length > 0">
         <thead>
@@ -44,3 +43,4 @@
 
 </div>
 <p *ngIf="note">{{note}}</p>
+<button type="button" (click)="search(input.value)">Search</button>

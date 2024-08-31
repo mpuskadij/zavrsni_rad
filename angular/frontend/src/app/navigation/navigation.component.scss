@@ -16,3 +16,19 @@ a#logout {
 a[routerLink] {
   display: inherit;
 }
+
+@media only screen and (max-width: 600px) {
+  nav {
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    a {
+      text-decoration: none;
+    }
+  }
+  a#logout {
+    margin-left: auto;
+    margin-right: auto;
+    cursor: pointer;
+  }
+}

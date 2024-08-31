@@ -1,18 +1,20 @@
 <app-navigation></app-navigation>
-<table *ngIf="workoutPlans.length">
-    <thead>
-        <tr>
-            <th scope="col">Title</th>
-            <th scope="col">Date created</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let workoutPlan of workoutPlans" (click)="getDetailsOfWorkoutPlan(workoutPlan.id)">
-            <td>{{workoutPlan.title}}</td>
-            <td>{{workoutPlan.dateAdded.toLocaleString()}}</td>
-        </tr>
-    </tbody>
-</table>
+<div *ngIf="workoutPlans.length">
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Date created</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let workoutPlan of workoutPlans" (click)="getDetailsOfWorkoutPlan(workoutPlan.id)">
+                <td>{{workoutPlan.title}}</td>
+                <td>{{workoutPlan.dateAdded.toLocaleString()}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 <p *ngIf="errorMessage">{{errorMessage}}</p>
 <button type="button" id="addWorkoutPlan" (click)="navigateToForm()">Create a new workout plan</button>
 <app-clock></app-clock>

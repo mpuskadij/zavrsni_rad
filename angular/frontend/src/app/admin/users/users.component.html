@@ -1,25 +1,27 @@
 <app-navigation></app-navigation>
-<table *ngIf="users.length > 0">
-    <thead>
-        <tr>
-            <th scope="col">Username</th>
-            <th scope="col">Is an admin?</th>
-            <th scope="col">Is active?</th>
-            <th scope="col">Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let user of users;">
-            <td>{{user.username}}</td>
-            <td>{{user.isAdmin}}</td>
-            <td>{{user.isActive}}</td>
-            <td (click)="changeActiveStatus(user)">
-                {{user.isActive ? "Lock" :"Unlock"}}
-            </td>
-        </tr>
-    </tbody>
+<div *ngIf="users.length > 0">
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Username</th>
+                <th scope="col">Is an admin?</th>
+                <th scope="col">Is active?</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let user of users;">
+                <td>{{user.username}}</td>
+                <td>{{user.isAdmin}}</td>
+                <td>{{user.isActive}}</td>
+                <td (click)="changeActiveStatus(user)">
+                    {{user.isActive ? "Lock" :"Unlock"}}
+                </td>
+            </tr>
+        </tbody>
 
-</table>
+    </table>
+</div>
 
 <p *ngIf="note">{{note}}</p>
 <app-clock></app-clock>

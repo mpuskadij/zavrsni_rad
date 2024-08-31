@@ -1,27 +1,29 @@
 <app-navigation></app-navigation>
-<table *ngIf="workoutPlanDetails !== undefined && workoutPlanDetails.exercises.length > 0">
-    <thead>
-        <tr>
-            <th scope="col">Exercise name</th>
-            <th scope="col">Exercise description</th>
-            <th scope="col">Exercise category</th>
-            <th scope="col">Exercise equipment</th>
-            <th scope="col">Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let exercise of workoutPlanDetails.exercises;let i = index;">
-            <td>{{exercise.name}}</td>
-            <td>{{exercise.description}}</td>
-            <td>{{exercise.category}}</td>
-            <td>{{exercise.equipment}}</td>
-            <td (click)="deleteExercise(exercise,i)">Remove exercise</td>
-        </tr>
-    </tbody>
-</table>
+<div id="table" *ngIf="workoutPlanDetails !== undefined && workoutPlanDetails.exercises.length > 0">
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Exercise name</th>
+                <th scope="col">Exercise description</th>
+                <th scope="col">Exercise category</th>
+                <th scope="col">Exercise equipment</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let exercise of workoutPlanDetails.exercises;let i = index;">
+                <td>{{exercise.name}}</td>
+                <td>{{exercise.description}}</td>
+                <td>{{exercise.category}}</td>
+                <td>{{exercise.equipment}}</td>
+                <td (click)="deleteExercise(exercise,i)">Remove exercise</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 <p *ngIf=" note">{{note}}</p>
 <app-clock></app-clock>
-<div>
+<div id="buttons">
     <button *ngIf="workoutPlanDetails" type="button" (click)="navigateToSearch()">Add exercise</button>
     <button id="deleteButton" *ngIf="workoutPlanDetails !== undefined" type="button"
         (click)="deleteWorkout(workoutPlanDetails.id)">Delete

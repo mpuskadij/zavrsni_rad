@@ -6,6 +6,7 @@ $red: #d11717;
 $black: #000000;
 $buttonCursor: pointer;
 $buttonPadding: 10px;
+$pressedButtonColor: #759e04;
 @mixin setBackgroundImage($path) {
   background-image: url($path);
   background-repeat: no-repeat;
@@ -40,30 +41,35 @@ body {
 .invalidInput {
   background-color: $red;
 }
-
-table {
-  text-align: center;
-  td,
-  th {
-    padding: 15px;
-    border: 1px solid;
-  }
-  th {
-    background-color: $buttonGreen;
-  }
-  tbody {
-    tr:hover {
-      cursor: $buttonCursor;
+div {
+  overflow-x: auto;
+  table {
+    text-align: center;
+    td,
+    th {
+      padding: 15px;
+      border: 1px solid;
+    }
+    th {
       background-color: $buttonGreen;
     }
+    tbody {
+      tr:hover {
+        cursor: $buttonCursor;
+        background-color: $buttonGreen;
+      }
+    }
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 50px;
   }
-  border-collapse: collapse;
-  width: 100%;
-  margin-bottom: 50px;
 }
 button {
   background-color: $buttonGreen;
   cursor: pointer;
+  &:hover {
+    background-color: $pressedButtonColor;
+  }
 }
 button:disabled {
   cursor: not-allowed;
