@@ -104,15 +104,11 @@ export class LoginComponent implements OnInit {
             next: (loginData) => {
               sessionStorage.setItem('isAdmin', loginData.isAdmin.toString());
               this.ngZone.run(() => {
-                this.router.navigateByUrl('/bmi');
+                this.router.navigate(['/bmi']);
               });
             },
-            error: (response) => {
-              if (response instanceof HttpErrorResponse) {
-                if (response.status == HttpStatusCode.Unauthorized) {
-                  this.errorMessage = 'Username and/or password are invalid!';
-                }
-              }
+            error: () => {
+              this.errorMessage = 'Username and/or password are invalid!';
             },
           });
         },

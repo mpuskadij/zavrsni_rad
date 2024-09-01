@@ -12,15 +12,15 @@ export const unauthorizedInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((response: any) => {
       if (response instanceof HttpErrorResponse) {
-        if (response.status == HttpStatusCode.Unauthorized) {
+        if (
+          response.status == HttpStatusCode.Unauthorized &&
+          !req.url.endsWith('/login')
+        ) {
           router.navigate(['/login']);
           return EMPTY;
         }
       }
-
-      return throwError(() => {
-        response;
-      });
+      return throwError(() => response);
     })
   );
 };

@@ -134,3 +134,4 @@ nest/backend/.test.env
 angular/frontend/.angular
 nest/backend/time.json
 nest/backend/frontend
+tests/*.html

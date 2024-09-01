@@ -26,9 +26,10 @@
             <option [value]="swissBallId">Swiss ball</option>
             <option [value]="bodyweightId">None (bodyweight)</option>
         </select>
-        <button type="button" (click)="search(page = 1,input.value, category.value, equipment.value)">Search</button>
+        <button type="button" id="search"
+            (click)="search(page = 1,input.value, category.value, equipment.value)">Search</button>
     </form>
-    <table *ngIf="exercises.length > 0">
+    <table id="results" *ngIf="exercises.length > 0">
         <thead>
             <tr>
                 <th scope="col">Name</th>
