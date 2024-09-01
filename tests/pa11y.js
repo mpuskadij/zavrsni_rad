@@ -5,7 +5,8 @@ const loginURL = `${host}login`;
 const bmiURL = `${host}bmi`;
 const workoutPlansURL = `${host}workout-plans`;
 const createWorkoutPlanURL = `${workoutPlansURL}/create`;
-const workoutPlanDetailsURL = `${workoutPlansURL}/6`;
+const workoutPlanID = "6";
+const workoutPlanDetailsURL = `${workoutPlansURL}/${workoutPlanID}`;
 const addExerciseURL = `${workoutPlanDetailsURL}/add`;
 const nutritionURL = `${host}nutrition`;
 const addFoodURL = `${nutritionURL}/add`;
@@ -17,11 +18,14 @@ const addJournalEntryURL = `${journalURL}/add`;
 const editJournalEntryURL = `${journalURL}/edit/9`;
 const usersURL = `${host}users`;
 const serverTimeURL = `${host}time`;
+
 const htmlReporter = require("pa11y/lib/reporters/html");
 const cliReporter = require("pa11y/lib/reporters/cli");
+
 const fs = require("fs/promises");
 const path = require("path");
 const outputDirectory = path.resolve("./");
+
 async function createFile(result, fileName) {
 	const reporter = process.env["reporter"];
 	if (!reporter) {
@@ -59,7 +63,17 @@ function login() {
 		"set field #password to Pa11yisawesome",
 		"click element #btnLogin",
 		`wait for url to be ${bmiURL}`,
+		`wait for #bmiForm to be visible`,
 	];
+}
+
+function navigate(navigationLinkId, url) {
+	const actions = login();
+	actions.push(
+		`click element #a${navigationLinkId}`,
+		`wait for url to be ${url}`
+	);
+	return actions;
 }
 function loginForGraph() {
 	return [
@@ -67,12 +81,16 @@ function loginForGraph() {
 		"set field #password to Pa11yisawesome",
 		"click element #btnLogin",
 		`wait for url to be ${bmiURL}`,
+		`wait for #graphContainer to be visible`,
 	];
 }
 
 async function run() {
 	try {
-		const result = await pa11y(loginURL);
+		const result = await pa11y(loginURL, {
+			includeWarnings: true,
+			screenCapture: `${outputDirectory}/login.png`,
+		});
 		await createFile(result, "login");
 	} catch (error) {
 		console.error(error.message);
@@ -81,6 +99,8 @@ async function run() {
 	try {
 		const result = await pa11y(loginURL, {
 			actions: login(),
+			includeWarnings: true,
+			screenCapture: `${outputDirectory}/bmi-form.png`,
 		});
 		await createFile(result, "bmi-form");
 	} catch (error) {
@@ -89,6 +109,8 @@ async function run() {
 	try {
 		const result = await pa11y(loginURL, {
 			actions: loginForGraph(),
+			includeWarnings: true,
+			screenCapture: `${outputDirectory}/bmi-graph.png`,
 		});
 		await createFile(result, "bmi-graph");
 	} catch (error) {
@@ -97,7 +119,12 @@ async function run() {
 
 	try {
 		const result = await pa11y(loginURL, {
-			actions: login().push(`navigate to ${workoutPlansURL}`),
+			actions: login().concat(
+				`navigate to url ${workoutPlansURL}`,
+				`wait for table to be visible`
+			),
+			includeWarnings: true,
+			screenCapture: `${outputDirectory}/workout-plans.png`,
 		});
 		await createFile(result, "workout-plans");
 	} catch (error) {
@@ -106,7 +133,12 @@ async function run() {
 
 	try {
 		const result = await pa11y(loginURL, {
-			actions: login().push(`navigate to ${createWorkoutPlanURL}`),
+			actions: login().concat(
+				`navigate to url ${createWorkoutPlanURL}`,
+				`wait for form to be visible`
+			),
+			includeWarnings: true,
+			screenCapture: `${outputDirectory}/workout-plans-create.png`,
 		});
 		await createFile(result, "workout-plan-create");
 	} catch (error) {
@@ -115,7 +147,12 @@ async function run() {
 
 	try {
 		const result = await pa11y(loginURL, {
-			actions: login().push(`navigate to ${workoutPlanDetailsURL}`),
+			actions: login().concat(
+				`navigate to url ${workoutPlanDetailsURL}`,
+				`wait for table to be visible`
+			),
+			includeWarnings: true,
+			screenCapture: `${outputDirectory}/workout-plans-details.png`,
 		});
 		await createFile(result, "workout-plan-details");
 	} catch (error) {
@@ -124,12 +161,14 @@ async function run() {
 
 	try {
 		const result = await pa11y(loginURL, {
-			actions: login().push(
+			actions: login().concat(
 				`navigate to ${addExerciseURL}`,
 				`set field #category to Back`,
 				`click element #search`,
 				`wait for #results to be visible`
 			),
+			includeWarnings: true,
+			screenCapture: `${outputDirectory}/exercise-search.png`,
 		});
 		await createFile(result, "exercise-search");
 	} catch (error) {
@@ -138,7 +177,12 @@ async function run() {
 
 	try {
 		const result = await pa11y(loginURL, {
-			actions: login().push(`navigate to ${nutritionURL}`),
+			actions: login().concat(
+				`navigate to ${nutritionURL}`,
+				`wait for table to be visible`
+			),
+			includeWarnings: true,
+			screenCapture: `${outputDirectory}/nutrition.png`,
 		});
 		await createFile(result, "nutrition");
 	} catch (error) {
@@ -147,21 +191,14 @@ async function run() {
 
 	try {
 		const result = await pa11y(loginURL, {
-			actions: login().push(`navigate to ${addFoodURL}`),
-		});
-		await createFile(result, "nutrition-add");
-	} catch (error) {
-		console.error(error.message);
-	}
-
-	try {
-		const result = await pa11y(loginURL, {
-			actions: login().push(
+			actions: login().concat(
 				`navigate to ${addFoodURL}`,
 				`set field #search to hamburger`,
 				`click element #btnSearch`,
 				"wait for #results to be visible"
 			),
+			includeWarnings: true,
+			screenCapture: `${outputDirectory}/nutrition-add-search-table.png`,
 		});
 		await createFile(result, "nutrition-add-search-table");
 	} catch (error) {
@@ -170,7 +207,12 @@ async function run() {
 
 	try {
 		const result = await pa11y(loginURL, {
-			actions: login().push(`navigate to ${commonFoodDetailsURL}`),
+			actions: login().concat(
+				`navigate to ${commonFoodDetailsURL}`,
+				`wait for table to be visible`
+			),
+			includeWarnings: true,
+			screenCapture: `${outputDirectory}/common-food-details.png`,
 		});
 		await createFile(result, "common-food-details");
 	} catch (error) {
@@ -179,7 +221,12 @@ async function run() {
 
 	try {
 		const result = await pa11y(loginURL, {
-			actions: login().push(`navigate to ${brandedFoodDetailsURL}`),
+			actions: login().concat(
+				`navigate to ${brandedFoodDetailsURL}`,
+				`wait for table to be visible`
+			),
+			includeWarnings: true,
+			screenCapture: `${outputDirectory}/branded-food-details.png`,
 		});
 		await createFile(result, "branded-food-details");
 	} catch (error) {
@@ -188,7 +235,12 @@ async function run() {
 
 	try {
 		const result = await pa11y(loginURL, {
-			actions: login().push(`navigate to ${journalURL}`),
+			actions: login().concat(
+				`navigate to ${journalURL}`,
+				`wait for table to be visible`
+			),
+			includeWarnings: true,
+			screenCapture: `${outputDirectory}/journal.png`,
 		});
 		await createFile(result, "journal");
 	} catch (error) {
@@ -197,7 +249,12 @@ async function run() {
 
 	try {
 		const result = await pa11y(loginURL, {
-			actions: login().push(`navigate to ${addJournalEntryURL}`),
+			actions: login().concat(
+				`navigate to ${addJournalEntryURL}`,
+				`wait for form to be visible`
+			),
+			includeWarnings: true,
+			screenCapture: `${outputDirectory}/journal-add.png`,
 		});
 		await createFile(result, "journal-add");
 	} catch (error) {
@@ -206,7 +263,12 @@ async function run() {
 
 	try {
 		const result = await pa11y(loginURL, {
-			actions: login().push(`navigate to ${editJournalEntryURL}`),
+			actions: login().concat(
+				`navigate to ${editJournalEntryURL}`,
+				`wait for form to be visible`
+			),
+			includeWarnings: true,
+			screenCapture: `${outputDirectory}/journal-edit.png`,
 		});
 		await createFile(result, "journal-edit");
 	} catch (error) {
@@ -215,7 +277,12 @@ async function run() {
 
 	try {
 		const result = await pa11y(loginURL, {
-			actions: login().push(`navigate to ${usersURL}`),
+			actions: login().concat(
+				`navigate to ${usersURL}`,
+				`wait for table to be visible`
+			),
+			includeWarnings: true,
+			screenCapture: `${outputDirectory}/users.png`,
 		});
 		await createFile(result, "users");
 	} catch (error) {
@@ -224,7 +291,12 @@ async function run() {
 
 	try {
 		const result = await pa11y(loginURL, {
-			actions: login().push(`navigate to ${serverTimeURL}`),
+			actions: login().concat(
+				`navigate to ${serverTimeURL}`,
+				`wait for form to be visible`
+			),
+			includeWarnings: true,
+			screenCapture: `${outputDirectory}/time.png`,
 		});
 		await createFile(result, "time");
 	} catch (error) {

@@ -40,8 +40,7 @@ export class BmiComponent implements OnInit {
           this.previousBmiEntries = previousBmis;
         },
         error: () => {
-          this.errorMessage =
-            'Something went wrong while getting your previous bmi entries!';
+          this.errorMessage = 'No bmi entries yet!';
         },
       });
   }

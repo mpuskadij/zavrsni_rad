@@ -1,4 +1,4 @@
-<form [formGroup]="form">
+<form [formGroup]="form" id="bmiForm">
     <label for="height">Height ({{minHeight}} - {{maxHeight}}) m:</label>
     <input id="height" type="number" formControlName="height" step="0.01" [defaultValue]="0" [min]="minHeight"
         [max]="maxHeight" required>

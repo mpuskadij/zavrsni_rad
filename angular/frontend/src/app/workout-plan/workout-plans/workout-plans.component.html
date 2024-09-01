@@ -8,7 +8,8 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let workoutPlan of workoutPlans" (click)="getDetailsOfWorkoutPlan(workoutPlan.id)">
+            <tr *ngFor="let workoutPlan of workoutPlans" [id]="workoutPlan.id"
+                (click)="getDetailsOfWorkoutPlan(workoutPlan.id)">
                 <td>{{workoutPlan.title}}</td>
                 <td>{{workoutPlan.dateAdded.toLocaleString()}}</td>
             </tr>
