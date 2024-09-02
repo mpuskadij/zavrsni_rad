@@ -112,6 +112,7 @@ describe('UsersService (unit tests)', () => {
         .spyOn(provider, 'checkIfUsernameIsAlreadyInDatabase')
         .mockResolvedValue(false);
       jest.spyOn(repository, 'save').mockResolvedValue(userToAdd);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
       jest.spyOn(repository, 'create').mockReturnValue(userToAdd);
       mockCryptoService.hashPassword.mockResolvedValue(crpytoResult);
 
@@ -130,6 +131,7 @@ describe('UsersService (unit tests)', () => {
       let mockFunction = jest
         .spyOn(repository, 'save')
         .mockResolvedValue(userToAdd);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       const result = await provider.addUser('alex', 'jfdhgt6H');
 
@@ -143,6 +145,8 @@ describe('UsersService (unit tests)', () => {
       let mockFunction = jest
         .spyOn(repository, 'save')
         .mockResolvedValue(userToAdd);
+
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       let createMockFunction = jest
         .spyOn(repository, 'create')
@@ -162,6 +166,8 @@ describe('UsersService (unit tests)', () => {
       jest.spyOn(repository, 'create').mockReturnValue(userToAdd);
       mockCryptoService.hashPassword.mockResolvedValue(crpytoResult);
       jest.spyOn(repository, 'save').mockResolvedValue(userToAdd);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+
       const result = await provider.addUser(
         userToAdd.username,
         userToAdd.password,
