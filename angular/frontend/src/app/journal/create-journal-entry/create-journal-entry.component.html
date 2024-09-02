@@ -1,12 +1,12 @@
 <app-navigation></app-navigation>
-<form [formGroup]="this.form">
-    <input type="text" formControlName="title" placeholder="Title" required id="title">
+<form [formGroup]="this.form" (submit)="$event.preventDefault()">
+    <input type="text" title="Title of your day" formControlName="title" placeholder="Title" required id="title">
 
-    <textarea formControlName="description" placeholder="Description of your day" required [rows]="rows" [cols]="cols"
-        id="description"></textarea>
+    <textarea formControlName="description" title="Description of how your day went"
+        placeholder="Description of your day" required [rows]="rows" [cols]="cols" id="description"></textarea>
 
-    <button [disabled]="form.invalid" (click)="createEntry()" type="button">Create</button>
-    <button (click)="close()" type="button">Cancel</button>
+    <button [disabled]="form.invalid" (click)="createEntry()" type="submit">Create</button>
+    <button (click)="close()" id="cancel" type="button">Cancel</button>
 
 </form>
 <p *ngIf="note">{{note}}</p>

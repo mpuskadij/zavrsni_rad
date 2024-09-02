@@ -1,5 +1,11 @@
 {
 	"dependencies": {
+		"cypress": "^13.14.1",
 		"pa11y": "^8.0.0"
+	},
+	"scripts": {
+		"cypress": "cypress open",
+		"pa11y:hmtl": "reporter=html node ./pa11y/pa11y.js",
+		"pa11y:cli": "reporter=cli node ./pa11y/pa11y.js"
 	}
 }

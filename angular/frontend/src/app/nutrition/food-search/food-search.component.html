@@ -1,7 +1,8 @@
 <app-navigation></app-navigation>
-<input type="text" id="search" placeholder="Search..." #input>
+<input type="text" title="Full or partial name of the food to search for" id="search" placeholder="Search..." #input>
 <div *ngIf="foods !== undefined" id="results">
-    <table *ngIf="foods.common.length > 0">
+    <table id="common" *ngIf="foods.common.length > 0">
+        <caption>Common food</caption>
         <thead>
             <tr>
                 <th scope="col">Name</th>
@@ -21,7 +22,8 @@
     </table>
     <p *ngIf="foods.common.length == 0">No common food that matches search term found!</p>
 
-    <table *ngIf="foods.branded.length > 0">
+    <table id="branded" *ngIf="foods.branded.length > 0">
+        <caption>Branded food</caption>
         <thead>
             <tr>
                 <th scope="col">Name</th>

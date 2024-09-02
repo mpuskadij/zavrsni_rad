@@ -1,12 +1,11 @@
 <app-navigation></app-navigation>
-<form *ngIf="entry" [formGroup]="this.form">
-    <label for="title">Title:</label>
-    <input formControlName="title" type="text" id="title" maxlength="50">
+<form *ngIf="entry" [formGroup]="this.form" (submit)="$event.preventDefault()">
+    <input placeholder="Title" title="Title of your day" formControlName="title" type="text" id="title" maxlength="50">
 
-    <label for="description">Description:</label>
-    <textarea formControlName="description" type="text" [rows]="rows" [cols]="cols" id="description"></textarea>
+    <textarea placeholder="Description" title="Description of how your day went" formControlName="description"
+        type="text" [rows]="rows" [cols]="cols" id="description"></textarea>
 
-    <button type="button" *ngIf="form.valid" (click)="updateEntry()">Update entry</button>
+    <button type="submit" *ngIf="form.valid" (click)="updateEntry()">Update entry</button>
     <button id="delete" type="button" (click)="deleteEntry()">Delete entry</button>
 </form>
 <p *ngIf="note">{{note}}</p>

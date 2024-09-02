@@ -2,11 +2,12 @@ $white: #ffffff;
 $gray: #d9d9d9;
 $navigationGreen: #a4c547;
 $buttonGreen: #98ce00;
-$red: #d11717;
+$red: #e12727;
 $black: #000000;
 $buttonCursor: pointer;
 $buttonPadding: 10px;
 $pressedButtonColor: #759e04;
+$pressedDeleteButtonColor: #961818;
 @mixin setBackgroundImage($path) {
   background-image: url($path);
   background-repeat: no-repeat;
@@ -24,7 +25,6 @@ $pressedButtonColor: #759e04;
 @mixin setWideButton() {
   width: 100%;
   padding: 20px;
-  background-color: $buttonGreen;
 }
 @keyframes borderChange {
   from {
@@ -92,4 +92,10 @@ textarea:focus {
 }
 select {
   border-radius: 5px;
+}
+button#delete {
+  &:hover {
+    background-color: $pressedDeleteButtonColor;
+  }
+  background-color: $red;
 }

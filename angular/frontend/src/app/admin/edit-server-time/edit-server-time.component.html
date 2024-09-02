@@ -1,7 +1,7 @@
 <app-navigation></app-navigation>
-<form [formGroup]="form">
-    <label for="offset">Current offset:</label>
-    <input formControlName="offset" step="1" type="number" id="offset" required>
-    <button type="button" [disabled]="form.invalid" (click)="updateOffset()">Update server time</button>
+<form [formGroup]="form" (submit)="$event.preventDefault()">
+    <input placeholder="Offset" title="Offset of the server from current date and time" formControlName="offset"
+        step="1" type="number" id="offset" required>
+    <button type="submit" [disabled]="form.invalid" (click)="updateOffset()">Update server time</button>
 </form>
 <app-clock></app-clock>

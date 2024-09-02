@@ -1,6 +1,7 @@
 <app-navigation></app-navigation>
 <div *ngIf="users.length > 0">
     <table>
+        <caption>All current registered users (excluding you)</caption>
         <thead>
             <tr>
                 <th scope="col">Username</th>
@@ -14,7 +15,7 @@
                 <td>{{user.username}}</td>
                 <td>{{user.isAdmin}}</td>
                 <td>{{user.isActive}}</td>
-                <td (click)="changeActiveStatus(user)">
+                <td (click)="changeActiveStatus(user)" [id]="user.username">
                     {{user.isActive ? "Lock" :"Unlock"}}
                 </td>
             </tr>

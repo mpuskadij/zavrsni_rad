@@ -1,8 +1,8 @@
 <app-navigation></app-navigation>
 <div id="form">
-    <form>
-        <input placeholder="Search..." type="text" #input>
-        <select id="category" #category>
+    <form (submit)="$event.preventDefault()">
+        <input title="Precise exercise name to find" placeholder="Search..." type="text" #input>
+        <select title="Category that the exercise should target" id="category" #category>
             <option [value]="noCategoryId" selected>Category</option>
             <option [value]="absId">Abs</option>
             <option [value]="armsId">Arms</option>
@@ -13,7 +13,7 @@
             <option [value]="legsId">Legs</option>
             <option [value]="shouldersId">Shoulders</option>
         </select>
-        <select id="equipment" #equipment>
+        <select title="Equipment that the exercise should use" id="equipment" #equipment>
             <option [value]="noCategoryId" selected>Equipment</option>
             <option [value]="barbellId">Barbell</option>
             <option [value]="benchId">Bench</option>
@@ -26,10 +26,11 @@
             <option [value]="swissBallId">Swiss ball</option>
             <option [value]="bodyweightId">None (bodyweight)</option>
         </select>
-        <button type="button" id="search"
+        <button type="submit" id="search"
             (click)="search(page = 1,input.value, category.value, equipment.value)">Search</button>
     </form>
     <table id="results" *ngIf="exercises.length > 0">
+        <caption>Found exercises</caption>
         <thead>
             <tr>
                 <th scope="col">Name</th>

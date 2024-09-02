@@ -1,6 +1,7 @@
 <app-navigation></app-navigation>
 <div id="table" *ngIf="workoutPlanDetails !== undefined && workoutPlanDetails.exercises.length > 0">
     <table>
+        <caption>Exercises of the workout plan</caption>
         <thead>
             <tr>
                 <th scope="col">Exercise name</th>
@@ -24,8 +25,8 @@
 <p *ngIf=" note">{{note}}</p>
 <app-clock></app-clock>
 <div id="buttons">
-    <button *ngIf="workoutPlanDetails" type="button" (click)="navigateToSearch()">Add exercise</button>
-    <button id="deleteButton" *ngIf="workoutPlanDetails !== undefined" type="button"
+    <button id="add" *ngIf="workoutPlanDetails" type="button" (click)="navigateToSearch()">Add exercise</button>
+    <button id="delete" *ngIf="workoutPlanDetails !== undefined" type="button"
         (click)="deleteWorkout(workoutPlanDetails.id)">Delete
         workout plan</button>
 </div>

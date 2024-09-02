@@ -1,6 +1,7 @@
 <app-navigation></app-navigation>
 <div *ngIf="foods.length > 0">
     <table>
+        <caption>Food in your nutrition plan</caption>
         <thead>
             <tr>
                 <th scope="col">Name</th>
@@ -33,8 +34,8 @@
                 <td>{{food.protein ? food.protein * food.quantity : food.protein}}</td>
                 <td>{{food.potassium ? food.potassium * food.quantity : food.potassium}}</td>
                 <td>
-                    <input type="number" [(ngModel)]="food.quantity" (ngModelChange)="changeQuantity(food)" [min]="1"
-                        [step]="1">
+                    <input type="number" title="Quantity that you want to eat or ate" [(ngModel)]="food.quantity"
+                        (ngModelChange)="changeQuantity(food)" [min]="1" [step]="1">
                 </td>
                 <td (click)="deleteFood(food.id, i)">
                     Remove food
@@ -50,5 +51,5 @@
 <app-clock></app-clock>
 <div id="actions">
     <button type="submit" *ngIf="changedFoods.length > 0" (click)="updateQuantity()">Save</button>
-    <button type="button" (click)="navigateToFoodSearch()">Add food</button>
+    <button type="button" id="btnAddFood" (click)="navigateToFoodSearch()">Add food</button>
 </div>

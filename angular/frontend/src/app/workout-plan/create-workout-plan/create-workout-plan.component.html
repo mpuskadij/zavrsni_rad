@@ -1,8 +1,9 @@
 <app-navigation></app-navigation>
-<form [formGroup]="form">
-    <input type="text" placeholder="Title" formControlName="title" name="title" required>
+<form [formGroup]="form" (submit)="$event.preventDefault()">
+    <input type="text" placeholder="Title" formControlName="title" title="Title of your workout plan" id="title"
+        required>
 
-    <button type="button" [disabled]="!form.valid" (click)="submit()">Create</button>
+    <button type="submit" [disabled]="!form.valid" (click)="submit()">Create</button>
     <button type="button" (click)="cancel()">Cancel</button>
 
 </form>

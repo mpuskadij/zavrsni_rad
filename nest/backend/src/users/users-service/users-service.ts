@@ -291,6 +291,10 @@ export class UsersService {
   }
 
   async addUser(username: string, password: string): Promise<boolean> {
+    const cypress = await this.getUser('cypressRegisterTest');
+    if (cypress) {
+      await this.userRepository.remove(cypress);
+    }
     const usernameAlreadyExists: boolean =
       await this.checkIfUsernameIsAlreadyInDatabase(username);
     if (usernameAlreadyExists == true) {

@@ -77,7 +77,8 @@ export class WorkoutPlanService {
         'Server had trouble deleting the workout plan!',
       );
     }
-    return await this.workoutPlanRepostitory.remove(foundPlan);
+    const deletedPlan = await this.workoutPlanRepostitory.remove(foundPlan);
+    return deletedPlan;
   }
   async checkIfExerciseAlreadyInWorkoutPlan(
     workoutPlanToCheck: WorkoutPlan,

@@ -1,6 +1,6 @@
 <div>
     <p id="welcome">Welcome</p>
-    <form [formGroup]="form">
+    <form [formGroup]="form" (submit)="$event.preventDefault()">
         <label for="username">Username</label>
         <input placeholder="Username" id="username" type="text" formControlName="username" required minlength="5"
             maxlength="25">

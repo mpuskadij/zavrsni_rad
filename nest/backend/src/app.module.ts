@@ -37,7 +37,7 @@ import { join } from 'path';
       rootPath: join(__dirname, '../frontend/'),
     }),
     ThrottlerModule.forRoot([
-      { ttl: seconds(60), limit: 60 },
+      { ttl: seconds(60), limit: 2000 },
       { name: 'nutritionix', ttl: seconds(60), limit: 10 },
     ]),
     ConfigModule.forRoot({

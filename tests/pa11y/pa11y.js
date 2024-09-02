@@ -24,7 +24,7 @@ const cliReporter = require("pa11y/lib/reporters/cli");
 
 const fs = require("fs/promises");
 const path = require("path");
-const outputDirectory = path.resolve("./");
+let outputDirectory = path.resolve("./");
 
 async function createFile(result, fileName) {
 	const reporter = process.env["reporter"];
@@ -86,12 +86,15 @@ function loginForGraph() {
 }
 
 async function run() {
+	await fs.mkdir(outputDirectory.concat("/results"), { recursive: true });
+	outputDirectory = outputDirectory.concat("/results");
 	try {
 		const result = await pa11y(loginURL, {
 			includeWarnings: true,
 			screenCapture: `${outputDirectory}/login.png`,
 		});
 		await createFile(result, "login");
+		console.log(`Completed ${loginURL}`);
 	} catch (error) {
 		console.error(error.message);
 	}
@@ -103,6 +106,7 @@ async function run() {
 			screenCapture: `${outputDirectory}/bmi-form.png`,
 		});
 		await createFile(result, "bmi-form");
+		console.log(`Completed ${bmiURL} form`);
 	} catch (error) {
 		console.error(error.message);
 	}
@@ -113,6 +117,7 @@ async function run() {
 			screenCapture: `${outputDirectory}/bmi-graph.png`,
 		});
 		await createFile(result, "bmi-graph");
+		console.log(`Completed ${bmiURL} graphs`);
 	} catch (error) {
 		console.error(error.message);
 	}
@@ -127,6 +132,7 @@ async function run() {
 			screenCapture: `${outputDirectory}/workout-plans.png`,
 		});
 		await createFile(result, "workout-plans");
+		console.log(`Completed ${workoutPlansURL}`);
 	} catch (error) {
 		console.error(error.message);
 	}
@@ -141,6 +147,7 @@ async function run() {
 			screenCapture: `${outputDirectory}/workout-plans-create.png`,
 		});
 		await createFile(result, "workout-plan-create");
+		console.log(`Completed ${createWorkoutPlanURL}`);
 	} catch (error) {
 		console.error(error.message);
 	}
@@ -155,6 +162,7 @@ async function run() {
 			screenCapture: `${outputDirectory}/workout-plans-details.png`,
 		});
 		await createFile(result, "workout-plan-details");
+		console.log(`Completed ${workoutPlanDetailsURL}`);
 	} catch (error) {
 		console.error(error.message);
 	}
@@ -163,14 +171,17 @@ async function run() {
 		const result = await pa11y(loginURL, {
 			actions: login().concat(
 				`navigate to ${addExerciseURL}`,
-				`set field #category to Back`,
-				`click element #search`,
+				`wait for select#category to be visible`,
+				`wait for button#search to be visible`,
+				`set field select#category to Back`,
+				`click element button#search`,
 				`wait for #results to be visible`
 			),
 			includeWarnings: true,
 			screenCapture: `${outputDirectory}/exercise-search.png`,
 		});
 		await createFile(result, "exercise-search");
+		console.log(`Completed ${addExerciseURL}`);
 	} catch (error) {
 		console.error(error.message);
 	}
@@ -185,6 +196,7 @@ async function run() {
 			screenCapture: `${outputDirectory}/nutrition.png`,
 		});
 		await createFile(result, "nutrition");
+		console.log(`Completed ${nutritionURL}`);
 	} catch (error) {
 		console.error(error.message);
 	}
@@ -201,6 +213,7 @@ async function run() {
 			screenCapture: `${outputDirectory}/nutrition-add-search-table.png`,
 		});
 		await createFile(result, "nutrition-add-search-table");
+		console.log(`Completed ${addFoodURL}`);
 	} catch (error) {
 		console.error(error.message);
 	}
@@ -215,6 +228,7 @@ async function run() {
 			screenCapture: `${outputDirectory}/common-food-details.png`,
 		});
 		await createFile(result, "common-food-details");
+		console.log(`Completed ${commonFoodDetailsURL}`);
 	} catch (error) {
 		console.error(error.message);
 	}
@@ -229,6 +243,7 @@ async function run() {
 			screenCapture: `${outputDirectory}/branded-food-details.png`,
 		});
 		await createFile(result, "branded-food-details");
+		console.log(`Completed ${brandedFoodDetailsURL}`);
 	} catch (error) {
 		console.error(error.message);
 	}
@@ -243,6 +258,7 @@ async function run() {
 			screenCapture: `${outputDirectory}/journal.png`,
 		});
 		await createFile(result, "journal");
+		console.log(`Completed ${journalURL}`);
 	} catch (error) {
 		console.error(error.message);
 	}
@@ -257,6 +273,7 @@ async function run() {
 			screenCapture: `${outputDirectory}/journal-add.png`,
 		});
 		await createFile(result, "journal-add");
+		console.log(`Completed ${addJournalEntryURL}`);
 	} catch (error) {
 		console.error(error.message);
 	}
@@ -271,6 +288,7 @@ async function run() {
 			screenCapture: `${outputDirectory}/journal-edit.png`,
 		});
 		await createFile(result, "journal-edit");
+		console.log(`Completed ${editJournalEntryURL}`);
 	} catch (error) {
 		console.error(error.message);
 	}
@@ -285,6 +303,7 @@ async function run() {
 			screenCapture: `${outputDirectory}/users.png`,
 		});
 		await createFile(result, "users");
+		console.log(`Completed ${usersURL}`);
 	} catch (error) {
 		console.error(error.message);
 	}
@@ -299,6 +318,7 @@ async function run() {
 			screenCapture: `${outputDirectory}/time.png`,
 		});
 		await createFile(result, "time");
+		console.log(`Completed ${serverTimeURL}`);
 	} catch (error) {
 		console.error(error.message);
 	}
