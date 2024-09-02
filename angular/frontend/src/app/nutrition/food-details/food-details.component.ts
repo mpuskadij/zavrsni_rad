@@ -50,14 +50,18 @@ export class FoodDetailsComponent implements OnInit {
       this.note = 'Invalid food type';
       return;
     }
-    this.nutritionService.addToNutrition(body).subscribe({
-      next: () => {
-        this.router.navigate(['/nutrition']);
-      },
-      error: () => {
-        this.note =
-          'Something went wrong while trying to add food to nutrition!';
-      },
-    });
+    try {
+      this.nutritionService.addToNutrition(body).subscribe({
+        next: () => {
+          this.router.navigate(['/nutrition']);
+        },
+        error: () => {
+          this.note =
+            'Something went wrong while trying to add food to nutrition!';
+        },
+      });
+    } catch (error: any) {
+      this.note = error.message;
+    }
   }
 }

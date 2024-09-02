@@ -14,12 +14,12 @@ export class FoodService {
   constructor(private httpClient: HttpClient) {}
 
   searchFood(query: IFoodSearchQuery) {
-    if (!query.searchTerm) {
+    if (!query.searchTerm.length) {
       throw new Error('Search term cannot be empty!');
     }
     const parameters = new HttpParams().set('searchTerm', query.searchTerm);
 
-    return this.httpClient.get<IFoodSearchResponseBody>(`${this.endPoint}?`, {
+    return this.httpClient.get<IFoodSearchResponseBody>(`${this.endPoint}`, {
       observe: 'body',
       responseType: 'json',
       params: parameters,
@@ -27,7 +27,10 @@ export class FoodService {
   }
 
   getDetails(parameterName: string, parameterValue: string) {
-    if (parameterName === 'name' || parameterName === 'id') {
+    if (
+      (parameterName === 'name' || parameterName === 'id') &&
+      parameterValue.length
+    ) {
       const parameters = new HttpParams().set(parameterName, parameterValue);
       return this.httpClient.get<IFoodDetails>(`${this.endPoint}/details`, {
         observe: 'body',

@@ -53,7 +53,7 @@ export class JournalService {
   }
 
   addNewJournalEntry(body: ICreateJournalEntry) {
-    if (!body.description || !body.title) {
+    if (!body.description.length || !body.title.length) {
       throw new Error('Title and/or description not provided!');
     }
     return this.httpClient.post(this.endPoint, body, {

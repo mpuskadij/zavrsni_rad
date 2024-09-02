@@ -27,14 +27,18 @@ export class UsersComponent implements OnInit {
 
   changeActiveStatus(user: IExistingUser) {
     const params: IChangeActiveStatus = { username: user.username };
-    this.adminService.changeStatus(params).subscribe({
-      next: () => {
-        user.isActive = !user.isActive;
-      },
-      error: () => {
-        this.note =
-          'Something went wrong while trying to change status of user!';
-      },
-    });
+    try {
+      this.adminService.changeStatus(params).subscribe({
+        next: () => {
+          user.isActive = !user.isActive;
+        },
+        error: () => {
+          this.note =
+            'Something went wrong while trying to change status of user!';
+        },
+      });
+    } catch (error: any) {
+      this.note = error.message;
+    }
   }
 }

@@ -52,19 +52,23 @@ export class NutritionComponent implements OnInit {
   }
 
   deleteFood(foodID: number, index: number) {
-    this.nutritionService.deleteFood(foodID).subscribe({
-      next: (response) => {
-        if (response.status == HttpStatusCode.NoContent) {
-          this.note = 'Successfully deleted food!';
-          this.foods.splice(index, 1);
-          this.calculateSum();
-        }
-      },
-      error: () => {
-        this.note =
-          'Something went wrong while trying to delete food from nutrition!';
-      },
-    });
+    try {
+      this.nutritionService.deleteFood(foodID).subscribe({
+        next: (response) => {
+          if (response.status == HttpStatusCode.NoContent) {
+            this.note = 'Successfully deleted food!';
+            this.foods.splice(index, 1);
+            this.calculateSum();
+          }
+        },
+        error: () => {
+          this.note =
+            'Something went wrong while trying to delete food from nutrition!';
+        },
+      });
+    } catch (error: any) {
+      this.note = error.message;
+    }
   }
   private calculateSum() {
     this.sumOfCalories = 0;

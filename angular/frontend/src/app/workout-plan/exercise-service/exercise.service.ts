@@ -8,11 +8,15 @@ import { ISearchExercise } from 'src/interfaces/isearch-exercise';
   providedIn: 'root',
 })
 export class ExerciseService {
-  private endPoint = `${environment.apiUrl}exercise?`;
+  private endPoint = `${environment.apiUrl}exercise`;
   constructor(private httpClient: HttpClient) {}
 
   search(query: ISearchExercise) {
-    if (!query.searchTerm && !query.category && !query.equipment) {
+    if (
+      (!query.searchTerm && !query.category && !query.equipment) ||
+      isNaN(query.page) ||
+      query.page <= 0
+    ) {
       throw new Error('Please provide search term, category or equipment!');
     }
     let params = new HttpParams();

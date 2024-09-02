@@ -21,6 +21,9 @@ export class AdminService {
   }
 
   changeStatus(parameters: IChangeActiveStatus) {
+    if (!parameters.username.length) {
+      throw new Error('Username is empty!');
+    }
     return this.httpClient.put(
       `${this.userEndPoint}/${parameters.username}`,
       undefined,

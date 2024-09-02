@@ -48,29 +48,6 @@ export class WorkoutPlansComponent implements OnInit {
       this.router.navigate(['/workout-plans/' + id]);
     });
   }
-
-  deleteWorkout(workoutPlanId: number) {
-    const body: IDeleteWorkoutPlan = { id: workoutPlanId };
-    this.workoutPlanService.deleteWorkoutPlan(body).subscribe({
-      next: (response) => {
-        if (response.status == HttpStatusCode.NoContent) {
-          const index = this.workoutPlans.findIndex(
-            (wp) => wp.id == workoutPlanId
-          );
-          if (index != -1) {
-            this.workoutPlans.splice(index);
-          } else {
-            this.errorMessage = 'Could not find workout plan in the table!';
-          }
-        }
-      },
-      error: () => {
-        this.errorMessage =
-          'Something went wrong while trying to delete your workout plan!';
-      },
-    });
-  }
-
   navigateToForm() {
     this.ngZone.run(() => {
       this.router.navigate(['/workout-plans/create']);

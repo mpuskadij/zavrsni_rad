@@ -120,23 +120,27 @@ export class ExerciseComponent {
   }
 
   add(exerciseName: string) {
-    if (+this.id && exerciseName) {
-      const body: IAddExercise = { name: exerciseName };
-      this.workoutPlanService.addExercise(+this.id, body).subscribe({
-        next: (response) => {
-          if (response.status == HttpStatusCode.Created) {
-            this.router.navigate([`/workout-plans/${+this.id}`], {
-              replaceUrl: true,
-            });
-          }
-        },
-        error: () => {
-          this.note =
-            'Something went wrong while trying to add exercise to your workout plan!';
-        },
-      });
-    } else {
-      this.note = 'Invalid workout plan id or exercise name!';
+    try {
+      if (+this.id && exerciseName) {
+        const body: IAddExercise = { name: exerciseName };
+        this.workoutPlanService.addExercise(+this.id, body).subscribe({
+          next: (response) => {
+            if (response.status == HttpStatusCode.Created) {
+              this.router.navigate([`/workout-plans/${+this.id}`], {
+                replaceUrl: true,
+              });
+            }
+          },
+          error: () => {
+            this.note =
+              'Something went wrong while trying to add exercise to your workout plan!';
+          },
+        });
+      } else {
+        throw new Error('Invalid workout plan id or exercise name!');
+      }
+    } catch (error: any) {
+      this.note = error.message;
     }
   }
 }

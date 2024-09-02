@@ -29,22 +29,26 @@ export class CreateWorkoutPlanComponent {
   }
 
   submit() {
-    if (this.form.valid) {
-      this.errorMessage = '';
-      const workoutPlanData: ICreateWorkoutPlan = {
-        title: this.form.controls.title.value!,
-      };
-      this.workoutPlanService.createWorkoutPlan(workoutPlanData).subscribe({
-        next: () => {
-          this.cancel();
-        },
-        error: () => {
-          this.errorMessage =
-            'Something went wrong while trying to create your workout plan!';
-        },
-      });
-    } else {
-      this.errorMessage = 'Title was not provided!';
+    try {
+      if (this.form.valid) {
+        this.errorMessage = '';
+        const workoutPlanData: ICreateWorkoutPlan = {
+          title: this.form.controls.title.value!,
+        };
+        this.workoutPlanService.createWorkoutPlan(workoutPlanData).subscribe({
+          next: () => {
+            this.cancel();
+          },
+          error: () => {
+            this.errorMessage =
+              'Something went wrong while trying to create your workout plan!';
+          },
+        });
+      } else {
+        throw new Error('Title was not provided!');
+      }
+    } catch (error: any) {
+      this.errorMessage = error.message;
     }
   }
 }

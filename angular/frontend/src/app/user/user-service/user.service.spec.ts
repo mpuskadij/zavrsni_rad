@@ -55,10 +55,6 @@ describe('UserService', () => {
       service.register(user, 'asdasd').subscribe();
 
       const request = httpTestingController.expectOne(registerUrl);
-      const responseBody: IBackendError = {
-        message: 'Username already exists',
-      };
-      request.flush(responseBody);
 
       expect(request.request.method).toEqual('POST');
       expect(request.request.headers.has('recaptcha')).toBe(true);
@@ -93,10 +89,6 @@ describe('UserService', () => {
       service.login(user, 'asdasd').subscribe();
 
       const request = httpTestingController.expectOne(loginUrl);
-      const responseBody: IBackendError = {
-        message: 'Username already exists',
-      };
-      request.flush(responseBody);
 
       expect(request.request.method).toEqual('POST');
     });
