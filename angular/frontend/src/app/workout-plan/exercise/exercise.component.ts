@@ -87,6 +87,7 @@ export class ExerciseComponent {
   ) {
     try {
       this.fetched = false;
+      if (isNaN(page)) throw new Error('Invalid page number!');
       if (this.categories.includes(category) == false) {
         throw new Error('Category value is not valid!');
       }
@@ -124,12 +125,10 @@ export class ExerciseComponent {
       if (+this.id && exerciseName) {
         const body: IAddExercise = { name: exerciseName };
         this.workoutPlanService.addExercise(+this.id, body).subscribe({
-          next: (response) => {
-            if (response.status == HttpStatusCode.Created) {
-              this.router.navigate([`/workout-plans/${+this.id}`], {
-                replaceUrl: true,
-              });
-            }
+          next: () => {
+            this.router.navigate([`/workout-plans/${+this.id}`], {
+              replaceUrl: true,
+            });
           },
           error: () => {
             this.note =

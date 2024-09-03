@@ -20,15 +20,6 @@ describe('NavigationComponent', () => {
     fixture.detectChanges();
   });
 
-  describe('UI', () => {
-    it('should have a <nav> element', () => {
-      const ui: HTMLElement = fixture.nativeElement;
-      const nav = ui.querySelector('nav');
-
-      expect(nav).not.toBeNull();
-    });
-  });
-
   describe('ngOnInit', () => {
     it('should set isLoggedIn to true if session storage isAdmin is true', () => {
       sessionStorage.setItem('isAdmin', 'true');

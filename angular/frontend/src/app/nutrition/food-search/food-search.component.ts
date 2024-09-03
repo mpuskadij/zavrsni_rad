@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { IFoodSearchQuery } from 'src/interfaces/ifood-search-query';
 import { FoodService } from '../food-service/food.service';
 import { IFoodSearchResponseBody } from 'src/interfaces/ifood-search-response-body';
@@ -12,26 +12,15 @@ import { Router } from '@angular/router';
   styleUrl: './food-search.component.scss',
 })
 export class FoodSearchComponent {
-  navigateToDetailsOfCommonFood(commonFood: ICommonFood) {
-    return this.navigateToDetails('common', commonFood.food_name);
-  }
-
-  navigateToDetailsOfBrandedFood(brandedFood: IBrandedFood) {
-    return this.navigateToDetails('branded', brandedFood.nix_item_id);
-  }
-
-  private navigateToDetails(type: string, id: string) {
-    if (!type || !id) {
-      this.note =
-        'Something went wrong while trying to navigate to food details!';
-      return;
-    }
-    this.router.navigate([`/nutrition/add/${type}/${id}`]);
-  }
-
   foods?: IFoodSearchResponseBody;
   note = '';
-  constructor(private foodService: FoodService, private router: Router) {}
+
+  constructor(
+    private foodService: FoodService,
+    private router: Router,
+    private ngZone: NgZone
+  ) {}
+
   search(searchTerm: string) {
     try {
       if (!searchTerm) {
@@ -49,5 +38,24 @@ export class FoodSearchComponent {
     } catch (error: any) {
       this.note = error.message;
     }
+  }
+
+  navigateToDetailsOfCommonFood(commonFood: ICommonFood) {
+    return this.navigateToDetails('common', commonFood.food_name);
+  }
+
+  navigateToDetailsOfBrandedFood(brandedFood: IBrandedFood) {
+    return this.navigateToDetails('branded', brandedFood.nix_item_id);
+  }
+
+  private navigateToDetails(type: string, value: string) {
+    if (!type || !value) {
+      this.note =
+        'Something went wrong while trying to navigate to food details!';
+      return;
+    }
+    this.ngZone.run(() => {
+      this.router.navigate([`/nutrition/add/${type}/${value}`]);
+    });
   }
 }

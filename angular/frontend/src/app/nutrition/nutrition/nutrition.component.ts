@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { INutritionFood } from 'src/interfaces/inutrition-food';
 import { NutritionService } from '../nutrition-service/nutrition.service';
 import { HttpStatusCode } from '@angular/common/http';
@@ -20,12 +20,13 @@ export class NutritionComponent implements OnInit {
 
   constructor(
     private nutritionService: NutritionService,
-    private router: Router
+    private router: Router,
+    private ngZone: NgZone
   ) {}
 
   changeQuantity(food: INutritionFood) {
-    if (food.quantity < 0) {
-      this.note = 'Quantity cannot be less than 1!';
+    if (food.quantity <= 0) {
+      this.note = 'Quantity cannot be 0 or less!';
       return;
     }
     const foundFood = this.changedFoods.find((changedFood) => {
@@ -42,6 +43,10 @@ export class NutritionComponent implements OnInit {
   ngOnInit(): void {
     this.nutritionService.getNutrition().subscribe({
       next: (foodFromServer) => {
+        if (!foodFromServer.length) {
+          this.note = "You don't have any food in nutrition!";
+          return;
+        }
         this.foods = foodFromServer;
         this.calculateSum();
       },
@@ -53,13 +58,13 @@ export class NutritionComponent implements OnInit {
 
   deleteFood(foodID: number, index: number) {
     try {
+      if (isNaN(foodID) || isNaN(index))
+        throw new Error('Invalid table index or ID');
       this.nutritionService.deleteFood(foodID).subscribe({
-        next: (response) => {
-          if (response.status == HttpStatusCode.NoContent) {
-            this.note = 'Successfully deleted food!';
-            this.foods.splice(index, 1);
-            this.calculateSum();
-          }
+        next: () => {
+          this.note = 'Successfully deleted food!';
+          this.foods.splice(index, 1);
+          this.calculateSum();
         },
         error: () => {
           this.note =
@@ -105,6 +110,8 @@ export class NutritionComponent implements OnInit {
     }
   }
   navigateToFoodSearch() {
-    this.router.navigate(['/nutrition/add']);
+    this.ngZone.run(() => {
+      this.router.navigate(['/nutrition/add']);
+    });
   }
 }

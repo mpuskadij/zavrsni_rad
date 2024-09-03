@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { JournalService } from '../journal-service/journal.service';
 import { ICreateJournalEntry } from 'src/interfaces/icreate-journal-entry';
@@ -21,7 +21,8 @@ export class CreateJournalEntryComponent {
   constructor(
     private formBuilder: FormBuilder,
     private journalService: JournalService,
-    private router: Router
+    private router: Router,
+    private ngZone: NgZone
   ) {}
 
   createEntry() {
@@ -37,7 +38,9 @@ export class CreateJournalEntryComponent {
       };
       this.journalService.addNewJournalEntry(body).subscribe({
         next: () => {
-          this.router.navigate(['/journal'], { replaceUrl: true });
+          this.ngZone.run(() => {
+            this.router.navigate(['/journal'], { replaceUrl: true });
+          });
         },
         error: () => {
           this.note = 'You already have a journal entry today!';
@@ -49,6 +52,8 @@ export class CreateJournalEntryComponent {
   }
 
   close() {
-    this.router.navigate(['/journal'], { replaceUrl: true });
+    this.ngZone.run(() => {
+      this.router.navigate(['/journal'], { replaceUrl: true });
+    });
   }
 }

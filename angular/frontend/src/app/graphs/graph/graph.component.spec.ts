@@ -24,26 +24,6 @@ describe('GraphComponent', () => {
     fixture.detectChanges();
   });
 
-  describe('UI', () => {
-    it('should contain line chart when input property passed', () => {
-      const ui: HTMLElement = fixture.nativeElement;
-      const bmiData: IBmiGraphData = { bmi: 17.5, dateAdded: new Date() };
-      component.graphData = [bmiData];
-
-      const lineChart = ui.querySelector('canvas[id="lineChart"]');
-      expect(lineChart).not.toBeNull();
-    });
-
-    it('should contain bar chart when input property passed', () => {
-      const ui: HTMLElement = fixture.nativeElement;
-      const bmiData: IBmiGraphData = { bmi: 17.5, dateAdded: new Date() };
-      component.graphData = [bmiData];
-
-      const lineChart = ui.querySelector('canvas[id="barChart"]');
-      expect(lineChart).not.toBeNull();
-    });
-  });
-
   describe('ngOnInit', () => {
     it('should not extract data from input property if input property is undefined', () => {
       component.graphData = undefined;

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, NgZone, OnInit } from '@angular/core';
 import { WorkoutPlanService } from '../workout-plan-service/workout-plan.service';
 import { IWorkoutPlanDetails } from 'src/interfaces/iworkout-plan-details';
 import { map } from 'rxjs';
@@ -19,6 +19,7 @@ export class WorkoutPlanDetailsComponent implements OnInit {
   public note: string = '';
   workoutPlanDetails?: IWorkoutPlanDetails;
   constructor(
+    private ngZone: NgZone,
     private workoutPlanService: WorkoutPlanService,
     private router: Router
   ) {}
@@ -54,8 +55,10 @@ export class WorkoutPlanDetailsComponent implements OnInit {
   }
 
   deleteExercise(exercise: IWorkoutPlanExercise, index: number) {
-    const body: IDeleteExercise = { name: exercise.name };
     try {
+      if (isNaN(index)) throw new Error('Invalid table index!');
+      if (!exercise.name.length) throw new Error('Exercise name is empty!');
+      const body: IDeleteExercise = { name: exercise.name };
       if (this.workoutPlanDetails) {
         this.workoutPlanService
           .deleteExercise(this.workoutPlanDetails.id, body)
@@ -81,16 +84,20 @@ export class WorkoutPlanDetailsComponent implements OnInit {
 
   navigateToSearch() {
     if (this.workoutPlanDetails) {
-      this.router.navigate([
-        `/workout-plans/${this.workoutPlanDetails.id}/add`,
-      ]);
+      this.ngZone.run(() => {
+        this.router.navigate([
+          `/workout-plans/${this.workoutPlanDetails!.id}/add`,
+        ]);
+      });
     } else {
       this.note = 'Invalid workout plan id!';
     }
   }
   deleteWorkout(workoutPlanId: number) {
-    const body: IDeleteWorkoutPlan = { id: workoutPlanId };
     try {
+      if (isNaN(workoutPlanId))
+        throw new Error('Invalid ID of the workout plan to delete!');
+      const body: IDeleteWorkoutPlan = { id: workoutPlanId };
       this.workoutPlanService.deleteWorkoutPlan(body).subscribe({
         next: (response) => {
           if (response.status == HttpStatusCode.NoContent) {

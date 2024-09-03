@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { IPreviousJournalEntry } from 'src/interfaces/iprevious-journal-entry';
 import { JournalService } from '../journal-service/journal.service';
 import { map } from 'rxjs';
@@ -14,7 +14,11 @@ export class JournalComponent implements OnInit {
   previousJournalEntries: IPreviousJournalEntry[] = [];
   note = '';
 
-  constructor(private journalService: JournalService, private router: Router) {}
+  constructor(
+    private journalService: JournalService,
+    private router: Router,
+    private ngZone: NgZone
+  ) {}
 
   ngOnInit(): void {
     this.journalService
@@ -38,10 +42,18 @@ export class JournalComponent implements OnInit {
   }
 
   editEntry(entry: IPreviousJournalEntry) {
-    this.router.navigate([`/journal/edit/${entry.id}`]);
+    if (isNaN(entry.id)) {
+      this.note = 'Cannot edit journal entry with invalid id!';
+      return;
+    }
+    this.ngZone.run(() => {
+      this.router.navigate([`/journal/edit/${entry.id}`]);
+    });
   }
 
   navigateToForm() {
-    this.router.navigate(['/journal/add']);
+    this.ngZone.run(() => {
+      this.router.navigate(['/journal/add']);
+    });
   }
 }

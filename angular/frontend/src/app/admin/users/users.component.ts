@@ -17,6 +17,10 @@ export class UsersComponent implements OnInit {
   ngOnInit(): void {
     this.adminService.getAllUsers().subscribe({
       next: (usersFromServer) => {
+        if (!usersFromServer.length) {
+          this.note = 'No users yet!';
+          return;
+        }
         this.users = usersFromServer;
       },
       error: () => {
@@ -26,8 +30,11 @@ export class UsersComponent implements OnInit {
   }
 
   changeActiveStatus(user: IExistingUser) {
-    const params: IChangeActiveStatus = { username: user.username };
     try {
+      if (!user.username.length) {
+        throw new Error('Username is empty!');
+      }
+      const params: IChangeActiveStatus = { username: user.username };
       this.adminService.changeStatus(params).subscribe({
         next: () => {
           user.isActive = !user.isActive;

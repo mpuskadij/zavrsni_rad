@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, NgZone, OnInit } from '@angular/core';
 import { FoodService } from '../food-service/food.service';
 import { IFoodDetails } from 'src/interfaces/ifood-details';
 import { NutritionService } from '../nutrition-service/nutrition.service';
@@ -21,7 +21,8 @@ export class FoodDetailsComponent implements OnInit {
   constructor(
     private foodService: FoodService,
     private nutritionService: NutritionService,
-    private router: Router
+    private router: Router,
+    private ngZone: NgZone
   ) {}
 
   ngOnInit(): void {
@@ -53,7 +54,9 @@ export class FoodDetailsComponent implements OnInit {
     try {
       this.nutritionService.addToNutrition(body).subscribe({
         next: () => {
-          this.router.navigate(['/nutrition']);
+          this.ngZone.run(() => {
+            this.router.navigate(['/nutrition'], { replaceUrl: true });
+          });
         },
         error: () => {
           this.note =

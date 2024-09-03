@@ -1,8 +1,9 @@
 <app-navigation></app-navigation>
 <form *ngIf="entry" [formGroup]="this.form" (submit)="$event.preventDefault()">
-    <input placeholder="Title" title="Title of your day" formControlName="title" type="text" id="title" maxlength="50">
+    <input placeholder="Title" title="Title of your day" formControlName="title" required type="text" id="title"
+        maxlength="50">
 
-    <textarea placeholder="Description" title="Description of how your day went" formControlName="description"
+    <textarea placeholder="Description" title="Description of how your day went" required formControlName="description"
         type="text" [rows]="rows" [cols]="cols" id="description"></textarea>
 
     <button type="submit" *ngIf="form.valid" (click)="updateEntry()">Update entry</button>

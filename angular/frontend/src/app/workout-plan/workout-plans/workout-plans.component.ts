@@ -44,9 +44,16 @@ export class WorkoutPlansComponent implements OnInit {
   }
 
   getDetailsOfWorkoutPlan(id: number) {
-    this.ngZone.run(() => {
-      this.router.navigate(['/workout-plans/' + id]);
-    });
+    try {
+      if (isNaN(id)) {
+        throw new Error('ID is invalid!');
+      }
+      this.ngZone.run(() => {
+        this.router.navigate(['/workout-plans/' + id]);
+      });
+    } catch (error: any) {
+      this.errorMessage = error.message;
+    }
   }
   navigateToForm() {
     this.ngZone.run(() => {

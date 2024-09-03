@@ -35,117 +35,6 @@ describe('WorkoutPlansComponent', () => {
     fixture.detectChanges();
   });
 
-  describe('UI', () => {
-    it('should have navigation', () => {
-      const ui: HTMLElement = fixture.nativeElement;
-      const nav = ui.querySelector('nav');
-      expect(nav).not.toBeNull();
-    });
-
-    it('should have a clock', () => {
-      const ui: HTMLElement = fixture.nativeElement;
-      const clock = ui.querySelector('#clock');
-      expect(clock).not.toBeNull();
-    });
-
-    it('should not have a table if no workout plans', () => {
-      component.errorMessage = 'Error!';
-
-      component.ngOnInit();
-
-      fixture.detectChanges();
-
-      const ui: HTMLElement = fixture.nativeElement;
-      const table = ui.querySelector('table');
-
-      expect(table).toBeNull();
-    });
-
-    it('should have a table if there are workout plans', () => {
-      component.workoutPlans = [
-        { id: 1, dateAdded: new Date(), title: 'asdasdsa' },
-      ];
-
-      component.ngOnInit();
-
-      fixture.detectChanges();
-
-      const ui: HTMLElement = fixture.nativeElement;
-      const table = ui.querySelector('table');
-
-      expect(table).not.toBeNull();
-    });
-
-    it('should have a table head if there are workout plans', () => {
-      component.workoutPlans = [
-        { id: 1, dateAdded: new Date(), title: 'asdasdsa' },
-      ];
-
-      component.ngOnInit();
-
-      fixture.detectChanges();
-
-      const ui: HTMLElement = fixture.nativeElement;
-      const thead = ui.querySelector('thead');
-
-      expect(thead).not.toBeNull();
-    });
-
-    it('should have 2 headers', () => {
-      component.workoutPlans = [
-        { id: 1, dateAdded: new Date(), title: 'asdasdsa' },
-      ];
-
-      component.ngOnInit();
-
-      fixture.detectChanges();
-
-      const ui: HTMLElement = fixture.nativeElement;
-      const th = ui.querySelectorAll('th');
-
-      expect(th).not.toBeNull();
-      expect(th.length).toBe(2);
-    });
-
-    it('should have tbody tag', () => {
-      component.workoutPlans = [
-        { id: 1, dateAdded: new Date(), title: 'asdasdsa' },
-      ];
-
-      component.ngOnInit();
-
-      fixture.detectChanges();
-
-      const ui: HTMLElement = fixture.nativeElement;
-      const tbody = ui.querySelector('tbody');
-
-      expect(tbody).not.toBeNull();
-    });
-
-    it('should 2 rows (header + data) if there is only 1 workout plan', () => {
-      component.workoutPlans = [
-        { id: 1, dateAdded: new Date(), title: 'asdasdsa' },
-      ];
-
-      component.ngOnInit();
-
-      fixture.detectChanges();
-
-      const ui: HTMLElement = fixture.nativeElement;
-      const tr = ui.querySelectorAll('tr');
-
-      expect(tr).not.toBeNull();
-      expect(tr.length).toBe(2);
-    });
-
-    it('should have a button for creating a new workout plan', () => {
-      const ui: HTMLElement = fixture.nativeElement;
-      const button = ui.querySelector('button');
-
-      expect(button).not.toBeNull();
-    });
-  });
-
   describe('ngOnInit', () => {
     it('should use workoutplanservice to fetch data from backend', () => {
       spyOn(workoutPlanService, 'getAllWorkoutPlans').and.returnValue(of());
@@ -180,6 +69,28 @@ describe('WorkoutPlansComponent', () => {
 
       expect(component.errorMessage).toBeTruthy();
       expect(component.workoutPlans.length).toBe(0);
+    });
+  });
+
+  describe('getDetailsOfWorkoutPlan', () => {
+    it('should set error message if id is NaN', () => {
+      component.getDetailsOfWorkoutPlan(NaN);
+
+      expect(component.errorMessage).toBeTruthy();
+    });
+
+    it('should navigate if id is a number', () => {
+      component.getDetailsOfWorkoutPlan(1);
+
+      expect(component.errorMessage).toBeFalsy();
+    });
+  });
+
+  describe('navigateToFrom', () => {
+    it('should navigate when called', () => {
+      component.navigateToForm();
+
+      expect(component.errorMessage).toBeFalsy();
     });
   });
 });

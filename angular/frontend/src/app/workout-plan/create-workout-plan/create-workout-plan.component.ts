@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
@@ -17,14 +17,17 @@ export class CreateWorkoutPlanComponent {
   errorMessage: string = '';
 
   constructor(
+    private ngZone: NgZone,
     private formBuilder: FormBuilder,
     private router: Router,
     private workoutPlanService: WorkoutPlanService
   ) {}
 
   cancel() {
-    this.router.navigate(['/workout-plans'], {
-      replaceUrl: true,
+    this.ngZone.run(() => {
+      this.router.navigate(['/workout-plans'], {
+        replaceUrl: true,
+      });
     });
   }
 

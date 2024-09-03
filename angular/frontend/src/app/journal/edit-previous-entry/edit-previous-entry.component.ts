@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, NgZone, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { JournalService } from '../journal-service/journal.service';
 import { IPreviousJournalEntry } from 'src/interfaces/iprevious-journal-entry';
@@ -24,12 +24,13 @@ export class EditPreviousEntryComponent implements OnInit {
     description: ['', [Validators.required]],
   });
 
-  note = '';
+  public note: string = '';
 
   constructor(
     private formBuilder: FormBuilder,
     private journalService: JournalService,
-    private router: Router
+    private router: Router,
+    private ngZone: NgZone
   ) {}
 
   ngOnInit(): void {
@@ -53,8 +54,12 @@ export class EditPreviousEntryComponent implements OnInit {
 
   updateEntry() {
     try {
-      if (this.form.invalid || !this.entry?.id)
+      if (this.form.invalid) {
         throw new Error('Invalid journal entry details!');
+      }
+      if (!this.entry?.id) {
+        throw new Error('Invalid ID');
+      }
       const body: IUpdateJournalEntry = {
         description: this.form.controls.description.value!,
         title: this.form.controls.title.value!,
@@ -62,7 +67,9 @@ export class EditPreviousEntryComponent implements OnInit {
       };
       this.journalService.updatePreviousJournalEntry(body).subscribe({
         next: () => {
-          this.router.navigate(['/journal']);
+          this.ngZone.run(() => {
+            this.router.navigate(['/journal'], { replaceUrl: true });
+          });
         },
         error: () => {
           this.note =
@@ -75,13 +82,18 @@ export class EditPreviousEntryComponent implements OnInit {
   }
 
   deleteEntry() {
-    const body: IDeleteJournalEntry = {
-      id: this.entry!.id,
-    };
     try {
+      if (!this.entry?.id) {
+        throw new Error('No journal entry to delete!');
+      }
+      const body: IDeleteJournalEntry = {
+        id: this.entry.id,
+      };
       this.journalService.deletePreviousJournalEntry(body).subscribe({
         next: () => {
-          this.router.navigate(['/journal'], { replaceUrl: true });
+          this.ngZone.run(() => {
+            this.router.navigate(['/journal'], { replaceUrl: true });
+          });
         },
         error: () => {
           this.note =
