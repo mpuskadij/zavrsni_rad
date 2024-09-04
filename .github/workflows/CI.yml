@@ -31,6 +31,7 @@ jobs:
           envkey_JWT_SECRET: ${{secrets.JWT_SECRET}}
           envkey_NUTRITIONIX_APP_ID: $${{secrets.NUTRITIONIX_APP_ID}}
           envkey_NUTRITIONIX_APP_KEY: $${{secrets.NUTRITIONIX_APP_KEY}}
+          envkey_RECAPTCHA_ACTIVE: true
           directory: ./nest/backend
           file_name: .env
           fail_on_empty: false
