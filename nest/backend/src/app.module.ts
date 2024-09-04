@@ -37,7 +37,7 @@ import { join } from 'path';
       rootPath: join(__dirname, '../frontend/'),
     }),
     ThrottlerModule.forRoot([
-      { ttl: seconds(60), limit: 2000 },
+      { ttl: seconds(60), limit: 10000 },
       { name: 'nutritionix', ttl: seconds(60), limit: 10 },
     ]),
     ConfigModule.forRoot({
@@ -47,6 +47,7 @@ import { join } from 'path';
         JWT_SECRET: Joi.string().min(1).required(),
         NUTRITIONIX_APP_ID: Joi.string().min(1).required(),
         NUTRITIONIX_APP_KEY: Joi.string().min(1).required(),
+        RECAPTCHA_ACTIVE: Joi.boolean().required(),
       }),
     }),
     TypeOrmModule.forRoot({
@@ -68,6 +69,7 @@ import { join } from 'path';
     GoogleRecaptchaModule.forRoot({
       secretKey: process.env.GOOGLE_RECAPTCHA_SECRET_KEY,
       response: (req) => req.headers.recaptcha,
+      skipIf: process.env.RECAPTCHA_ACTIVE == 'false',
       score: 0.5,
     }),
     JwtModule.register({

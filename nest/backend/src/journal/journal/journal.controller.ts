@@ -81,7 +81,7 @@ export class JournalController {
     @Body('title') title: string,
     @Body('description') description: string,
   ): Promise<any> {
-    if (!title || !description)
+    if (!title?.length || !description?.length)
       throw new BadRequestException(
         'Title and/or description not sent or empty!',
       );

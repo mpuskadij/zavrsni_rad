@@ -53,7 +53,7 @@ export class NutritionController {
 
     const userFood = await this.usersService.getFoodOfUser(user);
 
-    if (!userFood) {
+    if (!userFood?.length) {
       throw new ForbiddenException("You don't have any food items!");
     }
 
@@ -192,7 +192,7 @@ export class NutritionController {
       );
     }
     const userFoods = await this.usersService.getFoodOfUser(user);
-    if (!userFoods.length) {
+    if (!userFoods?.length) {
       throw new InternalServerErrorException('User has 0 foods in nutrition!');
     }
     await this.usersService.updateFoodQuantity(
